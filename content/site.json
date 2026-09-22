@@ -4,8 +4,10 @@
   "logo": "/logo-white.png",
   "tagline": "Photographie • Vidéo • Sport",
   "headerTagline": "Sport · Événementiel",
-  "slogan": ["Capturer l’intensité.", "Raconter l’événement."],
-  "description": "ShootByTheo, photographe et vidéaste sportif : reportages photo, vidéo et contenus réseaux sociaux pour clubs, joueurs, associations et organisateurs d’événements sportifs.",
+  "slogan": [
+    "Capturer l’intensité."
+  ],
+  "description": "ShootByTheo, photographe sportif : reportages photo,  contenus réseaux sociaux pour clubs, joueurs, associations et événements sportifs.",
   "email": "contact@shootbytheo.com",
   "socials": [
     {
@@ -17,9 +19,21 @@
   "hero": {
     "autoplaySeconds": 7,
     "slides": [
-      { "event": "pre-nationale-j1-chambly", "photo": "cover", "position": "50% 40%" },
-      { "event": "top-12-j1-chambly", "photo": "cover", "position": "50% 40%" },
-      { "event": "top-12-j9-chambly", "photo": "cover", "position": "50% 40%" }
+      {
+        "event": "pre-nationale-j1-chambly",
+        "photo": "cover",
+        "position": "50% 40%"
+      },
+      {
+        "event": "top-12-j1-chambly",
+        "photo": "cover",
+        "position": "50% 40%"
+      },
+      {
+        "event": "top-12-j9-chambly",
+        "photo": "cover",
+        "position": "50% 40%"
+      }
     ]
   },
   "contact": {
