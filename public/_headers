@@ -11,3 +11,7 @@
 /*
   X-Content-Type-Options: nosniff
   Referrer-Policy: strict-origin-when-cross-origin
+  # Cette adresse (shootbytheo.pages.dev) ne sert qu'à l'administration (CMS) :
+  # jamais indexée par Google, quelle que soit la page. Le vrai site (OVH) n'a
+  # pas ce fichier _headers et reste normalement indexable.
+  X-Robots-Tag: noindex, nofollow
