@@ -1,0 +1,64 @@
+---
+/**
+ * Accueil — « à la une » : uniquement les photos, en plein écran.
+ * Tout le reste (événements, prestations, à propos, contact) vit dans sa propre page, via le menu.
+ */
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import HeroSlider, { type Slide } from '@/components/HeroSlider.astro';
+import { getEvents } from '@/lib/events';
+import { findPhoto } from '@/lib/media';
+import { absoluteUrl, site } from '@/lib/site';
+
+const events = await getEvents();
+
+// ---- Image(s) à la une : content/site.json → hero.slides ----
+let slides: Slide[] = (site.hero.slides ?? [])
+  .map((entry): Slide | undefined => {
+    const event = events.find((e) => e.slug === entry.event || e.folder === entry.event);
+    if (!event) return undefined;
+    const photo = !entry.photo || entry.photo === 'cover' ? event.cover : findPhoto(event.folder, entry.photo);
+    return photo ? { photo, event, position: entry.position ?? event.coverPosition } : undefined;
+  })
+  .filter((slide): slide is Slide => Boolean(slide));
+
+// Rien de configuré (ou événements introuvables) : les trois derniers événements passent à la une.
+if (!slides.length) {
+  slides = events
+    .filter((event) => event.cover)
+    .slice(0, 3)
+    .map((event) => ({ photo: event.cover!, event, position: event.coverPosition }));
+}
+
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    name: site.name,
+    url: absoluteUrl('/'),
+    inLanguage: 'fr-FR',
+    description: site.description,
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'ProfessionalService',
+    name: site.name,
+    url: absoluteUrl('/'),
+    email: site.email,
+    description: site.description,
+    image: slides[0]?.event?.ogImage ? absoluteUrl(slides[0].event.ogImage) : undefined,
+    sameAs: site.socials.map((social) => social.url),
+    knowsAbout: ['Photographie sportive', 'Vidéo sportive', 'Badminton', 'Événementiel sportif', 'Contenu pour les réseaux sociaux'],
+  },
+];
+---
+
+<BaseLayout
+  fullTitle={`${site.name} — Photographe & vidéaste sportif | ${site.tagline}`}
+  description={site.description}
+  image={slides[0]?.event?.ogImage}
+  jsonLd={jsonLd}
+  footer="compact"
+  bodyClass="page-home"
+>
+  {slides.length > 0 && <HeroSlider slides={slides} autoplaySeconds={site.hero.autoplaySeconds} />}
+</BaseLayout>

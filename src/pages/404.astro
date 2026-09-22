@@ -1,0 +1,40 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Icon from '@/components/Icon.astro';
+---
+
+<BaseLayout title="Page introuvable" description="Cette page n’existe pas ou a été déplacée." noindex>
+  <section class="lost container">
+    <p class="kicker">Erreur 404</p>
+    <h1 class="display lost__title">Hors cadre.</h1>
+    <p class="lead lost__text">Cette page n’existe pas, ou elle a changé d’adresse.</p>
+    <div class="lost__actions">
+      <a class="btn btn--accent" href="/evenements/">Voir les événements <Icon name="arrow-right" /></a>
+      <a class="btn btn--ghost" href="/">Retour à l’accueil</a>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .lost {
+    display: grid;
+    align-content: center;
+    justify-items: start;
+    gap: clamp(1rem, 2vw, 2rem);
+    min-height: 82svh;
+    padding-top: var(--header-h);
+  }
+  .lost__title {
+    font-size: clamp(2.5rem, 9.6vw, 11rem);
+    margin-left: -0.04em;
+  }
+  .lost__text {
+    color: var(--text-dim);
+  }
+  .lost__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 0.5rem;
+  }
+</style>

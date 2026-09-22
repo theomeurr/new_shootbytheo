@@ -1,0 +1,27 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import PageHead from '@/components/PageHead.astro';
+
+interface Props {
+  title: string;
+  description: string;
+  updated?: string;
+}
+const { title, description, updated } = Astro.props;
+---
+
+<BaseLayout title={title} description={description}>
+  <PageHead kicker="Informations légales" title={title} compact />
+  <div class="container legal">
+    <div class="prose">
+      <slot />
+      {updated && <p class="meta">Dernière mise à jour : {updated}</p>}
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .legal {
+    padding-bottom: var(--section);
+  }
+</style>

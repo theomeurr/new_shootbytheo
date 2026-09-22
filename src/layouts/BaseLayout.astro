@@ -1,0 +1,119 @@
+---
+import '@/styles/global.css';
+import archivoFont from '@fontsource-variable/archivo/files/archivo-latin-wght-normal.woff2?url';
+import Header from '@/components/Header.astro';
+import Footer from '@/components/Footer.astro';
+import { getEvents } from '@/lib/events';
+import { absoluteUrl, site } from '@/lib/site';
+
+interface Props {
+  /** Titre de la page, sans la marque (ajoutée automatiquement). */
+  title?: string;
+  /** Titre complet, quand on ne veut pas du suffixe « | ShootByTheo ». */
+  fullTitle?: string;
+  description?: string;
+  /** Image de partage (chemin ou URL). Par défaut : celle du dernier événement. */
+  image?: string;
+  imageAlt?: string;
+  type?: 'website' | 'article';
+  noindex?: boolean;
+  jsonLd?: Record<string, unknown> | Record<string, unknown>[];
+  /** "compact" : pied de page réduit à une seule ligne (accueil). */
+  footer?: 'full' | 'compact';
+  bodyClass?: string;
+}
+
+const { title, fullTitle, description = site.description, image, imageAlt, type = 'website', noindex = false, jsonLd, footer = 'full', bodyClass } = Astro.props;
+
+const pageTitle = fullTitle ?? (title ? `${title} | ${site.name}` : site.name);
+const canonical = absoluteUrl(Astro.url.pathname);
+
+const events = await getEvents();
+const fallbackImage = events.find((event) => event.ogImage)?.ogImage ?? '/og-default.jpg';
+const shareImage = absoluteUrl(image ?? fallbackImage);
+const schemas = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
+---
+
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>{pageTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    {noindex && <meta name="robots" content="noindex, follow" />}
+    <meta name="theme-color" content="#0a0a0b" />
+    <meta name="color-scheme" content="dark" />
+    <meta name="author" content={site.name} />
+
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="/favicon-48.png" type="image/png" sizes="48x48" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+    <link rel="preload" href={archivoFont} as="font" type="font/woff2" crossorigin />
+
+    <meta property="og:site_name" content={site.name} />
+    <meta property="og:locale" content="fr_FR" />
+    <meta property="og:type" content={type} />
+    <meta property="og:title" content={fullTitle ?? title ?? site.name} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={shareImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    {imageAlt && <meta property="og:image:alt" content={imageAlt} />}
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={fullTitle ?? title ?? site.name} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={shareImage} />
+
+    {schemas.map((schema) => <script type="application/ld+json" is:inline set:html={JSON.stringify(schema).replace(/</g, '\\u003c')} />)}
+
+    <script is:inline>
+      // Active les animations uniquement si JavaScript fonctionne, et révèle chaque image dès qu'elle est chargée.
+      document.documentElement.classList.add('js');
+      (function () {
+        var reveal = function (event) {
+          var target = event.target;
+          if (target && target.tagName === 'IMG') target.classList.add('is-loaded');
+        };
+        document.addEventListener('load', reveal, true);
+        document.addEventListener('error', reveal, true);
+        document.addEventListener('DOMContentLoaded', function () {
+          document.querySelectorAll('img[data-fade]').forEach(function (img) {
+            if (img.complete && img.getAttribute('src')) img.classList.add('is-loaded');
+          });
+        });
+      })();
+    </script>
+  </head>
+  <body class={bodyClass}>
+    <a class="skip-link" href="#contenu">Aller au contenu</a>
+    <Header />
+    <main id="contenu">
+      <slot />
+    </main>
+    <Footer compact={footer === 'compact'} />
+
+    <script>
+      // Apparitions discrètes au défilement
+      const targets = document.querySelectorAll<HTMLElement>('[data-reveal]');
+      if ('IntersectionObserver' in window && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        const observer = new IntersectionObserver(
+          (entries) => {
+            for (const entry of entries) {
+              if (!entry.isIntersecting) continue;
+              entry.target.classList.add('is-visible');
+              observer.unobserve(entry.target);
+            }
+          },
+          { rootMargin: '0px 0px -8% 0px', threshold: 0.05 },
+        );
+        targets.forEach((target) => observer.observe(target));
+      } else {
+        targets.forEach((target) => target.classList.add('is-visible'));
+      }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,264 @@
+# Configuration de l'interface d'administration (Sveltia CMS).
+# Voir le README, section « Interface d'administration », pour le mode d'emploi.
+#
+# - En local (npm run dev) : fonctionne tout de suite, sans rien configurer ci-dessous
+#   (bouton « Work with Local Repository », voir README).
+# - À distance, depuis n'importe quel navigateur : remplacer "repo" par votre dépôt GitHub
+#   une fois qu'il existe (voir README).
+
+backend:
+  name: github
+  repo: VOTRE-COMPTE/VOTRE-DEPOT # à remplacer une fois le dépôt GitHub créé — voir le README
+  branch: main
+
+# Images « libres » (à propos, prestations…) : content/images/
+media_folder: content/images
+public_folder: /images
+
+# ---------------------------------------------------------------------------
+# Événements : un dossier par événement, exactement comme npm run new-event.
+# ---------------------------------------------------------------------------
+collections:
+  - name: evenements
+    label: Événements
+    label_singular: Événement
+    description: 'Une carte, une page et une galerie sont générées automatiquement pour chaque événement. Les catégories (Top 12, Pré-Nationale…) sont simplement le texte du champ « Compétition » — voir npm run categories.'
+    folder: content/evenements
+    create: true
+    delete: true
+    slug: '{{fields.slug}}'
+    path: '{{fields.slug}}/event'
+    extension: json
+    format: json
+    identifier_field: title
+    summary: '{{title}} — {{date}}'
+    sortable_fields: [date, title, competition]
+    view_groups:
+      - label: Compétition
+        field: competition
+    # Les photos de la galerie sont déposées directement dans le dossier de l'événement,
+    # au même endroit que event.json (comme quand on les copie soi-même dans le dossier).
+    media_folder: ''
+    public_folder: ''
+    fields:
+      - name: title
+        label: Titre
+        widget: string
+        hint: 'Ex. « Pré-Nationale • Journée 2 ». Le « • » sépare les deux lignes du titre sur la page de l’événement.'
+
+      - name: slug
+        label: Adresse de la page (slug)
+        widget: string
+        required: true
+        pattern: ['^[a-z0-9]+(?:-[a-z0-9]+)*$', 'Minuscules, chiffres et tirets uniquement, ex. pre-nationale-j2-beauvais.']
+        hint: 'Détermine le dossier et l’adresse /evenements/…/. Ex. pre-nationale-j2-beauvais (compétition + journée + lieu, en minuscules).'
+
+      - name: date
+        label: Date
+        widget: datetime
+        type: date
+        required: true
+
+      - name: dateEnd
+        label: Date de fin
+        widget: datetime
+        type: date
+        required: false
+        hint: 'Uniquement pour un événement sur plusieurs jours (ex. un tournoi de deux jours).'
+
+      - name: sport
+        label: Sport
+        widget: string
+        required: false
+        default: Badminton
+
+      - name: competition
+        label: Compétition (= catégorie)
+        widget: string
+        required: false
+        hint: 'Ex. « Top 12 », « Pré-Nationale », « Nationale 2 ». Regroupe les journées sur la page Événements — un nouveau nom crée une nouvelle catégorie tout seul. Laisser vide pour un tournoi, une cérémonie ou un événement spécial.'
+
+      - name: type
+        label: Type (si pas de compétition)
+        widget: string
+        required: false
+        hint: 'Tournoi, Cérémonie, Événement spécial… Affiché uniquement quand « Compétition » est vide.'
+
+      - name: category
+        label: Univers
+        widget: select
+        required: false
+        options:
+          - { label: Badminton, value: badminton }
+          - { label: Autres sports, value: autres-sports }
+          - { label: Événementiel, value: evenementiel }
+        hint: 'Filtre en haut de la page Événements. Par défaut : Badminton si le sport est le badminton, sinon Autres sports.'
+
+      - name: location
+        label: Lieu (ville)
+        widget: string
+        required: false
+
+      - name: venue
+        label: Salle / gymnase
+        widget: string
+        required: false
+
+      - name: teams
+        label: Équipes ou participants
+        widget: list
+        required: false
+        allow_add: true
+
+      - name: description
+        label: Description
+        widget: text
+        required: false
+        hint: 'Une ou deux phrases sur la journée.'
+
+      - name: cover
+        label: Couverture
+        widget: image
+        required: false
+        hint: 'Laisser vide pour utiliser automatiquement la première photo de la galerie.'
+
+      - name: coverPosition
+        label: Point focal de la couverture
+        widget: string
+        required: false
+        default: '50% 40%'
+        hint: 'Comme en CSS : horizontal puis vertical, de 0% à 100%. Ex. « 50% 40% » = centré, un peu vers le haut.'
+
+      - name: gallery
+        label: Galerie photo
+        widget: list
+        required: false
+        field: { name: image, label: Photo, widget: image }
+        hint: 'Glissez vos photos ici (JPEG, ~2560 px de large conseillé). L’ordre ci-dessus est celui de la galerie sur le site.'
+
+      - name: seoTitle
+        label: Titre SEO
+        widget: string
+        required: false
+        hint: 'Remplace le titre généré automatiquement pour Google et les partages. Laisser vide sauf besoin particulier.'
+
+      - name: seoDescription
+        label: Description SEO
+        widget: text
+        required: false
+
+      - name: draft
+        label: Brouillon (masqué du site publié)
+        widget: boolean
+        required: false
+        default: false
+        hint: 'Visible seulement en développement (npm run dev), absent du site une fois publié.'
+
+# ---------------------------------------------------------------------------
+# Textes et réglages du site : un formulaire par fichier, pas de liste à parcourir.
+# ---------------------------------------------------------------------------
+singletons:
+  - name: site
+    label: Réglages du site
+    file: content/site.json
+    format: json
+    fields:
+      - { name: name, label: Nom du site, widget: string }
+      - { name: url, label: Adresse du site, widget: string, hint: 'Ex. https://shootbytheo.com — sans le / final.' }
+      - { name: logo, label: Logo (optionnel), widget: string, required: false, hint: 'Chemin d’un logo déposé dans public/, ex. /logo.svg. Laisser vide pour le mot-symbole « ShootByTheo ».' }
+      - { name: tagline, label: Signature courte, widget: string, hint: 'Ex. « Photographie • Vidéo • Sport ».' }
+      - { name: headerTagline, label: Signature du menu, widget: string, hint: 'Affichée à côté du logo, sur grand écran.' }
+      - name: slogan
+        label: Slogan de l’accueil
+        widget: list
+        hint: 'Une ligne par entrée. Deux lignes fonctionnent le mieux avec la mise en page actuelle.'
+        min: 1
+        max: 3
+      - { name: description, label: Description du site (SEO), widget: text, hint: 'Utilisée par Google et les partages quand une page n’a pas sa propre description.' }
+      - { name: email, label: E-mail de contact, widget: string }
+      - name: socials
+        label: Réseaux sociaux
+        widget: list
+        summary: '{{fields.label}} — {{fields.handle}}'
+        fields:
+          - { name: label, label: Nom, widget: string, hint: 'Ex. Instagram.' }
+          - { name: handle, label: Identifiant affiché, widget: string, hint: 'Ex. @shootby.theo.' }
+          - { name: url, label: Adresse, widget: string }
+      - name: hero
+        label: Image(s) à la une
+        widget: object
+        fields:
+          - { name: autoplaySeconds, label: Durée entre deux photos (secondes), widget: number, value_type: int, min: 3, max: 30, default: 7 }
+          - name: slides
+            label: Photos à la une
+            widget: list
+            summary: '{{fields.event}}'
+            hint: 'Une seule entrée = image fixe. Vide = les 3 derniers événements sont utilisés automatiquement.'
+            fields:
+              - name: event
+                label: Événement
+                widget: relation
+                collection: evenements
+                value_field: '{{slug}}'
+                search_fields: [title, competition, location]
+                display_fields: [title]
+              - { name: photo, label: Photo, widget: string, default: cover, hint: '« cover » pour la couverture de l’événement, ou le nom d’un fichier de sa galerie (ex. 003.jpg).' }
+              - { name: position, label: Point focal, widget: string, default: '50% 40%', hint: 'Comme pour la couverture d’un événement.' }
+      - name: contact
+        label: Formulaire de contact
+        widget: object
+        required: false
+        fields:
+          - { name: formEndpoint, label: Adresse du service de formulaire, widget: string, required: false, hint: 'Ex. https://formspree.io/f/xxxxxxxx. Laisser vide : le bouton ouvre un e-mail prérempli dans la messagerie du visiteur (aucun service tiers).' }
+      - { name: mediaBaseUrl, label: Adresse externe des photos (avancé), widget: string, required: false, hint: 'Uniquement si public/media/ est déplacé vers un stockage séparé (ex. https://media.shootbytheo.com). Laisser vide sinon.' }
+      - name: legal
+        label: Mentions légales
+        widget: object
+        required: false
+        fields:
+          - { name: publisher, label: Éditeur du site, widget: string, required: false, hint: 'Nom et prénom, ou raison sociale.' }
+          - { name: status, label: Statut, widget: string, required: false, hint: 'Ex. micro-entrepreneur.' }
+          - { name: siret, label: SIRET, widget: string, required: false }
+          - { name: address, label: Adresse postale, widget: string, required: false }
+          - { name: publicationDirector, label: Directeur de la publication, widget: string, required: false }
+          - name: host
+            label: Hébergeur
+            widget: object
+            required: false
+            fields:
+              - { name: name, label: Nom de l’hébergeur, widget: string, required: false }
+              - { name: address, label: Adresse de l’hébergeur, widget: string, required: false }
+              - { name: contact, label: Téléphone ou site de l’hébergeur, widget: string, required: false }
+
+  - name: prestations
+    label: Prestations
+    file: content/prestations.json
+    format: json
+    fields:
+      - { name: intro, label: Texte d’introduction, widget: text }
+      - { name: quoteNote, label: Note sur les devis, widget: text }
+      - name: services
+        label: Prestations
+        widget: list
+        summary: '{{fields.title}}'
+        fields:
+          - { name: id, label: Identifiant, widget: string, hint: 'Court, sans espace (sert dans l’adresse de la page, ex. « photo »). Ne pas changer sur une prestation existante.' }
+          - { name: formValue, label: Valeur dans le formulaire de contact, widget: string, hint: 'Doit correspondre à une des options du menu « Type de prestation » du formulaire de contact.' }
+          - { name: title, label: Titre, widget: string }
+          - { name: summary, label: Résumé, widget: text }
+          - { name: includes, label: Ce qui est inclus, widget: list, hint: 'Une ligne par élément (affichés en petites étiquettes).' }
+          - { name: image, label: Photo, widget: image, media_folder: content/images, public_folder: /images }
+          - { name: imagePosition, label: Point focal de la photo, widget: string, default: '50% 50%' }
+
+  - name: a-propos
+    label: À propos
+    file: content/a-propos.json
+    format: json
+    fields:
+      - { name: title, label: Titre, widget: string }
+      - { name: lead, label: Première phrase (mise en avant), widget: text }
+      - { name: paragraphs, label: Paragraphes suivants, widget: list, hint: 'Un paragraphe par ligne.' }
+      - { name: signature, label: Signature, widget: string }
+      - { name: image, label: Photo, widget: image, media_folder: content/images, public_folder: /images }
+      - { name: imagePosition, label: Point focal de la photo, widget: string, default: '50% 40%' }
+      - { name: imageAlt, label: Texte alternatif de la photo, widget: string, hint: 'Décrit la photo pour l’accessibilité et le référencement.' }

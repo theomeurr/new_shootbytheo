@@ -1,0 +1,182 @@
+---
+/**
+ * Galerie masonry : photos verticales et horizontales mélangées, sans recadrage.
+ * - Seules des miniatures sont chargées, et uniquement à l'approche de l'écran (lazy-loading).
+ * - Le clic ouvre la visionneuse plein écran (composant Lightbox).
+ * - Sans JavaScript : colonnes CSS + lien direct vers la grande image.
+ */
+import { type Photo, closestWidth, fallbackFormat, photoUrl, ratio, srcset } from '@/lib/media';
+
+export interface GalleryItem {
+  photo: Photo;
+  alt: string;
+  caption?: string;
+  link?: { href: string; label: string };
+}
+
+interface Props {
+  items: GalleryItem[];
+  /** Nom du groupe : les photos d'un même groupe défilent ensemble dans la visionneuse. */
+  group?: string;
+  /** Nombre de miniatures chargées immédiatement (haut de page). */
+  eager?: number;
+}
+
+const { items, group = 'galerie', eager = 0 } = Astro.props;
+const sizes = '(min-width: 1500px) 21vw, (min-width: 900px) 28vw, 48vw';
+const LIGHTBOX_MIN = 960;
+---
+
+<div class="masonry" data-masonry>
+  {
+    items.map(({ photo, alt, caption, link }, index) => {
+      const fallback = fallbackFormat(photo);
+      const modern = photo.formats.filter((format) => format !== fallback);
+      return (
+        <a
+          class="masonry__item"
+          href={photoUrl(photo, closestWidth(photo, 2048), fallback)}
+          style={`--ratio:${ratio(photo)};--tone:${photo.color}`}
+          data-ratio={ratio(photo)}
+          data-lb={group}
+          data-lb-index={index}
+          data-lb-w={photo.w}
+          data-lb-h={photo.h}
+          data-lb-color={photo.color}
+          data-lb-srcset={srcset(photo, fallback, { min: LIGHTBOX_MIN })}
+          data-lb-srcset-avif={modern.includes('avif') ? srcset(photo, 'avif', { min: LIGHTBOX_MIN }) : undefined}
+          data-lb-caption={caption}
+          data-lb-link={link?.href}
+          data-lb-link-label={link?.label}
+          aria-label={`Agrandir : ${alt}`}
+        >
+          <picture>
+            {modern.map((format) => (
+              <source type={`image/${format}`} srcset={srcset(photo, format, { max: 960 })} sizes={sizes} />
+            ))}
+            <img
+              src={photoUrl(photo, closestWidth(photo, 480), fallback)}
+              srcset={srcset(photo, fallback, { max: 960 })}
+              sizes={sizes}
+              width={photo.w}
+              height={photo.h}
+              alt={alt}
+              loading={index < eager ? 'eager' : 'lazy'}
+              decoding="async"
+              data-fade
+            />
+          </picture>
+        </a>
+      );
+    })
+  }
+</div>
+
+<style>
+  .masonry {
+    --cols: 2;
+    columns: var(--cols);
+    column-gap: var(--gap);
+  }
+  @media (min-width: 900px) {
+    .masonry {
+      --cols: 3;
+    }
+  }
+  @media (min-width: 1500px) {
+    .masonry {
+      --cols: 4;
+    }
+  }
+
+  /* Une fois les colonnes calculées par le script (ordre de lecture gauche → droite) */
+  .masonry.is-ready {
+    columns: auto;
+    display: flex;
+    align-items: flex-start;
+    gap: var(--gap);
+  }
+  .masonry :global(.masonry__col) {
+    flex: 1 1 0;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--gap);
+  }
+
+  .masonry__item {
+    position: relative;
+    display: block;
+    margin-bottom: var(--gap);
+    overflow: hidden;
+    aspect-ratio: var(--ratio);
+    background-color: color-mix(in srgb, var(--tone) 50%, #0a0a0b);
+    break-inside: avoid;
+    cursor: zoom-in;
+  }
+  .masonry.is-ready .masonry__item {
+    margin-bottom: 0;
+  }
+  .masonry__item picture,
+  .masonry__item img {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+  .masonry__item img {
+    object-fit: cover;
+    transition:
+      opacity 0.8s ease,
+      transform 1.2s var(--ease-out),
+      filter 0.6s var(--ease);
+  }
+  @media (hover: hover) {
+    .masonry__item:hover img {
+      transform: scale(1.035);
+      filter: brightness(1.06);
+    }
+  }
+</style>
+
+<script>
+  /**
+   * Répartit les photos dans des colonnes en plaçant chaque image dans la colonne
+   * la plus courte : l'ordre reste naturel (de gauche à droite) et les colonnes équilibrées.
+   * Les proportions étant connues à l'avance, rien ne bouge pendant le chargement.
+   */
+  function layout(grid: HTMLElement) {
+    const styles = getComputedStyle(grid);
+    const cols = Math.max(1, Number(styles.getPropertyValue('--cols')) || 2);
+    if (grid.dataset.cols === String(cols)) return;
+    grid.dataset.cols = String(cols);
+
+    const items = [...grid.querySelectorAll<HTMLElement>('.masonry__item')].sort((a, b) => Number(a.dataset.lbIndex) - Number(b.dataset.lbIndex));
+    const gap = parseFloat(styles.columnGap) || 8;
+    const colWidth = Math.max(1, (grid.clientWidth - gap * (cols - 1)) / cols);
+    const heights = new Array<number>(cols).fill(0);
+    const columns = heights.map(() => {
+      const column = document.createElement('div');
+      column.className = 'masonry__col';
+      return column;
+    });
+
+    for (const item of items) {
+      let target = 0;
+      for (let i = 1; i < cols; i++) if (heights[i] < heights[target] - 0.02) target = i;
+      columns[target].append(item);
+      heights[target] += 1 / (Number(item.dataset.ratio) || 1.5) + gap / colWidth;
+    }
+
+    grid.replaceChildren(...columns);
+    grid.classList.add('is-ready');
+  }
+
+  const grids = [...document.querySelectorAll<HTMLElement>('[data-masonry]')];
+  grids.forEach(layout);
+
+  let frame = 0;
+  window.addEventListener('resize', () => {
+    cancelAnimationFrame(frame);
+    frame = requestAnimationFrame(() => grids.forEach(layout));
+  });
+</script>

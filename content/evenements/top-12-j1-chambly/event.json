@@ -1,0 +1,14 @@
+{
+  "id": 6,
+  "title": "Top 12 • Journée 1",
+  "date": "2026-09-12",
+  "sport": "Badminton",
+  "competition": "Top 12",
+  "location": "Chambly",
+  "teams": [
+    "BC Chambly",
+    "Équipe visiteuse"
+  ],
+  "description": "Reprise de l’élite du badminton français. Salle pleine, présentation des équipes et premiers points de la saison.",
+  "coverPosition": "50% 40%"
+}

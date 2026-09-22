@@ -1,0 +1,25 @@
+---
+/** Icônes au trait, dessinées en SVG pour un rendu identique partout. */
+interface Props {
+  name: 'arrow-right' | 'arrow-left' | 'arrow-up-right' | 'close' | 'instagram' | 'mail';
+  class?: string;
+}
+const { name, class: className } = Astro.props;
+---
+
+<svg class={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="square" aria-hidden="true" focusable="false">
+  {name === 'arrow-right' && <path d="M3 12h17M14 6l6 6-6 6" />}
+  {name === 'arrow-left' && <path d="M21 12H4M10 6l-6 6 6 6" />}
+  {name === 'arrow-up-right' && <path d="M6 18 18 6M8 6h10v10" />}
+  {name === 'close' && <path d="M5 5l14 14M19 5 5 19" />}
+  {name === 'mail' && <path d="M3 6h18v12H3zM3 7l9 7 9-7" />}
+  {
+    name === 'instagram' && (
+      <>
+        <rect x="3.5" y="3.5" width="17" height="17" rx="4.5" />
+        <circle cx="12" cy="12" r="4" />
+        <circle cx="17.3" cy="6.7" r="0.6" fill="currentColor" />
+      </>
+    )
+  }
+</svg>

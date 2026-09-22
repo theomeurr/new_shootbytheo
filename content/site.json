@@ -1,0 +1,42 @@
+{
+  "name": "ShootByTheo",
+  "url": "https://shootbytheo.com",
+  "logo": "",
+  "tagline": "Photographie • Vidéo • Sport",
+  "headerTagline": "Sport · Événementiel",
+  "slogan": ["Capturer l’intensité.", "Raconter l’événement."],
+  "description": "ShootByTheo, photographe et vidéaste sportif : reportages photo, vidéo et contenus réseaux sociaux pour clubs, joueurs, associations et organisateurs d’événements sportifs.",
+  "email": "contact@shootbytheo.com",
+  "socials": [
+    {
+      "label": "Instagram",
+      "handle": "@shootby.theo",
+      "url": "https://www.instagram.com/shootby.theo/"
+    }
+  ],
+  "hero": {
+    "autoplaySeconds": 7,
+    "slides": [
+      { "event": "pre-nationale-j1-chambly", "photo": "cover", "position": "50% 40%" },
+      { "event": "top-12-j1-chambly", "photo": "cover", "position": "50% 40%" },
+      { "event": "top-12-j9-chambly", "photo": "cover", "position": "50% 40%" }
+    ]
+  },
+  "contact": {
+    "formEndpoint": "",
+    "hiddenFields": {}
+  },
+  "mediaBaseUrl": "",
+  "legal": {
+    "publisher": "",
+    "status": "",
+    "siret": "",
+    "address": "",
+    "publicationDirector": "",
+    "host": {
+      "name": "",
+      "address": "",
+      "contact": ""
+    }
+  }
+}

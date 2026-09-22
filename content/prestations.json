@@ -1,0 +1,72 @@
+{
+  "intro": "Photo, vidéo ou les deux : chaque prestation est pensée pour raconter votre événement et nourrir votre communication.",
+  "quoteNote": "Pas de grille tarifaire figée : chaque devis est établi selon la durée, le déplacement et le type d’événement.",
+  "services": [
+    {
+      "id": "photo",
+      "formValue": "Photographie",
+      "title": "Reportage photo sportif",
+      "summary": "Couverture d’une rencontre, d’une compétition ou d’une journée sportive, du premier échauffement à la dernière poignée de main.",
+      "includes": [
+        "Matchs",
+        "Joueurs",
+        "Actions",
+        "Émotions",
+        "Équipe",
+        "Ambiance",
+        "Remise des récompenses",
+        "Photos retouchées",
+        "Galerie numérique"
+      ],
+      "image": "prestation-photo.jpg",
+      "imagePosition": "50% 50%"
+    },
+    {
+      "id": "video",
+      "formValue": "Vidéo",
+      "title": "Vidéo sportive",
+      "summary": "Des contenus vidéo courts et dynamiques, pensés pour être regardés jusqu’au bout et partagés.",
+      "includes": [
+        "Plans d’action",
+        "Ralentis",
+        "Ambiance",
+        "Coulisses",
+        "Interviews",
+        "Montage",
+        "Formats verticaux Instagram / TikTok / Reels"
+      ],
+      "image": "prestation-video.jpg",
+      "imagePosition": "50% 50%"
+    },
+    {
+      "id": "reseaux",
+      "formValue": "Réseaux sociaux",
+      "title": "Contenu réseaux sociaux",
+      "summary": "Un ensemble de contenus prêts à publier pour les clubs, les joueurs et les événements.",
+      "includes": [
+        "Photos",
+        "Vidéos",
+        "Reels",
+        "Stories",
+        "Contenus pendant ou après l’événement"
+      ],
+      "image": "prestation-reseaux.jpg",
+      "imagePosition": "50% 50%"
+    },
+    {
+      "id": "complete",
+      "formValue": "Photo + Vidéo",
+      "title": "Couverture complète d’événement",
+      "summary": "Photo et vidéo réunies pour raconter toute une journée sportive, sur le terrain comme en coulisses.",
+      "includes": [
+        "Reportage photo",
+        "Film de l’événement",
+        "Formats courts pour les réseaux",
+        "Galerie numérique",
+        "Un seul interlocuteur"
+      ],
+      "image": "prestation-complete.jpg",
+      "imagePosition": "50% 50%"
+    }
+  ]
+}

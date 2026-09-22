@@ -1,0 +1,52 @@
+---
+/** Bandeau d'appel au contact, en bas des pages. */
+import Icon from './Icon.astro';
+
+interface Props {
+  kicker?: string;
+  title?: string;
+  text?: string;
+  label?: string;
+  href?: string;
+}
+
+const {
+  kicker = 'Votre prochain événement',
+  title = 'Vous souhaitez des photos de votre prochain événement ?',
+  text,
+  label = 'Me contacter',
+  href = '/contact/',
+} = Astro.props;
+---
+
+<section class="cta">
+  <div class="container cta__inner" data-reveal>
+    <p class="kicker">{kicker}</p>
+    <h2 class="display cta__title">{title}</h2>
+    {text && <p class="cta__text">{text}</p>}
+    <a class="btn btn--accent" href={href}>{label} <Icon name="arrow-right" /></a>
+  </div>
+</section>
+
+<style>
+  .cta {
+    border-top: 1px solid var(--line);
+    background:
+      radial-gradient(60rem 28rem at 85% 120%, rgba(232, 85, 58, 0.16), transparent 70%),
+      var(--bg-soft);
+  }
+  .cta__inner {
+    display: grid;
+    justify-items: start;
+    gap: clamp(1.25rem, 2vw, 2rem);
+    padding-block: clamp(3.5rem, 6.5vw, 6.5rem);
+  }
+  .cta__title {
+    max-width: 18ch;
+    font-size: clamp(1.75rem, 4vw, 4.6rem);
+  }
+  .cta__text {
+    max-width: 52ch;
+    color: var(--text-dim);
+  }
+</style>

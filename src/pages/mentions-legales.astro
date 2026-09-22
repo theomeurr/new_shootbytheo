@@ -1,0 +1,41 @@
+---
+import LegalLayout from '@/layouts/LegalLayout.astro';
+import Fill from '@/components/Fill.astro';
+import { site } from '@/lib/site';
+
+const { legal } = site;
+---
+
+<LegalLayout title="Mentions légales" description="Mentions légales du site ShootByTheo : éditeur, hébergeur, propriété intellectuelle et droit à l’image.">
+  <h2>Éditeur du site</h2>
+  <p>
+    Le site {site.url.replace(/^https?:\/\//, '')} est édité par <Fill value={legal.publisher} label="nom et prénom ou raison sociale" />, <Fill value={legal.status} label="statut, ex. micro-entrepreneur" />.
+  </p>
+  <ul>
+    <li>SIRET : <Fill value={legal.siret} label="numéro SIRET" /></li>
+    <li>Adresse : <Fill value={legal.address} label="adresse postale" /></li>
+    <li>E-mail : <a href={`mailto:${site.email}`}>{site.email}</a></li>
+    <li>Directeur de la publication : <Fill value={legal.publicationDirector} label="nom du directeur de la publication" /></li>
+  </ul>
+
+  <h2>Hébergement</h2>
+  <p>
+    Le site est hébergé par <Fill value={legal.host.name} label="nom de l’hébergeur" />, <Fill value={legal.host.address} label="adresse de l’hébergeur" /> — <Fill value={legal.host.contact} label="téléphone ou site de l’hébergeur" />.
+  </p>
+
+  <h2>Propriété intellectuelle</h2>
+  <p>
+    L’ensemble des photographies, vidéos, textes et éléments graphiques présentés sur ce site sont la propriété exclusive de {site.name}, sauf mention contraire. Toute reproduction, diffusion ou utilisation, même partielle, sans autorisation écrite préalable
+    est interdite.
+  </p>
+  <p>Vous souhaitez utiliser une image (presse, club, communication, usage personnel) ? <a href="/contact/">Contactez-moi</a>, une solution existe presque toujours.</p>
+
+  <h2>Droit à l’image</h2>
+  <p>
+    Les photographies sont réalisées lors d’événements sportifs, avec l’accord des organisateurs. Si vous apparaissez sur une image et souhaitez qu’elle soit retirée du site, écrivez à <a href={`mailto:${site.email}`}>{site.email}</a> en indiquant
+    l’événement et la photo concernée : elle sera retirée dans les meilleurs délais.
+  </p>
+
+  <h2>Données personnelles</h2>
+  <p>Le traitement des données personnelles est détaillé dans la <a href="/politique-de-confidentialite/">politique de confidentialité</a>.</p>
+</LegalLayout>

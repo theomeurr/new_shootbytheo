@@ -1,0 +1,10 @@
+---
+/** Affiche une valeur de content/site.json, ou un repère bien visible tant qu'elle n'est pas renseignée. */
+interface Props {
+  value?: string;
+  label: string;
+}
+const { value, label } = Astro.props;
+---
+
+{value?.trim() ? <Fragment>{value}</Fragment> : <span class="todo">[À compléter : {label}]</span>}

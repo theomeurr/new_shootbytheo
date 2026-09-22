@@ -1,0 +1,524 @@
+---
+/**
+ * Image à la une, plein écran. Les diapositives viennent de content/site.json (hero.slides).
+ * Composition reprise du site actuel : titre massif en bas à gauche, commandes,
+ * compteur et vignettes en bas à droite, barres de progression tout en bas.
+ */
+import Icon from './Icon.astro';
+import Picture from './Picture.astro';
+import type { SiteEvent } from '@/lib/events';
+import type { Photo } from '@/lib/media';
+import { site } from '@/lib/site';
+import { fitDivisor } from '@/lib/type-metrics';
+
+export interface Slide {
+  photo: Photo;
+  position: string;
+  event?: SiteEvent;
+}
+
+interface Props {
+  slides: Slide[];
+  autoplaySeconds?: number;
+}
+
+const { slides, autoplaySeconds = 7 } = Astro.props;
+const many = slides.length > 1;
+const pad = (n: number) => String(n).padStart(2, '0');
+// Largeur réelle de la plus longue ligne du slogan : le titre s'ajuste pour qu'elle tienne sur une seule ligne.
+const sloganFit = fitDivisor(site.slogan);
+---
+
+<section class="hero" data-hero data-autoplay={many ? autoplaySeconds : 0} style={`--hero-duration:${autoplaySeconds}s;--hero-fit:${sloganFit}`} aria-roledescription="carrousel" aria-label="À la une">
+  <div class="hero__slides">
+    {
+      slides.map((slide, index) => (
+        <div class:list={['hero__slide', index === 0 && 'is-active']} data-hero-slide aria-hidden={index === 0 ? undefined : 'true'}>
+          <Picture
+            photo={slide.photo}
+            alt={slide.event ? `${slide.event.seoTitle} — photo ShootByTheo` : 'Photographie sportive ShootByTheo'}
+            sizes="100vw"
+            cover
+            position={slide.position}
+            priority={index === 0}
+            deferred={index > 0}
+          />
+        </div>
+      ))
+    }
+  </div>
+  <div class="hero__shade" aria-hidden="true"></div>
+
+  <div class="hero__inner">
+    <div class="hero__content">
+      <p class="kicker hero__kicker">{site.tagline}</p>
+      <h1 class="display hero__title">
+        <span class="sr-only">{site.name}, photographe et vidéaste sportif. </span>
+        {site.slogan.map((line) => <span class="hero__line">{line} </span>)}
+      </h1>
+      <div class="hero__actions">
+        <a class="btn btn--accent" href="/evenements/">Voir les événements <Icon name="arrow-right" /></a>
+        <a class="btn btn--ghost" href="/contact/">Me contacter</a>
+      </div>
+    </div>
+
+    <div class="hero__aside">
+      <div class="hero__captions">
+        {
+          slides.map((slide, index) =>
+            slide.event ? (
+              <a class:list={['hero__caption', index === 0 && 'is-active']} href={slide.event.url} data-hero-caption tabindex={index === 0 ? undefined : -1}>
+                <span class="meta">À la une<span class="hero__caption-date"> · {slide.event.dateLabel}</span></span>
+                <span class="hero__caption-title">
+                  {slide.event.title}
+                  {slide.event.location && ` — ${slide.event.location}`}
+                  <Icon name="arrow-up-right" />
+                </span>
+              </a>
+            ) : (
+              <span class:list={['hero__caption', index === 0 && 'is-active']} data-hero-caption />
+            ),
+          )
+        }
+      </div>
+
+      {
+        many && (
+          <div class="hero__controls" data-hero-controls>
+            <button class="hero__arrow" type="button" data-hero-prev aria-label="Image précédente">
+              <Icon name="arrow-left" />
+            </button>
+            <p class="hero__counter" aria-live="polite">
+              <span data-hero-current>01</span> / {pad(slides.length)}
+            </p>
+            <button class="hero__arrow" type="button" data-hero-next aria-label="Image suivante">
+              <Icon name="arrow-right" />
+            </button>
+          </div>
+        )
+      }
+
+      {
+        many && (
+          <div class="hero__thumbs" data-hero-controls>
+            {slides.map((slide, index) => (
+              <button class:list={['hero__thumb', index === 0 && 'is-active']} type="button" data-hero-thumb={index} aria-label={`Afficher l’image ${index + 1}`} aria-current={index === 0 ? 'true' : undefined}>
+                <Picture photo={slide.photo} alt="" sizes="96px" cover position={slide.position} max={480} placeholder="color" />
+              </button>
+            ))}
+          </div>
+        )
+      }
+    </div>
+
+    {
+      many && (
+        <div class="hero__progress" aria-hidden="true">
+          {slides.map((_, index) => (
+            <span class:list={['hero__bar', index === 0 && 'is-active']} data-hero-bar>
+              <i />
+            </span>
+          ))}
+        </div>
+      )
+    }
+  </div>
+</section>
+
+<style>
+  .hero {
+    position: relative;
+    /* Occupe toute la hauteur laissée par la page (voir .page-home dans global.css). */
+    flex: 1 0 auto;
+    /* Téléphone : l'image prend tout l'écran, la ligne de pied de page vient juste après. */
+    min-height: 100svh;
+    overflow: hidden;
+    background: var(--bg);
+    isolation: isolate;
+  }
+  /* Grand écran : l'image à la une et la ligne de pied de page tiennent ensemble dans l'écran, sans défilement. */
+  @media (min-width: 900px) {
+    .hero {
+      min-height: 34rem;
+    }
+  }
+  .hero__slides,
+  .hero__slide,
+  .hero__shade {
+    position: absolute;
+    inset: 0;
+  }
+  .hero__slide {
+    opacity: 0;
+    visibility: hidden;
+    transition:
+      opacity 1.4s var(--ease),
+      visibility 0s linear 1.4s;
+  }
+  .hero__slide.is-active {
+    opacity: 1;
+    visibility: visible;
+    transition:
+      opacity 1.4s var(--ease),
+      visibility 0s;
+  }
+  /* Zoom très lent sur l'image affichée */
+  .hero__slide :global(img) {
+    transform: scale(1.001);
+  }
+  .hero__slide.is-active :global(img) {
+    animation: hero-zoom 14s linear forwards;
+  }
+  @keyframes hero-zoom {
+    to {
+      transform: scale(1.07);
+    }
+  }
+  .hero__shade {
+    background:
+      linear-gradient(to top, rgba(10, 10, 11, 0.94) 0%, rgba(10, 10, 11, 0.55) 26%, rgba(10, 10, 11, 0) 58%),
+      linear-gradient(to right, rgba(10, 10, 11, 0.35), rgba(10, 10, 11, 0) 55%);
+  }
+
+  .hero__inner {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    align-content: end;
+    gap: 1.75rem;
+    padding: calc(var(--header-h) + 1rem) var(--edge) calc(1.5rem + env(safe-area-inset-bottom));
+  }
+
+  .hero__content {
+    display: grid;
+    gap: clamp(1rem, 1.6vw, 1.75rem);
+    justify-items: start;
+    container-type: inline-size;
+  }
+  .hero__title {
+    font-size: clamp(1.6rem, 7.8vw, 3rem);
+  }
+  .hero__line {
+    display: block;
+  }
+  .hero__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 0.35rem;
+  }
+
+  .hero__aside {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: end;
+    gap: 1rem 1.5rem;
+  }
+  .hero__captions {
+    display: grid;
+    min-width: 0;
+  }
+  .hero__caption {
+    grid-area: 1 / 1;
+    display: grid;
+    gap: 0.3rem;
+    min-width: 0;
+    opacity: 0;
+    visibility: hidden;
+    transform: translate3d(0, 0.5rem, 0);
+    transition:
+      opacity 0.6s var(--ease),
+      transform 0.6s var(--ease-out),
+      visibility 0s linear 0.6s;
+  }
+  .hero__caption.is-active {
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+    transition:
+      opacity 0.6s var(--ease) 0.25s,
+      transform 0.6s var(--ease-out) 0.25s,
+      visibility 0s;
+  }
+  .hero__caption-title {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6em;
+    font-size: 0.9375rem;
+    font-weight: 500;
+    line-height: 1.35;
+    color: var(--text);
+  }
+  .hero__caption-title :global(svg) {
+    flex: none;
+    width: 1.1em;
+    height: 1.1em;
+    color: var(--accent);
+    transition: transform 0.4s var(--ease-out);
+  }
+  .hero__caption:hover .hero__caption-title :global(svg) {
+    transform: translate(0.15em, -0.15em);
+  }
+
+  .hero__controls {
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+  }
+  /* Sur téléphone : la légende garde la place, les barres du bas indiquent déjà la position. */
+  @media (max-width: 699px) {
+    .hero__counter,
+    .hero__caption-date {
+      display: none;
+    }
+    .hero__controls {
+      gap: 0.5rem;
+    }
+  }
+  .hero__arrow {
+    display: grid;
+    place-items: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    border: 1px solid rgba(243, 239, 233, 0.4);
+    border-radius: 50%;
+    transition:
+      background-color 0.3s var(--ease),
+      border-color 0.3s var(--ease),
+      color 0.3s var(--ease);
+  }
+  .hero__arrow :global(svg) {
+    width: 1.15rem;
+    height: 1.15rem;
+  }
+  .hero__arrow:hover {
+    background: var(--text);
+    border-color: var(--text);
+    color: var(--bg);
+  }
+  .hero__counter {
+    min-width: 4.75rem;
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    letter-spacing: 0.22em;
+    text-align: center;
+    color: var(--text);
+  }
+
+  .hero__thumbs {
+    display: none;
+    grid-column: 1 / -1;
+    justify-content: flex-end;
+    gap: 0.6rem;
+  }
+  .hero__thumb {
+    width: 5rem;
+    aspect-ratio: 3 / 2;
+    overflow: hidden;
+    outline: 1px solid transparent;
+    outline-offset: 0;
+    opacity: 0.6;
+    transition:
+      opacity 0.4s var(--ease),
+      outline-color 0.4s var(--ease);
+  }
+  .hero__thumb:hover {
+    opacity: 1;
+  }
+  .hero__thumb.is-active {
+    opacity: 1;
+    outline: 2px solid var(--accent);
+  }
+  .hero__thumb:focus-visible {
+    outline: 2px solid var(--text);
+    outline-offset: 2px;
+  }
+
+  .hero__progress {
+    display: flex;
+    gap: 0.5rem;
+  }
+  .hero__bar {
+    position: relative;
+    flex: 1;
+    height: 2px;
+    background: rgba(243, 239, 233, 0.22);
+    overflow: hidden;
+  }
+  .hero__bar i {
+    position: absolute;
+    inset: 0;
+    background: var(--accent);
+    transform: scaleX(0);
+    transform-origin: left;
+  }
+  .hero__bar.is-active i {
+    animation: hero-progress var(--hero-duration) linear forwards;
+  }
+  .hero.is-paused .hero__bar.is-active i {
+    animation-play-state: paused;
+  }
+  .hero.is-static .hero__bar.is-active i {
+    animation: none;
+    transform: none;
+  }
+  @keyframes hero-progress {
+    to {
+      transform: scaleX(1);
+    }
+  }
+
+  /* À partir de la tablette : chaque ligne du slogan tient sur une ligne
+     (--hero-fit = largeur de la ligne la plus longue, en em ; voir src/lib/type-metrics.ts).
+     Le facteur 1.2 garde une marge : le titre n'a pas besoin de remplir toute la colonne. */
+  @media (min-width: 700px) {
+    .hero__title {
+      font-size: clamp(2rem, calc(100cqi / (var(--hero-fit) * 1.2)), 5rem);
+    }
+  }
+
+  @media (min-width: 1000px) {
+    .hero__inner {
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: end;
+      gap: 2.25rem 3rem;
+      padding-bottom: 2rem;
+    }
+    .hero__aside {
+      grid-template-columns: auto;
+      justify-items: end;
+      gap: 1.25rem;
+      max-width: 24rem;
+    }
+    .hero__caption {
+      justify-items: end;
+      text-align: right;
+    }
+    .hero__thumbs {
+      display: flex;
+    }
+    .hero__progress {
+      grid-column: 1 / -1;
+    }
+  }
+
+  @media (max-height: 560px) and (orientation: landscape) {
+    .hero__title {
+      font-size: clamp(1.6rem, 4.6vw, 2.75rem);
+    }
+    .hero__kicker {
+      display: none;
+    }
+  }
+</style>
+
+<script>
+  const hero = document.querySelector<HTMLElement>('[data-hero]');
+
+  if (hero) {
+    const slides = [...hero.querySelectorAll<HTMLElement>('[data-hero-slide]')];
+    const captions = [...hero.querySelectorAll<HTMLElement>('[data-hero-caption]')];
+    const thumbs = [...hero.querySelectorAll<HTMLButtonElement>('[data-hero-thumb]')];
+    const bars = [...hero.querySelectorAll<HTMLElement>('[data-hero-bar]')];
+    const current = hero.querySelector<HTMLElement>('[data-hero-current]');
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const autoplay = Number(hero.dataset.autoplay) > 0 && !reducedMotion;
+    let index = 0;
+
+    /** Les diapositives suivantes ne sont téléchargées qu'au moment utile. */
+    const hydrate = (slide: HTMLElement | undefined) => {
+      slide?.querySelectorAll<HTMLElement>('[data-srcset], [data-src]').forEach((node) => {
+        if (node.dataset.srcset) node.setAttribute('srcset', node.dataset.srcset);
+        if (node.dataset.src) node.setAttribute('src', node.dataset.src);
+        delete node.dataset.srcset;
+        delete node.dataset.src;
+      });
+    };
+
+    const goTo = (next: number) => {
+      const target = (next + slides.length) % slides.length;
+      if (target === index) return;
+      hydrate(slides[target]);
+      index = target;
+
+      slides.forEach((slide, i) => {
+        slide.classList.toggle('is-active', i === index);
+        slide.toggleAttribute('aria-hidden', i !== index);
+        if (i !== index) slide.setAttribute('aria-hidden', 'true');
+      });
+      captions.forEach((caption, i) => {
+        caption.classList.toggle('is-active', i === index);
+        if (caption instanceof HTMLAnchorElement) caption.tabIndex = i === index ? 0 : -1;
+      });
+      thumbs.forEach((thumb, i) => {
+        thumb.classList.toggle('is-active', i === index);
+        if (i === index) thumb.setAttribute('aria-current', 'true');
+        else thumb.removeAttribute('aria-current');
+      });
+      bars.forEach((bar, i) => {
+        bar.classList.remove('is-active');
+        if (i === index) {
+          void bar.offsetWidth; // relance l'animation de progression
+          bar.classList.add('is-active');
+        }
+      });
+      if (current) current.textContent = String(index + 1).padStart(2, '0');
+      hydrate(slides[(index + 1) % slides.length]);
+    };
+
+    if (slides.length > 1) {
+      hero.querySelector('[data-hero-next]')?.addEventListener('click', () => goTo(index + 1));
+      hero.querySelector('[data-hero-prev]')?.addEventListener('click', () => goTo(index - 1));
+      thumbs.forEach((thumb, i) => thumb.addEventListener('click', () => goTo(i)));
+
+      if (autoplay) {
+        // La barre de progression sert de minuterie : quand elle est pleine, on passe à la suite.
+        bars.forEach((bar) => bar.addEventListener('animationend', () => goTo(index + 1)));
+
+        const pauseReasons = new Set<string>();
+        const setPaused = (reason: string, paused: boolean) => {
+          if (paused) pauseReasons.add(reason);
+          else pauseReasons.delete(reason);
+          hero.classList.toggle('is-paused', pauseReasons.size > 0);
+        };
+        hero.querySelectorAll('[data-hero-controls]').forEach((zone) => {
+          zone.addEventListener('pointerenter', () => setPaused('hover', true));
+          zone.addEventListener('pointerleave', () => setPaused('hover', false));
+          zone.addEventListener('focusin', () => setPaused('focus', true));
+          zone.addEventListener('focusout', () => setPaused('focus', false));
+        });
+        document.addEventListener('visibilitychange', () => setPaused('hidden', document.hidden));
+        new IntersectionObserver(([entry]) => setPaused('offscreen', !entry.isIntersecting), { threshold: 0.25 }).observe(hero);
+      } else {
+        hero.classList.add('is-static');
+      }
+
+      // Balayage tactile
+      let startX = 0;
+      let startY = 0;
+      hero.addEventListener(
+        'touchstart',
+        (event) => {
+          startX = event.touches[0].clientX;
+          startY = event.touches[0].clientY;
+        },
+        { passive: true },
+      );
+      hero.addEventListener(
+        'touchend',
+        (event) => {
+          const dx = event.changedTouches[0].clientX - startX;
+          const dy = event.changedTouches[0].clientY - startY;
+          if (Math.abs(dx) > 48 && Math.abs(dx) > Math.abs(dy) * 1.5) goTo(index + (dx < 0 ? 1 : -1));
+        },
+        { passive: true },
+      );
+
+      // La deuxième image est préparée une fois la page chargée.
+      const warmUp = () => hydrate(slides[1]);
+      if (document.readyState === 'complete') warmUp();
+      else window.addEventListener('load', warmUp, { once: true });
+    }
+  }
+</script>

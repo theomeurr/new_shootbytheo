@@ -1,0 +1,380 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Icon from '@/components/Icon.astro';
+import { SERVICE_OPTIONS, site } from '@/lib/site';
+import { fitDivisor } from '@/lib/type-metrics';
+
+const titleLines = ['Un projet ?', 'Parlons-en.'];
+const titleFit = fitDivisor(titleLines);
+const endpoint = site.contact.formEndpoint?.trim() ?? '';
+const hiddenFields = Object.entries((site.contact.hiddenFields ?? {}) as Record<string, string>);
+---
+
+<BaseLayout title="Contact — un projet ? Parlons-en" description="Club, joueur, association, organisateur ou marque : contactez ShootByTheo pour discuter de votre événement et recevoir un devis personnalisé (photo, vidéo, réseaux sociaux).">
+  <section class="contact container">
+    <div class="contact__intro">
+      <p class="kicker" data-reveal>Contact</p>
+      <div class="fit" style={`--fit:${titleFit}`} data-reveal>
+        <h1 class="display contact__title">
+          {titleLines.map((line) => <span class="fit__line">{line} </span>)}
+        </h1>
+      </div>
+      <p class="lead contact__lead" data-reveal style="--reveal-delay:80ms">Club, joueur, association, organisateur ou marque : contactez-moi pour discuter de votre événement.</p>
+
+      <ul class="contact__links" data-reveal style="--reveal-delay:140ms">
+        <li>
+          <a href={`mailto:${site.email}`}>
+            <Icon name="mail" />
+            <span><small class="meta">E-mail</small>{site.email}</span>
+          </a>
+        </li>
+        {
+          site.socials.map((social) => (
+            <li>
+              <a href={social.url} target="_blank" rel="noopener">
+                <Icon name={social.label.toLowerCase() === 'instagram' ? 'instagram' : 'arrow-up-right'} />
+                <span><small class="meta">{social.label}</small>{social.handle}</span>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+
+    <form class="form" method="post" action={endpoint || `mailto:${site.email}`} data-contact-form data-endpoint={endpoint} data-email={site.email} data-reveal style="--reveal-delay:120ms" novalidate>
+      <div class="form__grid">
+        <div class="field">
+          <label for="nom">Nom</label>
+          <input id="nom" name="nom" type="text" autocomplete="family-name" required />
+        </div>
+        <div class="field">
+          <label for="prenom">Prénom</label>
+          <input id="prenom" name="prenom" type="text" autocomplete="given-name" required />
+        </div>
+        <div class="field">
+          <label for="email">E-mail</label>
+          <input id="email" name="email" type="email" autocomplete="email" inputmode="email" required />
+        </div>
+        <div class="field">
+          <label for="telephone">Téléphone <span class="field__optional">optionnel</span></label>
+          <input id="telephone" name="telephone" type="tel" autocomplete="tel" inputmode="tel" />
+        </div>
+        <div class="field">
+          <label for="organisation">Organisation / Club</label>
+          <input id="organisation" name="organisation" type="text" autocomplete="organization" />
+        </div>
+        <div class="field">
+          <label for="prestation">Type de prestation</label>
+          <select id="prestation" name="prestation" required>
+            <option value="" selected disabled hidden>Choisir…</option>
+            {SERVICE_OPTIONS.map((option) => <option value={option}>{option}</option>)}
+          </select>
+        </div>
+        <div class="field">
+          <label for="date">Date de l’événement</label>
+          <input id="date" name="date" type="date" />
+        </div>
+        <div class="field">
+          <label for="lieu">Lieu</label>
+          <input id="lieu" name="lieu" type="text" autocomplete="address-level2" />
+        </div>
+        <div class="field field--full">
+          <label for="message">Message</label>
+          <textarea id="message" name="message" rows="5" required></textarea>
+        </div>
+      </div>
+
+      {/* Piège anti-robots : invisible pour les visiteurs, ne doit jamais être rempli. */}
+      <div class="form__trap" aria-hidden="true">
+        <label for="site-web">Ne pas remplir ce champ</label>
+        <input id="site-web" name="_gotcha" type="text" tabindex="-1" autocomplete="off" />
+      </div>
+      <input type="hidden" name="_subject" value="Nouvelle demande depuis shootbytheo.com" />
+      {hiddenFields.map(([name, value]) => <input type="hidden" name={name} value={value} />)}
+
+      <div class="form__foot">
+        <button class="btn btn--accent" type="submit" data-submit>
+          <span data-submit-label>Envoyer ma demande</span>
+          <Icon name="arrow-right" />
+        </button>
+        <p class="form__legal">
+          Ces informations servent uniquement à répondre à votre demande. <a href="/politique-de-confidentialite/">En savoir plus</a>
+        </p>
+      </div>
+
+      <p class="form__status" role="status" aria-live="polite" data-status hidden></p>
+    </form>
+  </section>
+</BaseLayout>
+
+<style>
+  .contact {
+    display: grid;
+    gap: clamp(2.5rem, 6vw, 7rem);
+    padding-top: calc(var(--header-h) + clamp(2.5rem, 6vw, 6rem));
+    padding-bottom: var(--section);
+  }
+  .contact__intro {
+    display: grid;
+    align-content: start;
+    gap: clamp(1rem, 1.8vw, 1.75rem);
+  }
+  .contact__title {
+    font-size: clamp(1.4rem, calc(100cqi / (var(--fit) * 1.28)), 4.5rem);
+    margin-left: -0.04em;
+  }
+  .contact__lead {
+    max-width: 34ch;
+    color: var(--text-dim);
+  }
+  .contact__links {
+    display: grid;
+    margin-top: clamp(0.5rem, 2vw, 2rem);
+    border-top: 1px solid var(--line);
+  }
+  .contact__links a {
+    display: flex;
+    align-items: center;
+    gap: 1.1rem;
+    padding-block: 1.15rem;
+    border-bottom: 1px solid var(--line);
+    font-size: 1rem;
+    font-weight: 500;
+    transition:
+      color 0.3s var(--ease),
+      padding 0.5s var(--ease-out);
+  }
+  .contact__links a:hover {
+    padding-left: 0.5rem;
+    color: var(--accent-bright);
+  }
+  .contact__links :global(svg) {
+    flex: none;
+    width: 1.5rem;
+    height: 1.5rem;
+    color: var(--accent);
+  }
+  .contact__links span {
+    display: grid;
+    gap: 0.15rem;
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+
+  .form__grid {
+    display: grid;
+    gap: clamp(1.4rem, 2.2vw, 2rem) clamp(1.25rem, 2.4vw, 2.5rem);
+  }
+  .field {
+    display: grid;
+    gap: 0.35rem;
+    min-width: 0;
+  }
+  .field label {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--muted);
+    transition: color 0.3s var(--ease);
+  }
+  .field:focus-within label {
+    color: var(--accent);
+  }
+  .field__optional {
+    margin-left: 0.5em;
+    letter-spacing: 0.08em;
+    text-transform: none;
+    opacity: 0.75;
+  }
+  .field input,
+  .field select,
+  .field textarea {
+    width: 100%;
+    min-height: 3rem;
+    padding: 0.6rem 0;
+    border: 0;
+    border-bottom: 1px solid rgba(243, 239, 233, 0.28);
+    border-radius: 0;
+    background: transparent;
+    font-size: 1rem;
+    line-height: 1.4;
+    color: var(--text);
+    appearance: none;
+    transition: border-color 0.3s var(--ease);
+  }
+  .field textarea {
+    min-height: 8.5rem;
+    resize: vertical;
+  }
+  .field select {
+    padding-right: 2rem;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23e8553a' stroke-width='1.8'%3E%3Cpath d='m5 9 7 7 7-7'/%3E%3C/svg%3E") right center / 1.15rem no-repeat;
+    cursor: pointer;
+  }
+  .field select:invalid {
+    color: var(--muted);
+  }
+  .field option {
+    background: var(--bg-elev);
+    color: var(--text);
+  }
+  .field input[type='date'] {
+    color-scheme: dark;
+  }
+  .field input:hover,
+  .field select:hover,
+  .field textarea:hover {
+    border-bottom-color: rgba(243, 239, 233, 0.55);
+  }
+  .field input:focus,
+  .field select:focus,
+  .field textarea:focus {
+    outline: none;
+    border-bottom-color: var(--accent);
+    box-shadow: 0 1px 0 var(--accent);
+  }
+  .form.is-validated .field :invalid {
+    border-bottom-color: #ff8f7a;
+  }
+  .field input:-webkit-autofill {
+    -webkit-text-fill-color: var(--text);
+    box-shadow: 0 0 0 100px var(--bg) inset;
+    caret-color: var(--text);
+  }
+
+  .form__trap {
+    position: absolute;
+    left: -200vw;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+  }
+  .form__foot {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1.25rem 2rem;
+    margin-top: clamp(2rem, 3vw, 3rem);
+  }
+  .form__legal {
+    flex: 1 1 16rem;
+    font-size: 0.8125rem;
+    line-height: 1.5;
+    color: var(--muted);
+  }
+  .form__legal a {
+    color: var(--text-dim);
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+  }
+  .form__status {
+    margin-top: 1.5rem;
+    padding: 1.1rem 1.25rem;
+    border-left: 2px solid var(--accent);
+    background: var(--bg-elev);
+    line-height: 1.5;
+  }
+  .form__status :global(a) {
+    text-decoration: underline;
+    text-decoration-color: var(--accent);
+    text-underline-offset: 0.2em;
+  }
+
+  @media (min-width: 640px) {
+    .form__grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .field--full {
+      grid-column: 1 / -1;
+    }
+  }
+  @media (min-width: 1000px) {
+    .contact {
+      grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+      align-items: start;
+    }
+    .contact__intro {
+      position: sticky;
+      top: calc(var(--header-h) + 1rem);
+    }
+  }
+</style>
+
+<script>
+  const form = document.querySelector<HTMLFormElement>('[data-contact-form]');
+
+  if (form) {
+    const status = form.querySelector<HTMLElement>('[data-status]')!;
+    const submit = form.querySelector<HTMLButtonElement>('[data-submit]')!;
+    const submitLabel = form.querySelector<HTMLElement>('[data-submit-label]')!;
+    const endpoint = form.dataset.endpoint ?? '';
+    const email = form.dataset.email ?? '';
+
+    // Bouton « Demander un devis » d'une prestation : le type est présélectionné.
+    const wanted = new URLSearchParams(location.search).get('prestation');
+    const select = form.querySelector<HTMLSelectElement>('#prestation');
+    if (wanted && select) {
+      const option = [...select.options].find((o) => o.value.toLowerCase() === wanted.toLowerCase());
+      if (option) select.value = option.value;
+    }
+
+    const say = (html: string) => {
+      status.innerHTML = html;
+      status.hidden = false;
+      status.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+    };
+
+    const value = (name: string) => String(new FormData(form).get(name) ?? '').trim();
+
+    const mailtoUrl = () => {
+      const date = value('date');
+      const lines = [
+        `Nom : ${value('nom')}`,
+        `Prénom : ${value('prenom')}`,
+        `E-mail : ${value('email')}`,
+        value('telephone') && `Téléphone : ${value('telephone')}`,
+        value('organisation') && `Organisation / Club : ${value('organisation')}`,
+        `Type de prestation : ${value('prestation')}`,
+        date && `Date de l’événement : ${new Date(`${date}T12:00:00`).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}`,
+        value('lieu') && `Lieu : ${value('lieu')}`,
+        '',
+        value('message'),
+      ].filter((line) => line !== false && line !== undefined);
+      const subject = `Demande ${value('prestation') || 'de prestation'} — ${value('organisation') || `${value('prenom')} ${value('nom')}`}`;
+      return `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(lines.join('\n'))}`;
+    };
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      form.classList.add('is-validated');
+      if (!form.checkValidity()) {
+        form.reportValidity();
+        return;
+      }
+      if (value('_gotcha')) return; // robot
+
+      // Sans service de formulaire configuré : on prépare l'e-mail dans la messagerie du visiteur.
+      if (!endpoint) {
+        location.href = mailtoUrl();
+        say(`Votre messagerie s’ouvre avec la demande déjà rédigée : il ne reste qu’à l’envoyer. Rien ne se passe ? Écrivez-moi directement à <a href="mailto:${email}">${email}</a>.`);
+        return;
+      }
+
+      submit.disabled = true;
+      submitLabel.textContent = 'Envoi en cours…';
+      try {
+        const response = await fetch(endpoint, { method: 'POST', body: new FormData(form), headers: { Accept: 'application/json' } });
+        if (!response.ok) throw new Error(String(response.status));
+        form.reset();
+        form.classList.remove('is-validated');
+        say('Merci, votre demande est bien partie. Je vous réponds très vite.');
+      } catch {
+        say(`L’envoi n’a pas abouti. Vous pouvez réessayer ou m’écrire directement à <a href="mailto:${email}">${email}</a>.`);
+      } finally {
+        submit.disabled = false;
+        submitLabel.textContent = 'Envoyer ma demande';
+      }
+    });
+  }
+</script>

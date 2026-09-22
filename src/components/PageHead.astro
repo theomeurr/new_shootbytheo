@@ -1,0 +1,42 @@
+---
+/** En-tête des pages intérieures : un sur-titre, un grand titre, une phrase. */
+interface Props {
+  kicker?: string;
+  title: string;
+  intro?: string;
+  /** Titre plus petit (pages de texte). */
+  compact?: boolean;
+}
+const { kicker, title, intro, compact = false } = Astro.props;
+---
+
+<header class:list={['page-head', compact && 'page-head--compact']}>
+  <div class="container page-head__inner">
+    {kicker && <p class="kicker">{kicker}</p>}
+    <h1 class="display page-head__title">{title}</h1>
+    {intro && <p class="lead page-head__intro">{intro}</p>}
+    <slot />
+  </div>
+</header>
+
+<style>
+  .page-head {
+    padding-top: calc(var(--header-h) + clamp(2.5rem, 6vw, 6rem));
+    padding-bottom: clamp(2.5rem, 5vw, 5rem);
+  }
+  .page-head__inner {
+    display: grid;
+    gap: clamp(1rem, 1.8vw, 1.75rem);
+  }
+  .page-head__title {
+    font-size: clamp(2.2rem, 7.5vw, 8.25rem);
+    margin-left: -0.04em;
+  }
+  .page-head--compact .page-head__title {
+    font-size: clamp(1.85rem, 4.5vw, 4.3rem);
+  }
+  .page-head__intro {
+    max-width: 46ch;
+    color: var(--text-dim);
+  }
+</style>

@@ -1,0 +1,71 @@
+---
+/**
+ * Image responsive générée depuis le manifest : AVIF puis WebP, plusieurs largeurs,
+ * dimensions réservées (aucun saut de mise en page) et aperçu flou en attendant.
+ */
+import { type Photo, closestWidth, fallbackFormat, photoUrl, srcset } from '@/lib/media';
+
+interface Props {
+  photo: Photo;
+  alt: string;
+  /** Attribut sizes : largeur affichée selon l'écran. */
+  sizes: string;
+  /** Remplit son conteneur (object-fit: cover). */
+  cover?: boolean;
+  /** Point focal, comme object-position : "50% 35%". */
+  position?: string;
+  /** Image au-dessus de la ligne de flottaison : chargée immédiatement, en priorité. */
+  priority?: boolean;
+  /** Chargement piloté par JavaScript (diapositives suivantes du hero). */
+  deferred?: boolean;
+  placeholder?: 'blur' | 'color' | 'none';
+  min?: number;
+  max?: number;
+  class?: string;
+}
+
+const { photo, alt, sizes, cover = false, position, priority = false, deferred = false, placeholder = 'blur', min, max, class: className } = Astro.props;
+
+const fallback = fallbackFormat(photo);
+const modern = photo.formats.filter((format) => format !== fallback);
+const range = { min, max };
+const src = photoUrl(photo, closestWidth(photo, Math.min(960, max ?? 960)), fallback);
+
+const background =
+  placeholder === 'blur'
+    ? `background-color:${photo.color};background-image:url("${photo.lqip}")`
+    : placeholder === 'color'
+      ? `background-color:color-mix(in srgb, ${photo.color} 55%, #0a0a0b)`
+      : undefined;
+---
+
+<picture class:list={['picture', cover && 'picture--cover', className]} style={background}>
+  {
+    modern.map((format) =>
+      deferred ? (
+        <source type={`image/${format}`} data-srcset={srcset(photo, format, range)} sizes={sizes} />
+      ) : (
+        <source type={`image/${format}`} srcset={srcset(photo, format, range)} sizes={sizes} />
+      ),
+    )
+  }
+  {
+    deferred ? (
+      <img data-src={src} data-srcset={srcset(photo, fallback, range)} sizes={sizes} width={photo.w} height={photo.h} alt={alt} decoding="async" data-fade style={position ? `object-position:${position}` : undefined} />
+    ) : (
+      <img
+        src={src}
+        srcset={srcset(photo, fallback, range)}
+        sizes={sizes}
+        width={photo.w}
+        height={photo.h}
+        alt={alt}
+        loading={priority ? 'eager' : 'lazy'}
+        fetchpriority={priority ? 'high' : undefined}
+        decoding="async"
+        data-fade
+        style={position ? `object-position:${position}` : undefined}
+      />
+    )
+  }
+</picture>

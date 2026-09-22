@@ -1,0 +1,28 @@
+{
+  "name": "shootbytheo",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Site portfolio ShootByTheo — photographie, vidéo et contenu sportif.",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "photos": "node scripts/media.mjs",
+    "photos:force": "node scripts/media.mjs --force",
+    "new-event": "node scripts/new-event.mjs",
+    "categories": "node scripts/list-categories.mjs",
+    "rename-category": "node scripts/rename-category.mjs",
+    "demo-photos": "node scripts/demo-photos.mjs"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "@astrojs/sitemap": "^3.7.4",
+    "@fontsource-variable/archivo": "^5.3.0",
+    "@fontsource-variable/jetbrains-mono": "^5.3.0",
+    "astro": "^7.3.3",
+    "sharp": "^0.35.4"
+  }
+}

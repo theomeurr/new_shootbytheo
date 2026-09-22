@@ -1,0 +1,338 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import CtaBand from '@/components/CtaBand.astro';
+import EventCard from '@/components/EventCard.astro';
+import PageHead from '@/components/PageHead.astro';
+import { CATEGORIES, getEvents, groupBySeason } from '@/lib/events';
+import { absoluteUrl } from '@/lib/site';
+
+const events = await getEvents();
+const seasons = groupBySeason(events);
+const categories = CATEGORIES.map((category) => ({ ...category, count: events.filter((event) => event.category === category.id).length }));
+const totalPhotos = events.reduce((sum, event) => sum + event.photos.length, 0);
+
+const plural = (count: number, word: string) => `${count} ${word}${count > 1 ? 's' : ''}`;
+
+/** Largeur affichée des couvertures selon le nombre de cartes de la grille (voir le CSS de .grid). */
+const sizesFor = (count: number) =>
+  count <= 2 || count === 4 ? '(min-width: 700px) 45vw, 100vw' : '(min-width: 1200px) 30vw, (min-width: 700px) 45vw, 100vw';
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'CollectionPage',
+  name: 'Événements photographiés par ShootByTheo',
+  url: absoluteUrl('/evenements/'),
+  hasPart: events.slice(0, 50).map((event) => ({ '@type': 'ImageGallery', name: event.seoTitle, url: absoluteUrl(event.url) })),
+};
+---
+
+<BaseLayout
+  title="Événements — toutes les galeries photo"
+  description="Toutes les journées et événements sportifs photographiés par ShootByTheo : championnats de badminton, tournois, compétitions et cérémonies, classés par saison."
+  jsonLd={jsonLd}
+>
+  <PageHead kicker={`${plural(events.length, 'événement')} · ${plural(totalPhotos, 'photo')}`} title="Événements" intro="Toutes les journées photographiées, saison après saison." />
+
+  <div class="filters" data-filters>
+    <div class="container filters__inner">
+      <div class="filters__group" role="group" aria-label="Filtrer par univers">
+        <button class="chip" type="button" data-filter="all" aria-pressed="true">Tous <small>{events.length}</small></button>
+        {
+          categories.map((category) => (
+            <button class="chip" type="button" data-filter={category.id} aria-pressed="false" disabled={category.count === 0}>
+              {category.label} <small>{category.count}</small>
+            </button>
+          ))
+        }
+      </div>
+
+      {
+        seasons.length > 1 && (
+          <div class="filters__group filters__group--seasons" role="group" aria-label="Filtrer par saison">
+            <button class="chip" type="button" data-season-filter="all" aria-pressed="true">Toutes les saisons</button>
+            {seasons.map((season) => (
+              <button class="chip" type="button" data-season-filter={season.id} aria-pressed="false">
+                {season.season}
+              </button>
+            ))}
+          </div>
+        )
+      }
+    </div>
+  </div>
+
+  <div class="container seasons">
+    {
+      seasons.map((season, seasonIndex) => (
+        <section class="season" data-group data-season-section={season.id} aria-labelledby={`saison-${season.id}`}>
+          <header class="season__head" data-reveal>
+            <p class="kicker">Saison</p>
+            <h2 class="display season__title" id={`saison-${season.id}`}>
+              {season.season}
+            </h2>
+          </header>
+
+          {season.sports.map((sport) => (
+            <div class="sport" data-group>
+              <h3 class="sport__title">{sport.sport}</h3>
+
+              {sport.competitions.map((competition) => (
+                <div class="competition" data-group>
+                  <div class="competition__head" data-reveal>
+                    <h4 class="competition__title">{competition.name}</h4>
+                    <span class="meta">{plural(competition.events.length, 'journée')}</span>
+                  </div>
+                  <div class="grid" data-grid data-count={competition.events.length}>
+                    {competition.events.map((event, index) => (
+                      <div class="grid__cell" data-reveal style={`--reveal-delay:${(index % 3) * 80}ms`}>
+                        <EventCard event={event} heading="h4" sizes={sizesFor(competition.events.length)} priority={seasonIndex === 0 && index < 2} />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          ))}
+
+          {season.others.length > 0 && (
+            <div class="sport" data-group>
+              <h3 class="sport__title">Autres événements</h3>
+              <div class="competition" data-group>
+                <div class="competition__head" data-reveal>
+                  <p class="competition__title competition__title--soft">Tournois · Compétitions · Cérémonies · Événements spéciaux</p>
+                </div>
+                <div class="grid" data-grid data-count={season.others.length}>
+                  {season.others.map((event, index) => (
+                    <div class="grid__cell" data-reveal style={`--reveal-delay:${(index % 3) * 80}ms`}>
+                      <EventCard event={event} heading="h4" sizes={sizesFor(season.others.length)} />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+        </section>
+      ))
+    }
+
+    <p class="empty" data-empty hidden>Aucun événement dans cette sélection pour le moment.</p>
+    {events.length === 0 && <p class="empty">Les premières galeries arrivent bientôt.</p>}
+  </div>
+
+  <CtaBand />
+</BaseLayout>
+
+<style>
+  .filters {
+    position: sticky;
+    top: var(--sticky-top);
+    z-index: 20;
+    transition: top 0.55s var(--ease-out);
+    padding-block: 0.85rem;
+    background: rgba(10, 10, 11, 0.86);
+    -webkit-backdrop-filter: blur(16px);
+    backdrop-filter: blur(16px);
+    border-block: 1px solid var(--line);
+  }
+  .filters__inner {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 0.6rem 2rem;
+  }
+  .filters__group {
+    display: flex;
+    gap: 0.4rem;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  @media (max-width: 699px) {
+    .filters__group {
+      margin-inline: calc(var(--gutter) * -1);
+      padding-inline: var(--gutter);
+    }
+  }
+  .filters__group::-webkit-scrollbar {
+    display: none;
+  }
+  .filters :global(.chip[disabled]) {
+    opacity: 0.35;
+    pointer-events: none;
+  }
+
+  .seasons {
+    padding-block: clamp(2.5rem, 5vw, 5rem) var(--section);
+  }
+  .season + .season {
+    margin-top: clamp(4rem, 9vw, 9rem);
+  }
+  .season__head {
+    display: grid;
+    gap: 0.6rem;
+    margin-bottom: clamp(2rem, 4vw, 4rem);
+  }
+  .season__title {
+    font-size: clamp(2.35rem, 7.8vw, 8.6rem);
+    line-height: 0.9;
+    color: transparent;
+    -webkit-text-stroke: 1px rgba(243, 239, 233, 0.5);
+  }
+
+  .sport + .sport {
+    margin-top: clamp(3rem, 6vw, 6rem);
+  }
+  .sport__title {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    margin-bottom: clamp(1.5rem, 2.6vw, 2.5rem);
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.36em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+  .sport__title::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--line);
+  }
+
+  .competition + .competition {
+    margin-top: clamp(2.5rem, 4.5vw, 4.5rem);
+  }
+  .competition__head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.4rem 1.5rem;
+    margin-bottom: clamp(1rem, 1.6vw, 1.5rem);
+  }
+  .competition__title {
+    font-weight: 900;
+    font-size: clamp(1.3rem, 2.45vw, 2.5rem);
+    line-height: 1;
+    letter-spacing: -0.025em;
+    text-transform: uppercase;
+  }
+  .competition__title--soft {
+    font-weight: 400;
+    font-size: 0.9375rem;
+    letter-spacing: 0;
+    line-height: 1.5;
+    text-transform: none;
+    color: var(--muted);
+  }
+
+  .grid {
+    display: grid;
+    gap: var(--gap);
+  }
+  @media (min-width: 700px) {
+    .grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+  @media (min-width: 1200px) {
+    .grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+    /* Une ou deux journées seulement : les couvertures restent grandes. */
+    .grid[data-count='2'],
+    .grid[data-count='4'] {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+  @media (min-width: 1200px) {
+    .grid[data-count='1'] {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  .empty {
+    padding-block: 4rem;
+    color: var(--muted);
+    text-align: center;
+  }
+</style>
+
+<script>
+  const root = document.querySelector<HTMLElement>('[data-filters]');
+
+  if (root) {
+    const categoryButtons = [...root.querySelectorAll<HTMLButtonElement>('[data-filter]')];
+    const seasonButtons = [...root.querySelectorAll<HTMLButtonElement>('[data-season-filter]')];
+    const cells = [...document.querySelectorAll<HTMLElement>('.grid__cell')];
+    const groups = [...document.querySelectorAll<HTMLElement>('[data-group]')];
+    const empty = document.querySelector<HTMLElement>('[data-empty]');
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    const params = new URLSearchParams(location.search);
+    let category = params.get('filtre') ?? 'all';
+    let season = params.get('saison') ?? 'all';
+    if (!categoryButtons.some((button) => button.dataset.filter === category && !button.disabled)) category = 'all';
+    if (!seasonButtons.some((button) => button.dataset.seasonFilter === season)) season = 'all';
+
+    const apply = (animate: boolean) => {
+      let visible = 0;
+      for (const cell of cells) {
+        const card = cell.querySelector<HTMLElement>('[data-card]');
+        const show = Boolean(card) && (category === 'all' || card!.dataset.category === category) && (season === 'all' || card!.dataset.season === season);
+        cell.hidden = !show;
+        if (!show) continue;
+        cell.classList.add('is-visible'); // pas d'attente du défilement après un filtrage
+        if (animate && !reducedMotion) {
+          cell.animate(
+            [
+              { opacity: 0, transform: 'translate3d(0, 14px, 0)' },
+              { opacity: 1, transform: 'none' },
+            ],
+            { duration: 520, delay: Math.min(visible, 8) * 45, easing: 'cubic-bezier(0.16, 1, 0.3, 1)', fill: 'backwards' },
+          );
+        }
+        visible++;
+      }
+
+      // La grille s'adapte au nombre de cartes réellement affichées.
+      document.querySelectorAll<HTMLElement>('[data-grid]').forEach((grid) => {
+        const count = grid.querySelectorAll('.grid__cell:not([hidden])').length;
+        if (grid.dataset.count === String(count)) return;
+        grid.dataset.count = String(count);
+        // Les couvertures changent de taille : le navigateur choisit la définition adaptée.
+        const sizes = count <= 2 || count === 4 ? '(min-width: 700px) 45vw, 100vw' : '(min-width: 1200px) 30vw, (min-width: 700px) 45vw, 100vw';
+        grid.querySelectorAll<HTMLImageElement | HTMLSourceElement>('img, source').forEach((node) => (node.sizes = sizes));
+      });
+
+      // Un titre de saison / sport / compétition ne reste affiché que s'il contient encore des cartes.
+      for (const group of groups) group.hidden = !group.querySelector('.grid__cell:not([hidden])');
+      if (empty) empty.hidden = visible > 0;
+
+      categoryButtons.forEach((button) => button.setAttribute('aria-pressed', String(button.dataset.filter === category)));
+      seasonButtons.forEach((button) => button.setAttribute('aria-pressed', String(button.dataset.seasonFilter === season)));
+
+      const next = new URLSearchParams();
+      if (category !== 'all') next.set('filtre', category);
+      if (season !== 'all') next.set('saison', season);
+      const query = next.toString();
+      history.replaceState(null, '', query ? `?${query}` : location.pathname);
+    };
+
+    categoryButtons.forEach((button) =>
+      button.addEventListener('click', () => {
+        category = button.dataset.filter ?? 'all';
+        apply(true);
+      }),
+    );
+    seasonButtons.forEach((button) =>
+      button.addEventListener('click', () => {
+        season = button.dataset.seasonFilter ?? 'all';
+        apply(true);
+      }),
+    );
+
+    if (category !== 'all' || season !== 'all') apply(false);
+  }
+</script>

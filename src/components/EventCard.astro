@@ -1,0 +1,222 @@
+---
+/** Carte d'événement : une grande couverture, le strict nécessaire par-dessus. */
+import Icon from './Icon.astro';
+import Picture from './Picture.astro';
+import type { SiteEvent } from '@/lib/events';
+
+interface Props {
+  event: SiteEvent;
+  /** "feature" : carte pleine largeur, format panoramique. */
+  variant?: 'default' | 'feature';
+  sizes?: string;
+  heading?: 'h2' | 'h3' | 'h4';
+  priority?: boolean;
+}
+
+const { event, variant = 'default', heading: Heading = 'h3', priority = false } = Astro.props;
+const sizes = Astro.props.sizes ?? (variant === 'feature' ? '100vw' : '(min-width: 1200px) 30vw, (min-width: 700px) 45vw, 100vw');
+const count = event.photos.length;
+// « Pré-Nationale • Journée 1 » : deux lignes sur les cartes, une seule (avec la puce) sur la grande carte.
+const titleParts = event.title
+  .split(/[•|]/)
+  .map((part) => part.trim())
+  .filter(Boolean);
+---
+
+<a class:list={['card', `card--${variant}`]} href={event.url} data-card data-category={event.category} data-season={event.seasonId}>
+  <div class="card__media">
+    {
+      event.cover ? (
+        <Picture photo={event.cover} alt="" sizes={sizes} cover position={event.coverPosition} priority={priority} max={variant === 'feature' ? 2560 : 1440} />
+      ) : (
+        <div class="card__empty" />
+      )
+    }
+  </div>
+
+  {count > 0 && <span class="card__count">{count} photo{count > 1 ? 's' : ''}</span>}
+
+  <div class="card__body">
+    {event.tag && <p class="kicker">{event.tag}</p>}
+    <Heading class="card__title">
+      {titleParts.map((part, index) => (
+        <Fragment>
+          {index > 0 && <span class="card__dot"> • </span>}
+          <span class="card__part">{part}</span>
+        </Fragment>
+      ))}
+    </Heading>
+    <p class="card__meta">
+      <time datetime={event.isoDate}>{event.dateLabel}</time>
+      {event.location && <span>{event.location}</span>}
+    </p>
+    <span class="card__cta">Voir les photos <Icon name="arrow-right" /></span>
+  </div>
+</a>
+
+<style>
+  .card {
+    position: relative;
+    display: block;
+    overflow: hidden;
+    aspect-ratio: 3 / 2;
+    background: var(--bg-elev);
+    isolation: isolate;
+  }
+  .card--feature {
+    aspect-ratio: 4 / 5;
+  }
+  @media (min-width: 700px) {
+    .card--feature {
+      aspect-ratio: 16 / 9;
+    }
+  }
+  @media (min-width: 1100px) {
+    .card--feature {
+      aspect-ratio: 21 / 9;
+    }
+  }
+
+  .card__media {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    transition: transform 1.4s var(--ease-out);
+    will-change: transform;
+  }
+  .card__empty {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #15151a, #0c0c0e);
+  }
+  /* Dégradé de lisibilité, uniquement là où le texte se pose */
+  .card::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: linear-gradient(to top, rgba(10, 10, 11, 0.9) 0%, rgba(10, 10, 11, 0.45) 32%, rgba(10, 10, 11, 0) 62%);
+    transition: opacity 0.6s var(--ease);
+  }
+  .card:hover .card__media,
+  .card:focus-visible .card__media {
+    transform: scale(1.045);
+  }
+
+  .card__count {
+    position: absolute;
+    top: clamp(0.9rem, 1.4vw, 1.5rem);
+    right: clamp(0.9rem, 1.4vw, 1.5rem);
+    padding: 0.45em 0.8em;
+    background: rgba(10, 10, 11, 0.55);
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
+    font-family: var(--font-mono);
+    font-size: 0.66rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+  }
+
+  .card__body {
+    position: absolute;
+    inset: auto 0 0;
+    display: grid;
+    gap: 0.55rem;
+    padding: clamp(1.1rem, 1.8vw, 2rem);
+  }
+  .card__body .kicker {
+    letter-spacing: 0.28em;
+  }
+  .card__title {
+    font-weight: 900;
+    font-size: clamp(1.15rem, 1vw + 0.8rem, 1.75rem);
+    line-height: 1.02;
+    letter-spacing: -0.025em;
+    text-transform: uppercase;
+    text-wrap: balance;
+  }
+  .card__part {
+    display: block;
+  }
+  .card__dot {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+  .card--feature .card__title {
+    font-size: clamp(1.55rem, 3.15vw, 3.6rem);
+    line-height: 0.96;
+  }
+  @media (min-width: 1100px) {
+    .card--feature .card__part {
+      display: inline;
+    }
+    .card--feature .card__dot {
+      position: static;
+      width: auto;
+      height: auto;
+      clip-path: none;
+      color: var(--accent);
+    }
+  }
+  .card--feature .card__body {
+    gap: 0.8rem;
+    padding: clamp(1.25rem, 2.6vw, 3rem);
+  }
+  .card__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.2rem 0;
+    font-size: 0.875rem;
+    color: var(--text-dim);
+  }
+  .card__meta span::before {
+    content: '·';
+    margin-inline: 0.6em;
+    color: var(--accent);
+  }
+  .card__cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.8em;
+    margin-top: 0.5rem;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--text);
+  }
+  .card__cta :global(svg) {
+    width: 1.5em;
+    height: 1.5em;
+    color: var(--accent);
+    transition: transform 0.45s var(--ease-out);
+  }
+  .card:hover .card__cta :global(svg) {
+    transform: translateX(0.4em);
+  }
+
+  /* Sur écran avec souris : le bouton se dévoile au survol, la photo respire davantage. */
+  @media (hover: hover) and (min-width: 900px) {
+    .card:not(.card--feature) .card__cta {
+      max-height: 0;
+      margin-top: 0;
+      opacity: 0;
+      overflow: hidden;
+      transition:
+        max-height 0.5s var(--ease-out),
+        margin-top 0.5s var(--ease-out),
+        opacity 0.4s var(--ease);
+    }
+    .card:not(.card--feature):hover .card__cta,
+    .card:not(.card--feature):focus-visible .card__cta {
+      max-height: 2rem;
+      margin-top: 0.5rem;
+      opacity: 1;
+    }
+  }
+</style>

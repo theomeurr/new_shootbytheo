@@ -1,0 +1,497 @@
+---
+/**
+ * Visionneuse plein écran, partagée par toutes les galeries de la page.
+ * Clavier : ← → (Début / Fin), Échap. Tactile : balayage gauche/droite, vers le bas pour fermer.
+ * Le bouton « retour » du téléphone ferme la visionneuse, et chaque photo a son adresse (#photo-12).
+ */
+import Icon from './Icon.astro';
+---
+
+<dialog class="lb" data-lightbox aria-label="Visionneuse de photos">
+  <div class="lb__bar">
+    <p class="lb__counter" aria-live="polite"><span data-lb-current>01</span> / <span data-lb-total>01</span></p>
+    <button class="lb__button" type="button" data-lb-close aria-label="Fermer la visionneuse">
+      <Icon name="close" />
+    </button>
+  </div>
+
+  <div class="lb__stage" data-lb-stage>
+    <figure class="lb__frame" data-lb-frame></figure>
+  </div>
+
+  <button class="lb__button lb__nav lb__nav--prev" type="button" data-lb-prev aria-label="Photo précédente">
+    <Icon name="arrow-left" />
+  </button>
+  <button class="lb__button lb__nav lb__nav--next" type="button" data-lb-next aria-label="Photo suivante">
+    <Icon name="arrow-right" />
+  </button>
+
+  <p class="lb__caption" data-lb-caption></p>
+</dialog>
+
+<style>
+  .lb {
+    --lb-bar: 4rem;
+    --lb-foot: 3.75rem;
+    --lb-side: 0px;
+    position: fixed;
+    inset: 0;
+    width: 100vw;
+    max-width: none;
+    height: 100dvh;
+    max-height: none;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    overflow: hidden;
+    background: #060607;
+    color: var(--text);
+    opacity: 0;
+    transition: opacity 0.35s var(--ease);
+  }
+  .lb::backdrop {
+    background: transparent;
+  }
+  .lb.is-open {
+    opacity: 1;
+  }
+  .lb.is-dragging {
+    transition: none;
+  }
+
+  .lb__bar {
+    position: absolute;
+    inset: 0 0 auto;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: var(--lb-bar);
+    padding-inline: clamp(1rem, 2vw, 2rem) clamp(0.5rem, 1.4vw, 1.5rem);
+  }
+  .lb__counter {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.22em;
+    color: var(--text-dim);
+  }
+  .lb__button {
+    display: grid;
+    place-items: center;
+    width: 3rem;
+    height: 3rem;
+    border-radius: 50%;
+    color: var(--text);
+    transition:
+      background-color 0.3s var(--ease),
+      color 0.3s var(--ease),
+      opacity 0.3s var(--ease);
+  }
+  .lb__button :global(svg) {
+    width: 1.35rem;
+    height: 1.35rem;
+  }
+  .lb__button:hover {
+    background: var(--text);
+    color: var(--bg);
+  }
+  .lb__button[disabled] {
+    opacity: 0.25;
+    pointer-events: none;
+  }
+
+  .lb__stage {
+    position: absolute;
+    inset: var(--lb-bar) var(--lb-side) var(--lb-foot);
+    display: grid;
+    place-items: center;
+    touch-action: pinch-zoom;
+    cursor: zoom-out;
+  }
+  .lb.is-zoomed .lb__stage {
+    touch-action: auto;
+  }
+  .lb__frame {
+    --r: 1.5;
+    --w: 4000;
+    position: relative;
+    /* Le plus grand rectangle aux proportions de la photo qui tient dans la scène */
+    width: min(100vw - var(--lb-side) * 2, (100dvh - var(--lb-bar) - var(--lb-foot)) * var(--r), var(--w) * 1px);
+    aspect-ratio: var(--r);
+    background-position: center;
+    background-size: cover;
+    cursor: default;
+    transition:
+      transform 0.45s var(--ease-out),
+      opacity 0.3s var(--ease);
+    will-change: transform;
+  }
+  .lb.is-dragging .lb__frame {
+    transition: none;
+  }
+  .lb__frame :global(picture),
+  .lb__frame :global(img) {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+  .lb__frame :global(img) {
+    object-fit: contain;
+    opacity: 0;
+    transition: opacity 0.45s ease;
+    -webkit-user-drag: none;
+    user-select: none;
+  }
+  .lb__frame :global(img.is-loaded) {
+    opacity: 1;
+  }
+
+  .lb__nav {
+    position: absolute;
+    bottom: 0.4rem;
+    z-index: 2;
+  }
+  .lb__nav--prev {
+    left: clamp(0.5rem, 1.4vw, 1.5rem);
+  }
+  .lb__nav--next {
+    right: clamp(0.5rem, 1.4vw, 1.5rem);
+  }
+
+  .lb__caption {
+    position: absolute;
+    inset: auto 4rem 0;
+    z-index: 1;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 0.15rem 1rem;
+    min-height: var(--lb-foot);
+    padding-block: 0.5rem;
+    font-size: 0.8125rem;
+    line-height: 1.4;
+    text-align: center;
+    color: var(--text-dim);
+  }
+  .lb__caption :global(a) {
+    color: var(--text);
+    text-decoration: underline;
+    text-decoration-color: var(--accent);
+    text-underline-offset: 0.25em;
+    white-space: nowrap;
+  }
+  .lb__caption :global(a:hover) {
+    color: var(--accent-bright);
+  }
+
+  @media (min-width: 900px) {
+    .lb {
+      --lb-side: 5.5rem;
+      --lb-bar: 4.5rem;
+      --lb-foot: 4.5rem;
+    }
+    .lb__nav {
+      top: 50%;
+      bottom: auto;
+      width: 3.5rem;
+      height: 3.5rem;
+      margin-top: -1.75rem;
+      border: 1px solid rgba(243, 239, 233, 0.28);
+    }
+  }
+</style>
+
+<script>
+  interface Item {
+    el: HTMLAnchorElement;
+    href: string;
+    srcset: string;
+    srcsetAvif?: string;
+    w: number;
+    h: number;
+    alt: string;
+    color: string;
+    caption?: string;
+    link?: string;
+    linkLabel?: string;
+  }
+
+  const dialog = document.querySelector<HTMLDialogElement>('[data-lightbox]');
+
+  if (dialog && typeof dialog.showModal === 'function') {
+    const stage = dialog.querySelector<HTMLElement>('[data-lb-stage]')!;
+    const frame = dialog.querySelector<HTMLElement>('[data-lb-frame]')!;
+    const captionEl = dialog.querySelector<HTMLElement>('[data-lb-caption]')!;
+    const currentEl = dialog.querySelector<HTMLElement>('[data-lb-current]')!;
+    const totalEl = dialog.querySelector<HTMLElement>('[data-lb-total]')!;
+    const prevButton = dialog.querySelector<HTMLButtonElement>('[data-lb-prev]')!;
+    const nextButton = dialog.querySelector<HTMLButtonElement>('[data-lb-next]')!;
+    const closeButton = dialog.querySelector<HTMLButtonElement>('[data-lb-close]')!;
+
+    let items: Item[] = [];
+    let index = 0;
+    let isOpen = false;
+    let pushedState = false;
+    let closing = false;
+    let token = 0;
+    let avifSupported: boolean | null = null;
+    let opener: HTMLElement | null = null;
+
+    const pad = (n: number) => String(n).padStart(2, '0');
+    const hashFor = (i: number) => `#photo-${i + 1}`;
+    const cleanUrl = () => location.pathname + location.search;
+
+    const collect = (group: string): Item[] =>
+      [...document.querySelectorAll<HTMLAnchorElement>(`a[data-lb="${CSS.escape(group)}"]`)]
+        .sort((a, b) => Number(a.dataset.lbIndex) - Number(b.dataset.lbIndex))
+        .map((el) => ({
+          el,
+          href: el.href,
+          srcset: el.dataset.lbSrcset ?? '',
+          srcsetAvif: el.dataset.lbSrcsetAvif,
+          w: Number(el.dataset.lbW) || 3,
+          h: Number(el.dataset.lbH) || 2,
+          alt: el.querySelector('img')?.alt ?? '',
+          color: el.dataset.lbColor ?? '#111',
+          caption: el.dataset.lbCaption,
+          link: el.dataset.lbLink,
+          linkLabel: el.dataset.lbLinkLabel,
+        }));
+
+    const thumbSrc = (item: Item) => item.el.querySelector('img')?.currentSrc ?? '';
+
+    /** Précharge la photo voisine dans le format que le navigateur utilisera réellement. */
+    const preload = (i: number) => {
+      const item = items[i];
+      if (!item) return;
+      const image = new Image();
+      image.decoding = 'async';
+      image.sizes = `${Math.round(frame.getBoundingClientRect().width) || window.innerWidth}px`;
+      image.srcset = avifSupported && item.srcsetAvif ? item.srcsetAvif : item.srcset;
+    };
+
+    const show = (next: number) => {
+      index = (next + items.length) % items.length;
+      const item = items[index];
+      const current = ++token;
+
+      if (avifSupported === null) avifSupported = /\.avif(\?|$)/.test(thumbSrc(item));
+
+      frame.style.setProperty('--r', String(item.w / item.h));
+      frame.style.setProperty('--w', String(item.w));
+      frame.style.backgroundColor = item.color;
+      frame.style.backgroundImage = thumbSrc(item) ? `url("${thumbSrc(item)}")` : 'none';
+      frame.style.transform = '';
+
+      // Nouvelle balise à chaque photo : l'ancienne image ne s'affiche jamais dans le mauvais cadre.
+      const picture = document.createElement('picture');
+      const sizes = `${Math.round(frame.getBoundingClientRect().width) || window.innerWidth}px`;
+      if (item.srcsetAvif) {
+        const source = document.createElement('source');
+        source.type = 'image/avif';
+        source.sizes = sizes;
+        source.srcset = item.srcsetAvif;
+        picture.append(source);
+      }
+      const img = document.createElement('img');
+      img.alt = item.alt;
+      img.width = item.w;
+      img.height = item.h;
+      img.decoding = 'async';
+      img.draggable = false;
+      img.sizes = sizes;
+      const reveal = () => {
+        if (current === token) img.classList.add('is-loaded');
+      };
+      img.addEventListener('load', reveal, { once: true });
+      img.addEventListener('error', reveal, { once: true });
+      if (item.srcset) img.srcset = item.srcset;
+      img.src = item.href;
+      picture.append(img);
+      frame.replaceChildren(picture);
+      if (img.complete && img.naturalWidth) reveal();
+
+      currentEl.textContent = pad(index + 1);
+      totalEl.textContent = pad(items.length);
+
+      captionEl.replaceChildren();
+      if (item.caption) captionEl.append(Object.assign(document.createElement('span'), { textContent: item.caption }));
+      if (item.link) {
+        captionEl.append(Object.assign(document.createElement('a'), { href: item.link, textContent: item.linkLabel || 'Voir l’événement' }));
+      }
+
+      const single = items.length < 2;
+      prevButton.disabled = single;
+      nextButton.disabled = single;
+
+      if (isOpen) history.replaceState({ lightbox: true }, '', hashFor(index));
+      preload(index + 1);
+      preload(index - 1);
+    };
+
+    const open = (group: string, start: number, fromHistory = false) => {
+      items = collect(group);
+      if (!items.length) return;
+      opener = document.activeElement as HTMLElement | null;
+      dialog.dataset.group = group;
+      dialog.showModal();
+      document.body.classList.add('is-locked');
+      isOpen = true;
+      if (!fromHistory) {
+        history.pushState({ lightbox: true }, '', hashFor(start));
+        pushedState = true;
+      }
+      show(start);
+      requestAnimationFrame(() => dialog.classList.add('is-open'));
+      closeButton.focus({ preventScroll: true });
+    };
+
+    const finishClose = () => {
+      if (!isOpen) return;
+      isOpen = false;
+      closing = false;
+      token++;
+      dialog.classList.remove('is-open', 'is-dragging');
+      document.body.classList.remove('is-locked');
+      const target = items[index]?.el ?? opener;
+      window.setTimeout(() => {
+        if (dialog.open) dialog.close();
+        frame.replaceChildren();
+        frame.style.backgroundImage = 'none';
+        dialog.style.opacity = '';
+        // La page suit la visionneuse : on retrouve la dernière photo vue dans la grille.
+        target?.focus({ preventScroll: true });
+        target?.scrollIntoView({ block: 'nearest' });
+      }, 200);
+    };
+
+    const close = () => {
+      if (!isOpen || closing) return;
+      closing = true;
+      if (pushedState) {
+        pushedState = false;
+        history.back(); // déclenche popstate → finishClose
+      } else {
+        history.replaceState(null, '', cleanUrl());
+        finishClose();
+      }
+    };
+
+    window.addEventListener('popstate', (event) => {
+      if (isOpen) {
+        pushedState = false;
+        finishClose();
+      } else if (event.state?.lightbox) {
+        const match = location.hash.match(/^#photo-(\d+)$/);
+        const group = dialog.dataset.group;
+        if (match && group) {
+          pushedState = true;
+          open(group, Number(match[1]) - 1, true);
+        }
+      }
+    });
+
+    // Ouverture au clic sur une miniature
+    document.addEventListener('click', (event) => {
+      const link = (event.target as HTMLElement).closest<HTMLAnchorElement>('a[data-lb]');
+      if (!link || event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+      event.preventDefault();
+      open(link.dataset.lb as string, Number(link.dataset.lbIndex) || 0);
+    });
+
+    prevButton.addEventListener('click', () => show(index - 1));
+    nextButton.addEventListener('click', () => show(index + 1));
+    closeButton.addEventListener('click', close);
+    stage.addEventListener('click', (event) => {
+      if (event.target === stage) close();
+    });
+    dialog.addEventListener('cancel', (event) => {
+      event.preventDefault(); // Échap : on passe par notre fermeture (historique + animation)
+      close();
+    });
+    dialog.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape') close();
+      else if (event.key === 'ArrowRight') show(index + 1);
+      else if (event.key === 'ArrowLeft') show(index - 1);
+      else if (event.key === 'Home') show(0);
+      else if (event.key === 'End') show(items.length - 1);
+      else return;
+      event.preventDefault();
+    });
+
+    // ----- Tactile : balayer pour naviguer, tirer vers le bas pour fermer -----
+    const isZoomed = () => (window.visualViewport?.scale ?? 1) > 1.02;
+    window.visualViewport?.addEventListener('resize', () => dialog.classList.toggle('is-zoomed', isZoomed()));
+
+    let startX = 0;
+    let startY = 0;
+    let dx = 0;
+    let dy = 0;
+    let axis: 'x' | 'y' | null = null;
+    let tracking = false;
+
+    const resetDrag = () => {
+      tracking = false;
+      axis = null;
+      dialog.classList.remove('is-dragging');
+      frame.style.transform = '';
+      dialog.style.opacity = '';
+    };
+
+    stage.addEventListener(
+      'touchstart',
+      (event) => {
+        if (event.touches.length !== 1 || isZoomed()) return resetDrag();
+        tracking = true;
+        axis = null;
+        dx = dy = 0;
+        startX = event.touches[0].clientX;
+        startY = event.touches[0].clientY;
+      },
+      { passive: true },
+    );
+
+    stage.addEventListener(
+      'touchmove',
+      (event) => {
+        if (!tracking) return;
+        if (event.touches.length !== 1) return resetDrag();
+        dx = event.touches[0].clientX - startX;
+        dy = event.touches[0].clientY - startY;
+        if (!axis && Math.hypot(dx, dy) > 10) axis = Math.abs(dx) > Math.abs(dy) ? 'x' : 'y';
+        if (!axis) return;
+        dialog.classList.add('is-dragging');
+        if (axis === 'x') {
+          frame.style.transform = `translate3d(${dx}px, 0, 0)`;
+        } else if (dy > 0) {
+          frame.style.transform = `translate3d(0, ${dy}px, 0) scale(${1 - Math.min(dy / 1600, 0.12)})`;
+          dialog.style.opacity = String(1 - Math.min(dy / 600, 0.55));
+        }
+      },
+      { passive: true },
+    );
+
+    const endDrag = () => {
+      if (!tracking) return;
+      const moved = { axis, dx, dy };
+      resetDrag();
+      if (moved.axis === 'x' && Math.abs(moved.dx) > 56 && items.length > 1) show(index + (moved.dx < 0 ? 1 : -1));
+      else if (moved.axis === 'y' && moved.dy > 110) close();
+    };
+    stage.addEventListener('touchend', endDrag, { passive: true });
+    stage.addEventListener('touchcancel', resetDrag, { passive: true });
+
+    // Lien direct vers une photo : …/evenements/mon-evenement/#photo-12
+    const openFromHash = () => {
+      const direct = location.hash.match(/^#photo-(\d+)$/);
+      const group = document.querySelector<HTMLAnchorElement>('a[data-lb]')?.dataset.lb;
+      if (!direct || !group || isOpen) return;
+      const start = Math.min(Math.max(Number(direct[1]) - 1, 0), collect(group).length - 1);
+      history.replaceState({ lightbox: true }, '', hashFor(start));
+      open(group, start, true);
+    };
+    openFromHash();
+    window.addEventListener('hashchange', openFromHash);
+  }
+</script>
