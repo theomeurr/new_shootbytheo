@@ -16,7 +16,7 @@
     "demo-photos": "node scripts/demo-photos.mjs"
   },
   "engines": {
-    "node": ">=20"
+    "node": ">=22.12.0"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.4",
