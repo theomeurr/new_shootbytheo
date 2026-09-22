@@ -3,13 +3,14 @@
 #
 # - En local (npm run dev) : fonctionne tout de suite, sans rien configurer ci-dessous
 #   (bouton « Work with Local Repository », voir README).
-# - À distance, depuis n'importe quel navigateur : remplacer "repo" par votre dépôt GitHub
-#   une fois qu'il existe (voir README).
+# - À distance, depuis n'importe quel navigateur (Mac, téléphone…) : connexion GitHub via
+#   le petit relais déployé sur Cloudflare Workers (sbt-cms-admin) — voir README.
 
 backend:
   name: github
-  repo: VOTRE-COMPTE/VOTRE-DEPOT # à remplacer une fois le dépôt GitHub créé — voir le README
+  repo: theomeurr/new_shootbytheo
   branch: main
+  base_url: https://sbt-cms-admin.t-meurier13.workers.dev
 
 # Images « libres » (à propos, prestations…) : content/images/
 media_folder: content/images

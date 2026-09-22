@@ -32,12 +32,18 @@ utilisables à tout moment, y compris sur le même événement.
 Après avoir ajouté des photos par ce biais, lancez `npm run photos` (ou laissez `npm run dev`
 tourner : il s'en charge tout seul) pour générer leurs versions optimisées AVIF/WebP.
 
-### Utilisation à distance, depuis n'importe quel navigateur (facultatif)
+### Utilisation à distance, depuis n'importe quel navigateur — ✅ déjà en place
 
-Pour retrouver la même interface depuis un téléphone ou un autre ordinateur, il faut publier le
-projet sur GitHub et connecter le CMS à ce dépôt. Ces étapes touchent vos comptes GitHub/Cloudflare :
-à faire vous-même (je peux vous aider à chaque étape, mais je ne peux pas créer ces comptes ou m'y
-connecter à votre place).
+Le dépôt GitHub (`theomeurr/new_shootbytheo`) et l'authentification (relais Cloudflare Workers
+`sbt-cms-admin`) sont configurés. Une fois le site publié (voir « Publier le site » plus bas),
+`/admin/index.html` fonctionne depuis n'importe quel navigateur (Mac, téléphone…) : bouton
+**« Se connecter avec GitHub »**, sans rien installer.
+
+`/admin/` n'est pas listé dans le sitemap ni indexé (voir `robots.txt`) ; seules les personnes
+ayant accès au dépôt GitHub peuvent s'y connecter.
+
+<details>
+<summary>Reproduire cette configuration sur un autre projet</summary>
 
 1. **Créer le dépôt** : sur [github.com/new](https://github.com/new), créez un dépôt (privé de
    préférence), puis :
@@ -47,18 +53,16 @@ connecter à votre place).
    git remote add origin https://github.com/VOTRE-COMPTE/VOTRE-DEPOT.git
    git push -u origin main
    ```
-2. **Ouvrir `public/admin/config.yml`** et remplacer `VOTRE-COMPTE/VOTRE-DEPOT` (ligne `repo:`) par
-   l'adresse de ce dépôt, puis commitez/poussez ce changement.
+2. **Ouvrir `public/admin/config.yml`** et remplacer la ligne `repo:` par l'adresse de ce dépôt.
 3. **Déployer l'authentification GitHub** (gratuit, une seule fois) : suivez le guide de
    [sveltia-cms-auth](https://github.com/sveltia/sveltia-cms-auth) — un petit script à déployer sur
    Cloudflare Workers (compte Cloudflare gratuit), plus une application OAuth à créer sur GitHub
-   (quelques clics, aucune ligne de code). Le guide donne l'adresse exacte à saisir à chaque étape.
+   (quelques clics, aucune ligne de code). Dans Cloudflare, ajoutez `GITHUB_CLIENT_ID` et
+   `GITHUB_CLIENT_SECRET` en **variables chiffrées** (« Encrypt »), jamais en clair.
 4. Ajoutez l'adresse obtenue (`base_url`) sous `backend:` dans `config.yml`, commitez/poussez.
-5. Publiez le site (voir « Publier le site » plus bas) : `/admin/` fonctionne alors depuis
-   n'importe quel navigateur, avec connexion GitHub.
+5. Publiez le site.
 
-`/admin/` n'est pas listé dans le sitemap ni indexé (voir `robots.txt`) ; une fois le dépôt privé
-et l'authentification en place, seules les personnes ayant accès au dépôt GitHub peuvent s'y connecter.
+</details>
 
 ---
 
