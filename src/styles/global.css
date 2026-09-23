@@ -28,7 +28,7 @@
   --page-max: 108rem;
   /* Bord commun à l'en-tête, aux images plein cadre et aux contenus (centrés au-delà de --page-max). */
   --edge: max(var(--gutter), calc((100% - var(--page-max)) / 2));
-  --header-h: clamp(7.5rem, 10.5vw, 11rem);
+  --header-h: clamp(9.5rem, 13vw, 13.5rem);
   --section: clamp(4rem, 7.5vw, 8rem);
   --gap: clamp(0.375rem, 0.55vw, 0.75rem);
 

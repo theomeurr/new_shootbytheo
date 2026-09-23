@@ -109,24 +109,20 @@ const pad = (n: number) => String(n).padStart(2, '0');
 <style>
   .hero {
     position: relative;
-    /* Occupe toute la hauteur laissée par la page (voir .page-home dans global.css). */
     flex: 1 0 auto;
-    /* Téléphone : l'image prend tout l'écran, la ligne de pied de page vient juste après. */
-    min-height: 100svh;
+    min-height: 38rem;
     overflow: hidden;
     background: var(--bg);
     isolation: isolate;
   }
-  /* Grand écran : l'image à la une et la ligne de pied de page tiennent ensemble dans l'écran, sans défilement. */
-  @media (min-width: 900px) {
-    .hero {
-      min-height: 34rem;
-    }
-  }
   .hero__slides,
   .hero__shade {
     position: absolute;
-    inset: clamp(3.5rem, 11vh, 7rem) clamp(1.25rem, 7vw, 7rem);
+    top: calc(var(--header-h) + 1.5rem);
+    left: 50%;
+    transform: translateX(-50%);
+    width: min(82vw, 19rem);
+    aspect-ratio: 3 / 2;
   }
   .hero__slide {
     position: absolute;
