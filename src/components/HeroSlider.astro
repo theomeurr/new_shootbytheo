@@ -165,11 +165,12 @@ const many = slides.length > 1;
   .hero__content {
     display: grid;
     gap: clamp(1rem, 1.6vw, 1.75rem);
-    justify-items: start;
-    container-type: inline-size;
+    justify-items: center;
+    text-align: center;
   }
   .hero__actions {
     display: flex;
+    justify-content: center;
     flex-wrap: wrap;
     gap: 0.75rem;
     margin-top: 0.35rem;
@@ -253,12 +254,18 @@ const many = slides.length > 1;
 
   @media (min-width: 1000px) {
     .hero__inner {
-      grid-template-columns: minmax(0, 1fr) auto;
+      /* Accroche + bouton au centre, légende de l'image à droite */
+      grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
       align-items: end;
       gap: 2.25rem 3rem;
       padding-bottom: 2rem;
     }
+    .hero__content {
+      grid-column: 2;
+    }
     .hero__aside {
+      grid-column: 3;
+      justify-self: end;
       justify-items: end;
       max-width: 24rem;
     }

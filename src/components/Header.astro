@@ -12,7 +12,6 @@ const events = await getEvents();
   <div class="header__inner">
     <div class="header__brand">
       <Brand large />
-      <span class="header__tag" aria-hidden="true">{site.headerTagline}</span>
     </div>
 
     <nav class="nav" aria-label="Navigation principale">
@@ -108,7 +107,7 @@ const events = await getEvents();
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 0.6rem;
+    gap: clamp(1.25rem, 2vw, 2rem);
     padding: 1.1rem var(--edge);
     transition:
       padding 0.45s var(--ease-out),
@@ -151,25 +150,15 @@ const events = await getEvents();
     opacity: 0;
   }
 
-  .header__tag {
-    display: none;
-    padding-left: clamp(1rem, 1.4vw, 1.5rem);
-    border-left: 1px solid rgba(243, 239, 233, 0.3);
-    font-size: 0.7rem;
-    font-weight: 400;
-    line-height: 1.5;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: var(--text-dim);
-  }
-
   .nav {
     display: none;
+    align-items: center;
     justify-content: center;
     gap: clamp(1.25rem, 2.2vw, 2.5rem);
   }
   .nav__link {
     position: relative;
+    display: block;
     padding-block: 0.7rem;
     font-size: 0.7rem;
     font-weight: 600;
@@ -271,11 +260,6 @@ const events = await getEvents();
     }
     .burger {
       display: none !important;
-    }
-  }
-  @media (min-width: 1180px) {
-    .header__tag {
-      display: block;
     }
   }
 
