@@ -1,375 +1,10 @@
 {
  "version": 1,
  "sets": {
-  "cross-departemental-2026": {
-   "dir": "cross-departemental-2026",
-   "cover": "cover.jpg",
-   "og": "og.93de411d.jpg",
-   "photos": [
-    {
-     "id": "001",
-     "file": "001.jpg",
-     "hash": "9d0adcb4",
-     "w": 2200,
-     "h": 1467,
-     "color": "#2c2f24",
-     "lqip": "data:image/webp;base64,UklGRlgAAABXRUJQVlA4IEwAAADQAwCdASoUAA0APwFqrE8rJiQiMAgBYCAJQBYdg9I2NTkF0tD5+mgA/un07PP7cUPU1LZACGAXzH5lY8qyFyDGUzhhZhs9/FCVTAAA",
-     "widths": [
-      480,
-      960,
-      1440,
-      2048
-     ],
-     "formats": [
-      "avif",
-      "webp"
-     ],
-     "src": {
-      "size": 107941,
-      "mtime": 1789995408180,
-      "hash": "85d8ddf4eb85347d2eb9047e26fa0222bb42efd7"
-     }
-    },
-    {
-     "id": "002",
-     "file": "002.jpg",
-     "hash": "19a0132e",
-     "w": 1467,
-     "h": 2200,
-     "color": "#452d22",
-     "lqip": "data:image/webp;base64,UklGRmQAAABXRUJQVlA4IFgAAACQAwCdASoNABQAPwFqrU8rJiQiMAgBYCAJbACw7BuY8XsSor+AAP7s10LuRwbVvxjhDiyhpS5U/FxcsEc1zrwVy2eITXikgSDd64m8IKFyzYY50FUk0AAA",
-     "widths": [
-      480,
-      960,
-      1440
-     ],
-     "formats": [
-      "avif",
-      "webp"
-     ],
-     "src": {
-      "size": 117190,
-      "mtime": 1789995408306,
-      "hash": "d6c25e6a89299cc5205e35f3d984517b5982f484"
-     }
-    },
-    {
-     "id": "003",
-     "file": "003.jpg",
-     "hash": "d5d0b639",
-     "w": 2200,
-     "h": 1238,
-     "color": "#372e23",
-     "lqip": "data:image/webp;base64,UklGRlYAAABXRUJQVlA4IEoAAABQAwCdASoUAAsAPwForE6rJaQiMAgBYCAJQAALMVkokoeP8AD+3NuSnwC81xKs7tNQt3ZF1o5uSSO6pMjv3cx+iv3VpOGYssAAAA==",
-     "widths": [
-      480,
-      960,
-      1440,
-      2048
-     ],
-     "formats": [
-      "avif",
-      "webp"
-     ],
-     "src": {
-      "size": 90401,
-      "mtime": 1789995407865,
-      "hash": "8a8b8dbfeddef524a091ade4fe88b75b4923f1e8"
-     }
-    },
-    {
-     "id": "004",
-     "file": "004.jpg",
-     "hash": "9731fc51",
-     "w": 2200,
-     "h": 1467,
-     "color": "#313227",
-     "lqip": "data:image/webp;base64,UklGRlgAAABXRUJQVlA4IEwAAACwAwCdASoUAA0APwFqrE6rJiQiMAgBYCAJYwAATvtMlvDBIq4GAAD+5ep9oJVkM3Xio3ZMEuDX8TlrkSfjV7scF2HhEYq6Ai8MAAAA",
-     "widths": [
-      480,
-      960,
-      1440,
-      2048
-     ],
-     "formats": [
-      "avif",
-      "webp"
-     ],
-     "src": {
-      "size": 112804,
-      "mtime": 1789995411001,
-      "hash": "515fd811eabc6c8e4593e8d94e179820e8dfd43b"
-     }
-    },
-    {
-     "id": "005",
-     "file": "005.jpg",
-     "hash": "5b6700eb",
-     "w": 1760,
-     "h": 2200,
-     "color": "#4c3c2e",
-     "lqip": "data:image/webp;base64,UklGRmoAAABXRUJQVlA4IF4AAADwAwCdASoQABQAPwFqrU8rJiQiMAgBYCAJaACsABtPWQZ59R9dpD2AAP7p9WbtLSv4cRxQYBFwwcLfimeBUzvdzGRzzXYUGdF8Ej/FfJxVIRucYk37B7UYEAIsAAAA",
-     "widths": [
-      480,
-      960,
-      1440,
-      1760
-     ],
-     "formats": [
-      "avif",
-      "webp"
-     ],
-     "src": {
-      "size": 132118,
-      "mtime": 1789995412169,
-      "hash": "e1fadf9dba71b1351d11cbe932be6eb4b48333e0"
-     }
-    },
-    {
-     "id": "006",
-     "file": "006.jpg",
-     "hash": "41f200ec",
-     "w": 2200,
-     "h": 1467,
-     "color": "#3e3328",
-     "lqip": "data:image/webp;base64,UklGRlwAAABXRUJQVlA4IFAAAACwAwCdASoUAA0APwFqrU6rJiQiMAgBYCAJZAC7AB6QXwAsaum9YAD+6fVeFcqiGPmKZnawxHeLhX/hQmnVisTI61ua9FONk0DLXJGTNkAAAA==",
-     "widths": [
-      480,
-      960,
-      1440,
-      2048
-     ],
-     "formats": [
-      "avif",
-      "webp"
-     ],
-     "src": {
-      "size": 112202,
-      "mtime": 1789995411874,
-      "hash": "cdb2ebd45552121974fa08940b33f08336dc153d"
-     }
-    },
-    {
-     "id": "007",
-     "file": "007.jpg",
-     "hash": "36ee29d1",
-     "w": 2200,
-     "h": 1467,
-     "color": "#252820",
-     "lqip": "data:image/webp;base64,UklGRloAAABXRUJQVlA4IE4AAACwAwCdASoUAA0APwFqrE6rJiQiMAgBYCAJYwC7ACB/ftYwqMrxCAD+0MKj99x7NNR9JdQtgQjTeE3G4mvsArBTdJZsFnyJMyzsm50oAAA=",
-     "widths": [
-      480,
-      960,
-      1440,
-      2048
-     ],
-     "formats": [
-      "avif",
-      "webp"
-     ],
-     "src": {
-      "size": 105052,
-      "mtime": 1789995414047,
-      "hash": "24b129fa84ee9025d63153034ba74786a1119cc8"
-     }
-    },
-    {
-     "id": "008",
-     "file": "008.jpg",
-     "hash": "2db1de24",
-     "w": 2200,
-     "h": 1467,
-     "color": "#363b2d",
-     "lqip": "data:image/webp;base64,UklGRlgAAABXRUJQVlA4IEwAAACwAwCdASoUAA0APwFqrE6rJiQiMAgBYCAJQBWAA9Iu0qyXhveUAAD+6db8p6Hy0VH+lOwOTmoAc3egOp47cEistEhdrxtY1Doh7YAA",
-     "widths": [
-      480,
-      960,
-      1440,
-      2048
-     ],
-     "formats": [
-      "avif",
-      "webp"
-     ],
-     "src": {
-      "size": 114639,
-      "mtime": 1789995414106,
-      "hash": "cb0833d237745034dca4286758174419ab2b1c2f"
-     }
-    },
-    {
-     "id": "009",
-     "file": "009.jpg",
-     "hash": "bc1de314",
-     "w": 2200,
-     "h": 1467,
-     "color": "#372e24",
-     "lqip": "data:image/webp;base64,UklGRmIAAABXRUJQVlA4IFYAAADQAwCdASoUAA0APwFurU6rJqQiMAgBYCAJZAAASq2iiEQKEGkEznAA/tDEUUGRBToeASifTRqO0oCNV1bwIOXYY07RjVjOJs6/8NeOELsfogZCCgAAAA==",
-     "widths": [
-      480,
-      960,
-      1440,
-      2048
-     ],
-     "formats": [
-      "avif",
-      "webp"
-     ],
-     "src": {
-      "size": 115581,
-      "mtime": 1789995415333,
-      "hash": "b8bfbb2f57af9171e9cdc2b7cb0bb1b5be42681f"
-     }
-    },
-    {
-     "id": "010",
-     "file": "010.jpg",
-     "hash": "539bffaf",
-     "w": 1467,
-     "h": 2200,
-     "color": "#40271d",
-     "lqip": "data:image/webp;base64,UklGRmgAAABXRUJQVlA4IFwAAADwAwCdASoNABQAPwFqrE6rJiQiMAgBYCAJagCdABu1D0koZCLjf4GAAP7vYbccIe0LVGNxRdWaR4t4iyJJt1xhm+Q2Kbd05HU2+f+2CWomihPv2u9lAV9n17QAAA==",
-     "widths": [
-      480,
-      960,
-      1440
-     ],
-     "formats": [
-      "avif",
-      "webp"
-     ],
-     "src": {
-      "size": 107966,
-      "mtime": 1789995415759,
-      "hash": "f363611a4a0dcf1f3f6d6e69b8d340b78b4ad3ea"
-     }
-    },
-    {
-     "id": "011",
-     "file": "011.jpg",
-     "hash": "19b5ae9e",
-     "w": 2200,
-     "h": 1467,
-     "color": "#2f2a20",
-     "lqip": "data:image/webp;base64,UklGRlYAAABXRUJQVlA4IEoAAACQAwCdASoUAA0APwForE6rJiQiMAgBYCAJQBfnBDh6kiF/FBJAAP7l6sWcKPslBuZ9SDqmdzyPQid0lPyQELs1xHOtjAfELgQAAA==",
-     "widths": [
-      480,
-      960,
-      1440,
-      2048
-     ],
-     "formats": [
-      "avif",
-      "webp"
-     ],
-     "src": {
-      "size": 109436,
-      "mtime": 1789995417305,
-      "hash": "8511e09928e6d548f5dcb45c1a7219be11b6ec2d"
-     }
-    },
-    {
-     "id": "012",
-     "file": "012.jpg",
-     "hash": "3ead80a9",
-     "w": 1467,
-     "h": 2200,
-     "color": "#32281f",
-     "lqip": "data:image/webp;base64,UklGRlgAAABXRUJQVlA4IEwAAADwAwCdASoNABQAPwFsrU8rJiQiMAgBYCAJZgCdACHPgcPt0J7ddUtAAP7l52uwWkNC9Aq9ilU3gClNa4t9NcTbhNYExRvWXTuYAAAA",
-     "widths": [
-      480,
-      960,
-      1440
-     ],
-     "formats": [
-      "avif",
-      "webp"
-     ],
-     "src": {
-      "size": 109363,
-      "mtime": 1789995417536,
-      "hash": "99592db7a83c48ba7f0ade9039d0fc440bb197a5"
-     }
-    },
-    {
-     "id": "013",
-     "file": "013.jpg",
-     "hash": "4c80df86",
-     "w": 2200,
-     "h": 1238,
-     "color": "#3e392c",
-     "lqip": "data:image/webp;base64,UklGRlYAAABXRUJQVlA4IEoAAADwAwCdASoUAAsAPwFqrE6rJiQiMAgBYCAJQBbZA9Xg3/wSdVq4DsdgAP7l6n4BHSADZMBfbaFx66xLDP3ccL9CpxRtoMkYKKmAAA==",
-     "widths": [
-      480,
-      960,
-      1440,
-      2048
-     ],
-     "formats": [
-      "avif",
-      "webp"
-     ],
-     "src": {
-      "size": 99323,
-      "mtime": 1789995418317,
-      "hash": "d5fc3281ac9e164f1630bdd727c68183d5e47dfa"
-     }
-    },
-    {
-     "id": "014",
-     "file": "014.jpg",
-     "hash": "ef9b5e74",
-     "w": 2200,
-     "h": 1467,
-     "color": "#374031",
-     "lqip": "data:image/webp;base64,UklGRl4AAABXRUJQVlA4IFIAAADQAwCdASoUAA0APwFqrU6rJiQiMAgBYCAJQBOgA3ZuKGaiEQ8UAAAA/u9L/w3Qm2BdZK0rVOkIlKviRbZbi0wjGsq1RU53e7wnY6/qmiqR6AAA",
-     "widths": [
-      480,
-      960,
-      1440,
-      2048
-     ],
-     "formats": [
-      "avif",
-      "webp"
-     ],
-     "src": {
-      "size": 109772,
-      "mtime": 1789995419026,
-      "hash": "9d9d99ee1e176016198e11e2dbf6a56890abadf3"
-     }
-    },
-    {
-     "id": "cover",
-     "file": "cover.jpg",
-     "hash": "6de74e2d",
-     "w": 2880,
-     "h": 1920,
-     "color": "#3b2f25",
-     "lqip": "data:image/webp;base64,UklGRlwAAABXRUJQVlA4IFAAAADwAwCdASoUAA0APwFqrk6rJiQiMAgBYCAJZACsAB6P3WcNP2ORUB4AAP7l66ZM96b1K9nRg3Dqnryu0ory66t+JG++xIUYiyQZ4OK7/fC0AA==",
-     "widths": [
-      480,
-      960,
-      1440,
-      2048,
-      2560
-     ],
-     "formats": [
-      "avif",
-      "webp"
-     ],
-     "src": {
-      "size": 178038,
-      "mtime": 1789995410675,
-      "hash": "e67daf9b5f1956bc5fd038e4fe88ffab56e3a506"
-     }
-    }
-   ]
-  },
   "pre-nationale-j1-chambly": {
    "dir": "pre-nationale-j1-chambly",
-   "cover": "cover.jpg",
-   "og": "og.b020cc1e.jpg",
+   "cover": "DSC_5538J1_PRE NAT.jpg",
+   "og": "og.ef7d18c4.jpg",
    "photos": [
     {
      "id": "001",
@@ -391,7 +26,7 @@
      ],
      "src": {
       "size": 93853,
-      "mtime": 1789995421175,
+      "mtime": 1790105321678,
       "hash": "309febde2a31ac7b16d7bd3fd98ebaf770518bb4"
      }
     },
@@ -414,7 +49,7 @@
      ],
      "src": {
       "size": 94308,
-      "mtime": 1789995421954,
+      "mtime": 1790105321683,
       "hash": "52e1295790c8f472ff00849b27dca3e69fb72892"
      }
     },
@@ -438,7 +73,7 @@
      ],
      "src": {
       "size": 93253,
-      "mtime": 1789995422886,
+      "mtime": 1790105321683,
       "hash": "0ee2d1f937cdf2d8401ab5fb15365fdc12eaa4eb"
      }
     },
@@ -461,7 +96,7 @@
      ],
      "src": {
       "size": 104551,
-      "mtime": 1789995424852,
+      "mtime": 1790105321683,
       "hash": "3e4b7fe2faceece263f88423a4ee6570bc28bda6"
      }
     },
@@ -485,7 +120,7 @@
      ],
      "src": {
       "size": 83228,
-      "mtime": 1789995425197,
+      "mtime": 1790105321683,
       "hash": "ce947c9c4aa0e692a77833dd0ec5f5022e425c35"
      }
     },
@@ -509,7 +144,7 @@
      ],
      "src": {
       "size": 96755,
-      "mtime": 1789995426262,
+      "mtime": 1790105321686,
       "hash": "76c35a1bc5a878666d4d84b96390f08e19962e31"
      }
     },
@@ -533,7 +168,7 @@
      ],
      "src": {
       "size": 109587,
-      "mtime": 1789995427265,
+      "mtime": 1790105321686,
       "hash": "8ec990fc2eb6df500e05f8ff08aa5b2eedbf94c8"
      }
     },
@@ -557,7 +192,7 @@
      ],
      "src": {
       "size": 95744,
-      "mtime": 1789995428325,
+      "mtime": 1790105321686,
       "hash": "a363cf10ffecfe08517ed69d8a1e0f4b8794e7ea"
      }
     },
@@ -581,7 +216,7 @@
      ],
      "src": {
       "size": 87522,
-      "mtime": 1789995428501,
+      "mtime": 1790105321686,
       "hash": "aa06d49bc1e21380ca30266eb59fce70fb2f5445"
      }
     },
@@ -605,7 +240,7 @@
      ],
      "src": {
       "size": 92325,
-      "mtime": 1789995429854,
+      "mtime": 1790105321686,
       "hash": "aa0039011365297c122bc0ae719dc599503b5d08"
      }
     },
@@ -629,7 +264,7 @@
      ],
      "src": {
       "size": 90311,
-      "mtime": 1789995430800,
+      "mtime": 1790105321690,
       "hash": "7738e0b7a1d30a4a1aefb2f58379e546fdd2fd31"
      }
     },
@@ -652,7 +287,7 @@
      ],
      "src": {
       "size": 92602,
-      "mtime": 1789995431668,
+      "mtime": 1790105321690,
       "hash": "e9bebf222e18b157d0527063f28bd961071f0045"
      }
     },
@@ -668,6 +303,30 @@
       480,
       960,
       1440,
+      2048
+     ],
+     "formats": [
+      "avif",
+      "webp"
+     ],
+     "src": {
+      "size": 150556,
+      "mtime": 1790105321690,
+      "hash": "c9dd778f8f78c4989065b897f28516a27b5e28ae"
+     }
+    },
+    {
+     "id": "dsc-5538j1-pre-nat",
+     "file": "DSC_5538J1_PRE NAT.jpg",
+     "hash": "22b45a72",
+     "w": 5626,
+     "h": 3712,
+     "color": "#374038",
+     "lqip": "data:image/webp;base64,UklGRooAAABXRUJQVlA4IH4AAAAQBACdASoUAA0APwFqrE8rJiQiMAgBYCAJbACdEf/gNudeg7bZRPVZAAD+2flTPwdTQzlDW800/l06ZcR3g2C13S7UIcTnP6JDrD5HlNm8u0zEfvL4WKeLptK5qWLeqHg75ug2fXGPUZCVjf1AvfsVIiAXnzZQ0nr2jyOAAAA=",
+     "widths": [
+      480,
+      960,
+      1440,
       2048,
       2560
      ],
@@ -676,9 +335,9 @@
       "webp"
      ],
      "src": {
-      "size": 150556,
-      "mtime": 1789995423269,
-      "hash": "c9dd778f8f78c4989065b897f28516a27b5e28ae"
+      "size": 2455201,
+      "mtime": 1790155889688,
+      "hash": "e4f8a9f79922e2db2f2990dff985e07db792b100"
      }
     }
    ]
@@ -708,7 +367,7 @@
      ],
      "src": {
       "size": 102999,
-      "mtime": 1789995500786,
+      "mtime": 1790105321747,
       "hash": "31c0a2c53c5214ff03ccda78f928a87a1bd86c28"
      }
     },
@@ -732,7 +391,7 @@
      ],
      "src": {
       "size": 95964,
-      "mtime": 1789995497750,
+      "mtime": 1790105321747,
       "hash": "fa241dfd269990de0f13b50de41e06a28ddfae79"
      }
     },
@@ -756,7 +415,7 @@
      ],
      "src": {
       "size": 100107,
-      "mtime": 1789995499107,
+      "mtime": 1790105321747,
       "hash": "4b01ac7bd2503e9656e303a465f5b7af3da9eb7a"
      }
     },
@@ -780,333 +439,16 @@
      ],
      "src": {
       "size": 76238,
-      "mtime": 1789995498661,
+      "mtime": 1790105321747,
       "hash": "e23b1ca94ee473c5c97bfcb6b9cb01b03358c3b2"
-     }
-    }
-   ]
-  },
-  "soiree-des-recompenses-2026": {
-   "dir": "soiree-des-recompenses-2026",
-   "cover": "cover.jpg",
-   "og": "og.a6de3b04.jpg",
-   "photos": [
-    {
-     "id": "001",
-     "file": "001.jpg",
-     "hash": "41b16136",
-     "w": 2200,
-     "h": 1467,
-     "color": "#422a15",
-     "lqip": "data:image/webp;base64,UklGRmAAAABXRUJQVlA4IFQAAADQAwCdASoUAA0APwFqrE8rJiQiMAgBYCAJZgCdAB7HmwM9YZNo3iAA/uy9uYDqF4NFxFRM1wkviB2LYNIEASbUeLSKkZBGazLNUBwnRSpE2+IAAAA=",
-     "widths": [
-      480,
-      960,
-      1440,
-      2048
-     ],
-     "formats": [
-      "avif",
-      "webp"
-     ],
-     "src": {
-      "size": 95558,
-      "mtime": 1789995433739,
-      "hash": "7661e254efb97ae1be4ff18a2e8185b004fd903d"
-     }
-    },
-    {
-     "id": "002",
-     "file": "002.jpg",
-     "hash": "099a6f92",
-     "w": 1467,
-     "h": 2200,
-     "color": "#4b341f",
-     "lqip": "data:image/webp;base64,UklGRmgAAABXRUJQVlA4IFwAAADwAwCdASoNABQAPwFqrU8rJiQiMAgBYCAJZgCdMoRwACU576tP+9awAP7vYdih0IGnsdegqwSDF9u3/0tzre57oQRPkVJBSdeO8NfUvpFLI8Yb1v9ZOl20uk3AAA==",
-     "widths": [
-      480,
-      960,
-      1440
-     ],
-     "formats": [
-      "avif",
-      "webp"
-     ],
-     "src": {
-      "size": 105627,
-      "mtime": 1789995434466,
-      "hash": "b68ca4f89b6c1b862a95fa59376900b43fd8d089"
-     }
-    },
-    {
-     "id": "003",
-     "file": "003.jpg",
-     "hash": "ac3ecdf4",
-     "w": 2200,
-     "h": 1467,
-     "color": "#422c18",
-     "lqip": "data:image/webp;base64,UklGRmgAAABXRUJQVlA4IFwAAAAQBACdASoUAA0APwForE6rJiQiMAgBYCAJZACdMoADAXVbLjhB655OAAD+72HflLQpDCvf6Qg0iglP/GKJjHKkC7+r+fsiw+1se/O2B0raOCpIRm4amiVj0MAAAA==",
-     "widths": [
-      480,
-      960,
-      1440,
-      2048
-     ],
-     "formats": [
-      "avif",
-      "webp"
-     ],
-     "src": {
-      "size": 97487,
-      "mtime": 1789995435266,
-      "hash": "76b60c1eac7ed1d37362c7bf8f1047366ebe4574"
-     }
-    },
-    {
-     "id": "004",
-     "file": "004.jpg",
-     "hash": "cfeb3402",
-     "w": 1467,
-     "h": 2200,
-     "color": "#4c3420",
-     "lqip": "data:image/webp;base64,UklGRmIAAABXRUJQVlA4IFYAAAAwBACdASoNABQAPwFqrU8rJiQiMAgBYCAJZACdMoRwACWjuzPeQ6NjmkAA/vDe9oNfRt5EUBrwOOEk/CroEE2oud/mz9r/ttX931ttKa6a0anntYAAAA==",
-     "widths": [
-      480,
-      960,
-      1440
-     ],
-     "formats": [
-      "avif",
-      "webp"
-     ],
-     "src": {
-      "size": 97332,
-      "mtime": 1789995437192,
-      "hash": "876337c814ab96c53adbb7a7b51297bc1c1c24be"
-     }
-    },
-    {
-     "id": "005",
-     "file": "005.jpg",
-     "hash": "98cdf4f1",
-     "w": 2200,
-     "h": 1238,
-     "color": "#4e3721",
-     "lqip": "data:image/webp;base64,UklGRlwAAABXRUJQVlA4IFAAAADwAwCdASoUAAsAPwFqrE6rJiQiMAgBYCAJZgCdACP7qOS5D8y+DhVAAP7l52Mel+xZNOFah6iJ0ihFV3ueGWavKZmliRNtjh6kaZL1M1YAAA==",
-     "widths": [
-      480,
-      960,
-      1440,
-      2048
-     ],
-     "formats": [
-      "avif",
-      "webp"
-     ],
-     "src": {
-      "size": 84498,
-      "mtime": 1789995437186,
-      "hash": "ab5e03d8c4f0be3a8158ff88f199df8728aba607"
-     }
-    },
-    {
-     "id": "006",
-     "file": "006.jpg",
-     "hash": "97f13f67",
-     "w": 2200,
-     "h": 1467,
-     "color": "#3b2614",
-     "lqip": "data:image/webp;base64,UklGRmAAAABXRUJQVlA4IFQAAACwAwCdASoUAA0APwFqrU8rJiQiMAgBYCAJQBOgBDvuJtGELD7FAAD+5edicR+fhrSwHIUwTX4FIONBW3UlyELqsAMUNHpSNKDYAkGI8MtDph5uAAA=",
-     "widths": [
-      480,
-      960,
-      1440,
-      2048
-     ],
-     "formats": [
-      "avif",
-      "webp"
-     ],
-     "src": {
-      "size": 98404,
-      "mtime": 1789995437739,
-      "hash": "c7108aecbd8147dfd31a89dab2cf47ad7be8bd7c"
-     }
-    },
-    {
-     "id": "007",
-     "file": "007.jpg",
-     "hash": "891b6980",
-     "w": 1760,
-     "h": 2200,
-     "color": "#553920",
-     "lqip": "data:image/webp;base64,UklGRmgAAABXRUJQVlA4IFwAAABQBACdASoQABQAPwFqrU8rJiQiMAgBYCAJYgCdMoRwACWEFqFg5UJDCjwgAP7xbLvEgnqsByZMo7i2NumJbEYKQHK8YtEn97kjigeetOEAmm+w8rcXW7KGTAHgAA==",
-     "widths": [
-      480,
-      960,
-      1440,
-      1760
-     ],
-     "formats": [
-      "avif",
-      "webp"
-     ],
-     "src": {
-      "size": 115551,
-      "mtime": 1789995439313,
-      "hash": "89e6c91d04d7602f897691ba8ce25f670f95fa34"
-     }
-    },
-    {
-     "id": "008",
-     "file": "008.jpg",
-     "hash": "41814161",
-     "w": 2200,
-     "h": 1467,
-     "color": "#4a2e16",
-     "lqip": "data:image/webp;base64,UklGRlwAAABXRUJQVlA4IFAAAADwAwCdASoUAA0APwForE6rJaQiMAgBYCAJZgCdL1yBo8SFFOtbiFyQAP7vS1e4DAm+dqBeIrcO093Uz2y5R/ASDkxb9heS7uL0zfk+onAAAA==",
-     "widths": [
-      480,
-      960,
-      1440,
-      2048
-     ],
-     "formats": [
-      "avif",
-      "webp"
-     ],
-     "src": {
-      "size": 98588,
-      "mtime": 1789995440731,
-      "hash": "19048d3d30841e3edd8d016d627a6f48c6818051"
-     }
-    },
-    {
-     "id": "009",
-     "file": "009.jpg",
-     "hash": "96517781",
-     "w": 2200,
-     "h": 1467,
-     "color": "#53351a",
-     "lqip": "data:image/webp;base64,UklGRl4AAABXRUJQVlA4IFIAAAAQBACdASoUAA0APwForE6rJaQiMAgBYCAJZACdMoADTp18fRncRIouAAD+7K/ykbcammkIpgb6HIfq+Udosds5zy7kEEakqYsdtLS77E9P8AAA",
-     "widths": [
-      480,
-      960,
-      1440,
-      2048
-     ],
-     "formats": [
-      "avif",
-      "webp"
-     ],
-     "src": {
-      "size": 96812,
-      "mtime": 1789995440640,
-      "hash": "48e031efc5b79c592433437ba4a045c326f10b43"
-     }
-    },
-    {
-     "id": "010",
-     "file": "010.jpg",
-     "hash": "9746648d",
-     "w": 2200,
-     "h": 1467,
-     "color": "#392515",
-     "lqip": "data:image/webp;base64,UklGRloAAABXRUJQVlA4IE4AAACQAwCdASoUAA0APwForE6rJaQiMAgBYCAJQBOmUABp1hH6nygAAP7cz17AbfaFGNB81k0Rlv2N/+k2irti3etFEnOd5zz0qvLz6hqYAAA=",
-     "widths": [
-      480,
-      960,
-      1440,
-      2048
-     ],
-     "formats": [
-      "avif",
-      "webp"
-     ],
-     "src": {
-      "size": 92337,
-      "mtime": 1789995441246,
-      "hash": "755b686c6653c2535e5a8cdd3aa295e84dc2c0a7"
-     }
-    },
-    {
-     "id": "011",
-     "file": "011.jpg",
-     "hash": "419274af",
-     "w": 2200,
-     "h": 1467,
-     "color": "#372516",
-     "lqip": "data:image/webp;base64,UklGRl4AAABXRUJQVlA4IFIAAADwAwCdASoUAA0APwFqrE8rJiQiMAgBYCAJYgCdACIj1+yWisVflD6AAP7l6sQzOfcFrBGVWwJVbU8zYiN4xdNl7qHz/iq+X2kxBkQ9lFe6nPIA",
-     "widths": [
-      480,
-      960,
-      1440,
-      2048
-     ],
-     "formats": [
-      "avif",
-      "webp"
-     ],
-     "src": {
-      "size": 92150,
-      "mtime": 1789995442804,
-      "hash": "87d915d8afe7763e301eb24324b28f68714b0e96"
-     }
-    },
-    {
-     "id": "012",
-     "file": "012.jpg",
-     "hash": "e03a14b2",
-     "w": 1467,
-     "h": 2200,
-     "color": "#3a2718",
-     "lqip": "data:image/webp;base64,UklGRloAAABXRUJQVlA4IE4AAACwAwCdASoNABQAPwFqrU8rJiQiMAgBYCAJYgCdLwABn4CCs6GqAAD+7NfFDUicG9wlhIN/PL+EnickRezU9UIz7E7j/9FQSDe/sQtw0AA=",
-     "widths": [
-      480,
-      960,
-      1440
-     ],
-     "formats": [
-      "avif",
-      "webp"
-     ],
-     "src": {
-      "size": 94239,
-      "mtime": 1789995444362,
-      "hash": "5067ec5b91ed0ff6ddf0434da21497354dc72e93"
-     }
-    },
-    {
-     "id": "cover",
-     "file": "cover.jpg",
-     "hash": "f178a7df",
-     "w": 2880,
-     "h": 1920,
-     "color": "#50321a",
-     "lqip": "data:image/webp;base64,UklGRmAAAABXRUJQVlA4IFQAAADQAwCdASoUAA0APwFqrU8rJaQiMAgBYCAJZACdMoACaapyYslu3SAA/uy+ouHcOaFrU9y3e2topuiqmHnd8RCIp2JhY/h0kDc3w7Wtcq6kWCxB8AA=",
-     "widths": [
-      480,
-      960,
-      1440,
-      2048,
-      2560
-     ],
-     "formats": [
-      "avif",
-      "webp"
-     ],
-     "src": {
-      "size": 160847,
-      "mtime": 1789995433908,
-      "hash": "dfc236b194573e01afc4f078d6fa9ea741c5f3d6"
      }
     }
    ]
   },
   "top-12-j1-chambly": {
    "dir": "top-12-j1-chambly",
-   "cover": "cover.jpg",
-   "og": "og.4b4fd73b.jpg",
+   "cover": "DSC_6440-J1_TOP 12.jpg",
+   "og": "og.5798e9e5.jpg",
    "photos": [
     {
      "id": "001",
@@ -1128,7 +470,7 @@
      ],
      "src": {
       "size": 81766,
-      "mtime": 1789995445117,
+      "mtime": 1790105321702,
       "hash": "28d82c88156d00955d785044e4208548bc71b065"
      }
     },
@@ -1152,7 +494,7 @@
      ],
      "src": {
       "size": 76255,
-      "mtime": 1789995446727,
+      "mtime": 1790105321704,
       "hash": "727894df1d2a0f673362ac736e5ec7ac82212df9"
      }
     },
@@ -1176,7 +518,7 @@
      ],
      "src": {
       "size": 81073,
-      "mtime": 1789995447759,
+      "mtime": 1790105321704,
       "hash": "f774981daf53b043e0b02d64fd3488d50ccf4686"
      }
     },
@@ -1199,7 +541,7 @@
      ],
      "src": {
       "size": 72579,
-      "mtime": 1789995448608,
+      "mtime": 1790105321704,
       "hash": "c9b2717c4b0686255e3c1c8226b545b346055c61"
      }
     },
@@ -1223,7 +565,7 @@
      ],
      "src": {
       "size": 76431,
-      "mtime": 1789995450127,
+      "mtime": 1790105321704,
       "hash": "bbd3eaf9b39963a2b97c76a204161827edb6e844"
      }
     },
@@ -1246,7 +588,7 @@
      ],
      "src": {
       "size": 81623,
-      "mtime": 1789995450578,
+      "mtime": 1790105321704,
       "hash": "026da5439c59953a37de806bc826e1f1ead35ed2"
      }
     },
@@ -1270,7 +612,7 @@
      ],
      "src": {
       "size": 62779,
-      "mtime": 1789995450877,
+      "mtime": 1790105321704,
       "hash": "6e625a58a30a7ee9dbed46c81ac999827ba6b6cd"
      }
     },
@@ -1294,7 +636,7 @@
      ],
      "src": {
       "size": 75576,
-      "mtime": 1789995452304,
+      "mtime": 1790105321706,
       "hash": "af27783f045b4c27633ab54427dfb7c7dd5ef89c"
      }
     },
@@ -1318,7 +660,7 @@
      ],
      "src": {
       "size": 92063,
-      "mtime": 1789995454494,
+      "mtime": 1790105321706,
       "hash": "33556c2c3eb0391100c1a2de4f8c47cc3fbe34b4"
      }
     },
@@ -1342,7 +684,7 @@
      ],
      "src": {
       "size": 74979,
-      "mtime": 1789995454183,
+      "mtime": 1790105321706,
       "hash": "80d1ced245518a1d26dca84d44399973ee8c19b1"
      }
     },
@@ -1358,6 +700,30 @@
       480,
       960,
       1440,
+      2048
+     ],
+     "formats": [
+      "avif",
+      "webp"
+     ],
+     "src": {
+      "size": 125673,
+      "mtime": 1790105321706,
+      "hash": "382929d6983efd37237533a7162fb1d8ebf77aa5"
+     }
+    },
+    {
+     "id": "dsc-6440-j1-top-12",
+     "file": "DSC_6440-J1_TOP 12.jpg",
+     "hash": "2a5f49db",
+     "w": 5626,
+     "h": 3712,
+     "color": "#2b3c2d",
+     "lqip": "data:image/webp;base64,UklGRnwAAABXRUJQVlA4IHAAAAAwBACdASoUAA0APwForE6rJaQiMAgBYCAJbAC7ACHqSoSIDnS/puRo+yQA/uwRGSPXu21+AhGJrabScGXRIOzq9CZNX8daiHmXzIfX03IVv7arwjPpthh9yEa0qQg6SHRSG6NWP/ES5oL7VyRRAAAA",
+     "widths": [
+      480,
+      960,
+      1440,
       2048,
       2560
      ],
@@ -1366,9 +732,9 @@
       "webp"
      ],
      "src": {
-      "size": 125673,
-      "mtime": 1789995446316,
-      "hash": "382929d6983efd37237533a7162fb1d8ebf77aa5"
+      "size": 1440318,
+      "mtime": 1790155889700,
+      "hash": "dde7d389246900808cf5fcffc90728229ec5fcfe"
      }
     }
    ]
@@ -1398,7 +764,7 @@
      ],
      "src": {
       "size": 74808,
-      "mtime": 1789995456025,
+      "mtime": 1790105321706,
       "hash": "31de09817322509d72870f80304d9faa4ab573c1"
      }
     },
@@ -1422,7 +788,7 @@
      ],
      "src": {
       "size": 87191,
-      "mtime": 1789995458326,
+      "mtime": 1790105321710,
       "hash": "84ffae1ebd55e3e876ed4d202e7c5e4c372da135"
      }
     },
@@ -1446,7 +812,7 @@
      ],
      "src": {
       "size": 77917,
-      "mtime": 1789995457920,
+      "mtime": 1790105321710,
       "hash": "12dc83a2e17a3b4220d734f65062ee99ffaafe09"
      }
     },
@@ -1470,7 +836,7 @@
      ],
      "src": {
       "size": 83503,
-      "mtime": 1789995459717,
+      "mtime": 1790105321710,
       "hash": "0a09decd88a9bfceaad119c4ba5b7720bbdb46ad"
      }
     },
@@ -1494,7 +860,7 @@
      ],
      "src": {
       "size": 81746,
-      "mtime": 1789995460138,
+      "mtime": 1790105321710,
       "hash": "234d35d371b02f4201136c0ce48213a590f2dd79"
      }
     },
@@ -1518,7 +884,7 @@
      ],
      "src": {
       "size": 78623,
-      "mtime": 1789995461735,
+      "mtime": 1790105321710,
       "hash": "30cc591ac5d6fbe5409416285ab37555a62ecd3f"
      }
     },
@@ -1541,7 +907,7 @@
      ],
      "src": {
       "size": 74895,
-      "mtime": 1789995461739,
+      "mtime": 1790105321710,
       "hash": "e328940f421b96538afd2220839497bda34d8a15"
      }
     },
@@ -1565,7 +931,7 @@
      ],
      "src": {
       "size": 78879,
-      "mtime": 1789995462895,
+      "mtime": 1790105321710,
       "hash": "ad81b4524bcb30735ac338fae06d117d070b6365"
      }
     },
@@ -1588,7 +954,7 @@
      ],
      "src": {
       "size": 84433,
-      "mtime": 1789995463775,
+      "mtime": 1790105321710,
       "hash": "e7631a4a76d043a864923905c24edf6b6430fbea"
      }
     },
@@ -1612,7 +978,7 @@
      ],
      "src": {
       "size": 70502,
-      "mtime": 1789995464708,
+      "mtime": 1790105321710,
       "hash": "c7533c833fa4ef7e06d231da316128aa807537f2"
      }
     },
@@ -1636,7 +1002,7 @@
      ],
      "src": {
       "size": 74359,
-      "mtime": 1789995465341,
+      "mtime": 1790105321710,
       "hash": "5a67a9361255adc77f33357764e8e11783ad4de9"
      }
     },
@@ -1660,7 +1026,7 @@
      ],
      "src": {
       "size": 91258,
-      "mtime": 1789995466884,
+      "mtime": 1790105321714,
       "hash": "a347fd038a80b18ad78aba7f386e43626863b407"
      }
     },
@@ -1684,7 +1050,7 @@
      ],
      "src": {
       "size": 76604,
-      "mtime": 1789995467466,
+      "mtime": 1790105321714,
       "hash": "b54ce3eca4d59a5f67aa2f8c16abffbf36ea7c93"
      }
     },
@@ -1709,7 +1075,7 @@
      ],
      "src": {
       "size": 141206,
-      "mtime": 1789995456700,
+      "mtime": 1790105321714,
       "hash": "d1cbd3e0e91d2c56a48ef1d242cef4b89af6549a"
      }
     }
@@ -1740,7 +1106,7 @@
      ],
      "src": {
       "size": 89909,
-      "mtime": 1789995469522,
+      "mtime": 1790105321718,
       "hash": "a57ac983426a173d1abe73a994fcdf74277383fe"
      }
     },
@@ -1764,7 +1130,7 @@
      ],
      "src": {
       "size": 69451,
-      "mtime": 1789995471131,
+      "mtime": 1790105321718,
       "hash": "90b4e4f31b689ed3ad094e9d442c7166e1c38cc4"
      }
     },
@@ -1788,7 +1154,7 @@
      ],
      "src": {
       "size": 73335,
-      "mtime": 1789995472250,
+      "mtime": 1790105321718,
       "hash": "79938e8e9ed6e20d2c69918c327b46fe776ffca8"
      }
     },
@@ -1812,7 +1178,7 @@
      ],
      "src": {
       "size": 78190,
-      "mtime": 1789995473928,
+      "mtime": 1790105321718,
       "hash": "dd8593119e44e1632014637370a4bbce93b57792"
      }
     },
@@ -1836,7 +1202,7 @@
      ],
      "src": {
       "size": 82526,
-      "mtime": 1789995475205,
+      "mtime": 1790105321718,
       "hash": "2ecdd2bda015b564d21eaf353ff0ec77da01b0b1"
      }
     },
@@ -1859,7 +1225,7 @@
      ],
      "src": {
       "size": 87390,
-      "mtime": 1789995475514,
+      "mtime": 1790105321722,
       "hash": "b299698eb1580aa8ce1815d0962fbe593e65c5ac"
      }
     },
@@ -1883,7 +1249,7 @@
      ],
      "src": {
       "size": 76477,
-      "mtime": 1789995475616,
+      "mtime": 1790105321722,
       "hash": "4c9756d5b21f6e4626572b459d9f489cbc9b0cf4"
      }
     },
@@ -1906,7 +1272,7 @@
      ],
      "src": {
       "size": 82136,
-      "mtime": 1789995477705,
+      "mtime": 1790105321722,
       "hash": "2785c817128ec4c016d9f94fa7d7ce23d876ac52"
      }
     },
@@ -1930,7 +1296,7 @@
      ],
      "src": {
       "size": 70728,
-      "mtime": 1789995478338,
+      "mtime": 1790105321722,
       "hash": "618a2daa86d059e58f1bf8ff7aaf39795eee10aa"
      }
     },
@@ -1954,7 +1320,7 @@
      ],
      "src": {
       "size": 77769,
-      "mtime": 1789995479909,
+      "mtime": 1790105321722,
       "hash": "fdc50574547528113acdaaddc28b47663f9fb99e"
      }
     },
@@ -1978,7 +1344,7 @@
      ],
      "src": {
       "size": 93463,
-      "mtime": 1789995480578,
+      "mtime": 1790105321726,
       "hash": "eeaabf93d58c67c69962cfebbd6e88f3ae1eee6c"
      }
     },
@@ -2002,7 +1368,7 @@
      ],
      "src": {
       "size": 76890,
-      "mtime": 1789995482426,
+      "mtime": 1790105321726,
       "hash": "a23bdee45a39ff7637bfa92e7f9da9e16e917954"
      }
     },
@@ -2026,7 +1392,7 @@
      ],
      "src": {
       "size": 72051,
-      "mtime": 1789995483112,
+      "mtime": 1790105321726,
       "hash": "2d2cfd5932c1a087fe27dcaf8ee30c4c3aba3bbd"
      }
     },
@@ -2050,7 +1416,7 @@
      ],
      "src": {
       "size": 72013,
-      "mtime": 1789995484073,
+      "mtime": 1790105321726,
       "hash": "c2bd152b67951efd1a22645b736850fdce2c32ea"
      }
     },
@@ -2075,7 +1441,7 @@
      ],
      "src": {
       "size": 124910,
-      "mtime": 1789995471436,
+      "mtime": 1790105321730,
       "hash": "9a03e0e862e6967aee4596524c63ea7f654de660"
      }
     }
@@ -2106,7 +1472,7 @@
      ],
      "src": {
       "size": 85944,
-      "mtime": 1789995486135,
+      "mtime": 1790105321730,
       "hash": "c75a75be5dba6a98cf358d6b3f41374cf0de239f"
      }
     },
@@ -2130,7 +1496,7 @@
      ],
      "src": {
       "size": 103783,
-      "mtime": 1789995486690,
+      "mtime": 1790105321734,
       "hash": "2628fb81aea5d70c90ae186cf919178783a57583"
      }
     },
@@ -2154,7 +1520,7 @@
      ],
      "src": {
       "size": 113860,
-      "mtime": 1789995488963,
+      "mtime": 1790105321734,
       "hash": "d0072640e163f8b00353846a7dfdf0284c7ef60b"
      }
     },
@@ -2178,7 +1544,7 @@
      ],
      "src": {
       "size": 111154,
-      "mtime": 1789995490165,
+      "mtime": 1790105321734,
       "hash": "b346117ca503d1e4fb6311bad6e5b7477792c40c"
      }
     },
@@ -2202,7 +1568,7 @@
      ],
      "src": {
       "size": 112493,
-      "mtime": 1789995490906,
+      "mtime": 1790105321734,
       "hash": "87b9feae4b62c728f26223f44ea310a50e69d0d9"
      }
     },
@@ -2226,7 +1592,7 @@
      ],
      "src": {
       "size": 96060,
-      "mtime": 1789995491839,
+      "mtime": 1790105321738,
       "hash": "8e1970936ac4242e8d98176881177f68a7ad1773"
      }
     },
@@ -2250,7 +1616,7 @@
      ],
      "src": {
       "size": 101051,
-      "mtime": 1789995492964,
+      "mtime": 1790105321738,
       "hash": "06d1f8806429607f69687845d01b8bdc3a02d367"
      }
     },
@@ -2273,7 +1639,7 @@
      ],
      "src": {
       "size": 103923,
-      "mtime": 1789995494205,
+      "mtime": 1790105321738,
       "hash": "a27c2accd6315f5fec94f77cc0f3955e11971f8a"
      }
     },
@@ -2297,7 +1663,7 @@
      ],
      "src": {
       "size": 104451,
-      "mtime": 1789995494759,
+      "mtime": 1790105321738,
       "hash": "9fe2d8192bb16923a0fdfa1a8ba6ef1c6a2c1861"
      }
     },
@@ -2320,7 +1686,7 @@
      ],
      "src": {
       "size": 106218,
-      "mtime": 1789995495691,
+      "mtime": 1790105321742,
       "hash": "33bd70e7ca0cc06076b04539b0c2989a4fbacd2f"
      }
     },
@@ -2345,7 +1711,7 @@
      ],
      "src": {
       "size": 168758,
-      "mtime": 1789995487915,
+      "mtime": 1790105321742,
       "hash": "0c0cd8169c9543ff055e0333ec10dfaef37e6dda"
      }
     }
