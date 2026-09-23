@@ -29,6 +29,10 @@ utilisables à tout moment, y compris sur le même événement.
 4. C'est tout : créer/modifier un événement, glisser des photos, changer un texte du site… chaque
    sauvegarde écrit directement les fichiers, exactement comme si vous les modifiiez à la main.
 
+Le formulaire d'un événement ne montre que les champs les plus utiles (titre, date, compétition,
+lieu, description, photos) — l'adresse de la page (`slug`, voir plus bas) est calculée toute seule,
+et les champs plus rares (SEO, brouillon…) sont regroupés en bas.
+
 Après avoir ajouté des photos par ce biais, lancez `npm run photos` (ou laissez `npm run dev`
 tourner : il s'en charge tout seul) pour générer leurs versions optimisées AVIF/WebP.
 
