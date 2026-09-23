@@ -4,7 +4,7 @@
   "pre-nationale-j1-chambly": {
    "dir": "pre-nationale-j1-chambly",
    "cover": "cover.jpg",
-   "og": "og.4a98c7ae.jpg",
+   "og": "og.5354ece3.jpg",
    "photos": [
     {
      "id": "001",
@@ -294,11 +294,11 @@
     {
      "id": "cover",
      "file": "cover.jpg",
-     "hash": "22b45a72",
-     "w": 5626,
-     "h": 3712,
-     "color": "#374038",
-     "lqip": "data:image/webp;base64,UklGRooAAABXRUJQVlA4IH4AAAAQBACdASoUAA0APwFqrE8rJiQiMAgBYCAJbACdEf/gNudeg7bZRPVZAAD+2flTPwdTQzlDW800/l06ZcR3g2C13S7UIcTnP6JDrD5HlNm8u0zEfvL4WKeLptK5qWLeqHg75ug2fXGPUZCVjf1AvfsVIiAXnzZQ0nr2jyOAAAA=",
+     "hash": "7291ec33",
+     "w": 4684,
+     "h": 3122,
+     "color": "#393131",
+     "lqip": "data:image/webp;base64,UklGRnoAAABXRUJQVlA4IG4AAABQBACdASoUAA0APwFqrU8rJaQiMAgBYCAJYgC/UuAt9UB5HjkcBHkbd98AAP7w0eSewiXE8aYF7EtdR1q/xLPMcmgPzUPWxEgCyTNIUjyueN3FJ8ZV7v/hJVGqqR03dpJznQq5XKYsDhtG10woAA==",
      "widths": [
       480,
       960,
@@ -311,9 +311,9 @@
       "webp"
      ],
      "src": {
-      "size": 2455201,
-      "mtime": 1790155889688,
-      "hash": "e4f8a9f79922e2db2f2990dff985e07db792b100"
+      "size": 974546,
+      "mtime": 1790161547515,
+      "hash": "cccaf986e0c9b7b7f4b007f86953f558708ab5d4"
      }
     }
    ]
