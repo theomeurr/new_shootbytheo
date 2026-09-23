@@ -32,10 +32,6 @@ jobs:
           password: ${{ secrets.FTP_PASSWORD }}
           local-dir: ./dist/
           server-dir: ./www/
-          dangerous-clean-slate: true
           exclude: |
             **/.git*
             **/.git*/**
-            **/livraison/**
-            **/sbt-livraisons.php
-            **/sbt-mdp.php.vieux.php
