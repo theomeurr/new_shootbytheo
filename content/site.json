@@ -2,7 +2,7 @@
   "name": "ShootByTheo",
   "url": "https://shootbytheo.com",
   "logo": "/logo-white.png",
-  "tagline": "Photographie • Vidéo • Sport",
+  "tagline": "Photographie • Sport",
   "headerTagline": "Sport · Événementiel",
   "slogan": [
     "Capturer l’intensité."
@@ -21,12 +21,12 @@
     "slides": [
       {
         "event": "top-12-j1-chambly",
-        "photo": "cover",
+        "photo": "content/evenements/pre-nationale-j1-chambly/DSC_5538J1_PRE NAT.jpg",
         "position": "50% 40%"
       },
       {
         "event": "top-12-j1-chambly",
-        "photo": "cover",
+        "photo": "content/evenements/top-12-j1-chambly/DSC_6440-J1_TOP 12.jpg",
         "position": "50% 40%"
       }
     ]
