@@ -43,10 +43,6 @@ const year = new Date().getFullYear();
       <span>© {year} Théo Meurier</span>
       <a href={`mailto:${site.email}`}>{site.email}</a>
       {instagram && <a href={instagram.url} target="_blank" rel="noopener">{instagram.handle}</a>}
-      <span class="footer__legal">
-        <a href="/mentions-legales/">Mentions légales</a>
-        <a href="/politique-de-confidentialite/">Politique de confidentialité</a>
-      </span>
     </div>
   </div>
 </footer>
@@ -120,12 +116,6 @@ const year = new Date().getFullYear();
   .footer__bottom a:hover {
     color: var(--text);
   }
-  .footer__legal {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.75rem 1.75rem;
-  }
-
   /* Accueil : une seule ligne discrète sous l'image à la une */
   .footer--compact {
     border-top-color: transparent;
