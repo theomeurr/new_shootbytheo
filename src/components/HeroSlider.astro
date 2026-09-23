@@ -111,7 +111,7 @@ const many = slides.length > 1;
   }
   .hero__slides {
     position: relative;
-    width: min(72vw, 34rem);
+    width: min(74vw, 44rem, calc((100svh - var(--header-h) - 15rem) * 1.5));
     aspect-ratio: 3 / 2;
   }
   .hero__shade {
@@ -119,7 +119,7 @@ const many = slides.length > 1;
     top: calc(var(--header-h) + 1.5rem);
     left: 50%;
     transform: translateX(-50%);
-    width: min(72vw, 34rem);
+    width: min(74vw, 44rem, calc((100svh - var(--header-h) - 15rem) * 1.5));
     aspect-ratio: 3 / 2;
   }
   .hero__slide {
