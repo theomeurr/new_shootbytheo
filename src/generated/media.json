@@ -685,33 +685,9 @@
   },
   "site-images": {
    "dir": "site-images",
-   "cover": "a-propos.jpg",
+   "cover": "prestation-complete.jpg",
    "og": null,
    "photos": [
-    {
-     "id": "a-propos",
-     "file": "a-propos.jpg",
-     "hash": "5c2ae9e3",
-     "w": 1760,
-     "h": 2200,
-     "color": "#171e35",
-     "lqip": "data:image/webp;base64,UklGRlYAAABXRUJQVlA4IEoAAAAQBACdASoQABQAPwFqrE6rJiQiMAgBYCAJZgC7MoADTuG45ClSNaSahAD+7LkyTvou1HxojUFVJzZtYrIKMIwmvT52eRZb7ZUAAA==",
-     "widths": [
-      480,
-      960,
-      1440,
-      1760
-     ],
-     "formats": [
-      "avif",
-      "webp"
-     ],
-     "src": {
-      "size": 94850,
-      "mtime": 1789995497832,
-      "hash": "cef626d7272ae4068055e12eb3b096a1aa037f5f"
-     }
-    },
     {
      "id": "prestation-complete",
      "file": "prestation-complete.jpg",
