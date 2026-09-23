@@ -6,9 +6,16 @@ import PageHead from '@/components/PageHead.astro';
 import Picture from '@/components/Picture.astro';
 import { sitePhoto } from '@/lib/media';
 import { absoluteUrl, site } from '@/lib/site';
+import { slugify } from '@/lib/slug';
 import prestations from '@content/prestations.json';
 
-const services = prestations.services.map((service) => ({ ...service, photo: sitePhoto(service.image) }));
+// "id" n'est plus demandé dans le CMS : calculé depuis le titre si absent (compatible avec les
+// prestations existantes, qui gardent leur identifiant d'origine).
+const services = prestations.services.map((service) => ({
+  ...service,
+  id: (service as { id?: string }).id || slugify(service.title),
+  photo: sitePhoto(service.image),
+}));
 
 const jsonLd = {
   '@context': 'https://schema.org',

@@ -27,8 +27,9 @@ collections:
     folder: content/evenements
     create: true
     delete: true
-    slug: '{{fields.slug}}'
-    path: '{{fields.slug}}/event'
+    # Adresse de la page calculée automatiquement (sport + lieu + date) : rien à taper.
+    slug: "{{fields.sport}}-{{fields.location}}-{{date | date('YYYY-MM-DD')}}"
+    path: '{{slug}}/event'
     extension: json
     format: json
     identifier_field: title
@@ -42,17 +43,11 @@ collections:
     media_folder: ''
     public_folder: ''
     fields:
+      # --- Le plus courant : ce qu'on remplit à chaque événement ---
       - name: title
         label: Titre
         widget: string
         hint: 'Ex. « Pré-Nationale • Journée 2 ». Le « • » sépare les deux lignes du titre sur la page de l’événement.'
-
-      - name: slug
-        label: Adresse de la page (slug)
-        widget: string
-        required: true
-        pattern: ['^[a-z0-9]+(?:-[a-z0-9]+)*$', 'Minuscules, chiffres et tirets uniquement, ex. pre-nationale-j2-beauvais.']
-        hint: 'Détermine le dossier et l’adresse /evenements/…/. Ex. pre-nationale-j2-beauvais (compétition + journée + lieu, en minuscules).'
 
       - name: date
         label: Date
@@ -60,24 +55,42 @@ collections:
         type: date
         required: true
 
-      - name: dateEnd
-        label: Date de fin
-        widget: datetime
-        type: date
-        required: false
-        hint: 'Uniquement pour un événement sur plusieurs jours (ex. un tournoi de deux jours).'
-
-      - name: sport
-        label: Sport
-        widget: string
-        required: false
-        default: Badminton
-
       - name: competition
         label: Compétition (= catégorie)
         widget: string
         required: false
         hint: 'Ex. « Top 12 », « Pré-Nationale », « Nationale 2 ». Regroupe les journées sur la page Événements — un nouveau nom crée une nouvelle catégorie tout seul. Laisser vide pour un tournoi, une cérémonie ou un événement spécial.'
+
+      - name: location
+        label: Lieu (ville)
+        widget: string
+        required: false
+
+      - name: description
+        label: Description
+        widget: text
+        required: false
+        hint: 'Une ou deux phrases sur la journée.'
+
+      - name: cover
+        label: Couverture
+        widget: image
+        required: false
+        hint: 'Laisser vide pour utiliser automatiquement la première photo de la galerie.'
+
+      - name: gallery
+        label: Galerie photo
+        widget: list
+        required: false
+        field: { name: image, label: Photo, widget: image }
+        hint: 'Glissez vos photos ici (JPEG, ~2560 px de large conseillé). L’ordre ci-dessus est celui de la galerie sur le site.'
+
+      # --- Plus rare : à ne remplir que si besoin ---
+      - name: sport
+        label: Sport
+        widget: string
+        required: false
+        default: Badminton
 
       - name: type
         label: Type (si pas de compétition)
@@ -95,11 +108,6 @@ collections:
           - { label: Événementiel, value: evenementiel }
         hint: 'Filtre en haut de la page Événements. Par défaut : Badminton si le sport est le badminton, sinon Autres sports.'
 
-      - name: location
-        label: Lieu (ville)
-        widget: string
-        required: false
-
       - name: venue
         label: Salle / gymnase
         widget: string
@@ -111,31 +119,24 @@ collections:
         required: false
         allow_add: true
 
-      - name: description
-        label: Description
-        widget: text
+      - name: dateEnd
+        label: Date de fin
+        widget: datetime
+        type: date
         required: false
-        hint: 'Une ou deux phrases sur la journée.'
-
-      - name: cover
-        label: Couverture
-        widget: image
-        required: false
-        hint: 'Laisser vide pour utiliser automatiquement la première photo de la galerie.'
+        hint: 'Uniquement pour un événement sur plusieurs jours (ex. un tournoi de deux jours).'
 
       - name: coverPosition
-        label: Point focal de la couverture
-        widget: string
+        label: Cadrage de la couverture
+        widget: select
         required: false
-        default: '50% 40%'
-        hint: 'Comme en CSS : horizontal puis vertical, de 0% à 100%. Ex. « 50% 40% » = centré, un peu vers le haut.'
-
-      - name: gallery
-        label: Galerie photo
-        widget: list
-        required: false
-        field: { name: image, label: Photo, widget: image }
-        hint: 'Glissez vos photos ici (JPEG, ~2560 px de large conseillé). L’ordre ci-dessus est celui de la galerie sur le site.'
+        options:
+          - { label: 'Centré', value: '50% 50%' }
+          - { label: 'Centré, un peu en haut', value: '50% 35%' }
+          - { label: 'Centré, un peu en bas', value: '50% 65%' }
+          - { label: 'Vers la gauche', value: '30% 50%' }
+          - { label: 'Vers la droite', value: '70% 50%' }
+        hint: 'Où centrer le zoom sur la photo, selon la taille de l’écran. « Centré » convient presque toujours.'
 
       - name: seoTitle
         label: Titre SEO
@@ -204,7 +205,17 @@ singletons:
                 search_fields: [title, competition, location]
                 display_fields: [title]
               - { name: photo, label: Photo, widget: string, default: cover, hint: '« cover » pour la couverture de l’événement, ou le nom d’un fichier de sa galerie (ex. 003.jpg).' }
-              - { name: position, label: Point focal, widget: string, default: '50% 40%', hint: 'Comme pour la couverture d’un événement.' }
+              - name: position
+                label: Cadrage
+                widget: select
+                required: false
+                options:
+                  - { label: 'Centré', value: '50% 50%' }
+                  - { label: 'Centré, un peu en haut', value: '50% 35%' }
+                  - { label: 'Centré, un peu en bas', value: '50% 65%' }
+                  - { label: 'Vers la gauche', value: '30% 50%' }
+                  - { label: 'Vers la droite', value: '70% 50%' }
+                hint: 'Où centrer le zoom sur la photo, selon la taille de l’écran. « Centré » convient presque toujours.'
       - name: contact
         label: Formulaire de contact
         widget: object
@@ -243,13 +254,26 @@ singletons:
         widget: list
         summary: '{{fields.title}}'
         fields:
-          - { name: id, label: Identifiant, widget: string, hint: 'Court, sans espace (sert dans l’adresse de la page, ex. « photo »). Ne pas changer sur une prestation existante.' }
-          - { name: formValue, label: Valeur dans le formulaire de contact, widget: string, hint: 'Doit correspondre à une des options du menu « Type de prestation » du formulaire de contact.' }
           - { name: title, label: Titre, widget: string }
+          - name: formValue
+            label: Type (dans le formulaire de contact)
+            widget: select
+            options: ['Photographie', 'Vidéo', 'Photo + Vidéo', 'Réseaux sociaux', 'Autre']
+            hint: 'Présélectionné quand quelqu’un clique « Demander un devis » sur cette prestation.'
           - { name: summary, label: Résumé, widget: text }
           - { name: includes, label: Ce qui est inclus, widget: list, hint: 'Une ligne par élément (affichés en petites étiquettes).' }
           - { name: image, label: Photo, widget: image, media_folder: content/images, public_folder: /images }
-          - { name: imagePosition, label: Point focal de la photo, widget: string, default: '50% 50%' }
+          - name: imagePosition
+            label: Cadrage de la photo
+            widget: select
+            required: false
+            options:
+              - { label: 'Centré', value: '50% 50%' }
+              - { label: 'Centré, un peu en haut', value: '50% 35%' }
+              - { label: 'Centré, un peu en bas', value: '50% 65%' }
+              - { label: 'Vers la gauche', value: '30% 50%' }
+              - { label: 'Vers la droite', value: '70% 50%' }
+            hint: 'Où centrer le zoom sur la photo, selon la taille de l’écran. « Centré » convient presque toujours.'
 
   - name: a-propos
     label: À propos
@@ -261,5 +285,15 @@ singletons:
       - { name: paragraphs, label: Paragraphes suivants, widget: list, hint: 'Un paragraphe par ligne.' }
       - { name: signature, label: Signature, widget: string }
       - { name: image, label: Photo, widget: image, media_folder: content/images, public_folder: /images }
-      - { name: imagePosition, label: Point focal de la photo, widget: string, default: '50% 40%' }
+      - name: imagePosition
+        label: Cadrage de la photo
+        widget: select
+        required: false
+        options:
+          - { label: 'Centré', value: '50% 50%' }
+          - { label: 'Centré, un peu en haut', value: '50% 35%' }
+          - { label: 'Centré, un peu en bas', value: '50% 65%' }
+          - { label: 'Vers la gauche', value: '30% 50%' }
+          - { label: 'Vers la droite', value: '70% 50%' }
+        hint: 'Où centrer le zoom sur la photo, selon la taille de l’écran. « Centré » convient presque toujours.'
       - { name: imageAlt, label: Texte alternatif de la photo, widget: string, hint: 'Décrit la photo pour l’accessibilité et le référencement.' }
