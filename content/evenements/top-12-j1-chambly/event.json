@@ -1,14 +1,22 @@
 {
-  "id": 6,
   "title": "Top 12 • Journée 1",
   "date": "2026-09-12",
-  "sport": "Badminton",
   "competition": "Top 12",
   "location": "Chambly",
+  "description": "Reprise de l’élite du badminton français. Retour de la championne du monde Delphine Delrue, accompagnée d'une belle victoire contre Cholet !",
+  "cover": "DSC_6440-J1_TOP 12.jpg",
+  "gallery": [],
+  "sport": "Badminton",
+  "type": "",
+  "category": "",
+  "venue": "",
   "teams": [
-    "BC Chambly",
-    "Équipe visiteuse"
+    "BC Chambly"
   ],
-  "description": "Reprise de l’élite du badminton français. Salle pleine, présentation des équipes et premiers points de la saison.",
-  "coverPosition": "50% 40%"
+  "dateEnd": "",
+  "coverPosition": "50% 40%",
+  "seoTitle": "",
+  "seoDescription": "",
+  "draft": false,
+  "id": 6
 }
