@@ -4,7 +4,7 @@
   "pre-nationale-j1-chambly": {
    "dir": "pre-nationale-j1-chambly",
    "cover": "cover.jpg",
-   "og": "og.ef7d18c4.jpg",
+   "og": "og.4a98c7ae.jpg",
    "photos": [
     {
      "id": "001",
@@ -423,8 +423,8 @@
   },
   "top-12-j1-chambly": {
    "dir": "top-12-j1-chambly",
-   "cover": "DSC_6440-J1_TOP 12.jpg",
-   "og": "og.5798e9e5.jpg",
+   "cover": "cover.jpg",
+   "og": "og.a64cedee.jpg",
    "photos": [
     {
      "id": "001",
@@ -667,30 +667,6 @@
     {
      "id": "cover",
      "file": "cover.jpg",
-     "hash": "53708618",
-     "w": 2880,
-     "h": 1920,
-     "color": "#181e33",
-     "lqip": "data:image/webp;base64,UklGRlQAAABXRUJQVlA4IEgAAACQAwCdASoUAA0APwForE6rJiQiMAgBYCAJQBYdg9JBekS+n1agAP7w3wwKcBgSQv7dkjlqwaeGDwoKh2YMVXGxHQ15YCgAAAA=",
-     "widths": [
-      480,
-      960,
-      1440,
-      2048
-     ],
-     "formats": [
-      "avif",
-      "webp"
-     ],
-     "src": {
-      "size": 125673,
-      "mtime": 1790105321706,
-      "hash": "382929d6983efd37237533a7162fb1d8ebf77aa5"
-     }
-    },
-    {
-     "id": "dsc-6440-j1-top-12",
-     "file": "DSC_6440-J1_TOP 12.jpg",
      "hash": "2a5f49db",
      "w": 5626,
      "h": 3712,
