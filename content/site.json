@@ -20,13 +20,13 @@
     "autoplaySeconds": 7,
     "slides": [
       {
-        "event": "top-12-j1-chambly",
-        "photo": "content/evenements/pre-nationale-j1-chambly/DSC_5538J1_PRE NAT.jpg",
+        "event": "pre-nationale-j1-chambly",
+        "photo": "cover",
         "position": "50% 40%"
       },
       {
         "event": "top-12-j1-chambly",
-        "photo": "content/evenements/top-12-j1-chambly/DSC_6440-J1_TOP 12.jpg",
+        "photo": "cover",
         "position": "50% 40%"
       }
     ]
