@@ -1,6 +1,5 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
-import CtaBand from '@/components/CtaBand.astro';
 import EventCard from '@/components/EventCard.astro';
 import PageHead from '@/components/PageHead.astro';
 import { CATEGORIES, getEvents, groupBySeason } from '@/lib/events';
@@ -119,7 +118,6 @@ const jsonLd = {
     {events.length === 0 && <p class="empty">Les premières galeries arrivent bientôt.</p>}
   </div>
 
-  <CtaBand />
 </BaseLayout>
 
 <style>
