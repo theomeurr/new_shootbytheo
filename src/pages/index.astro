@@ -21,13 +21,16 @@ let slides: Slide[] = (site.hero.slides ?? [])
   })
   .filter((slide): slide is Slide => Boolean(slide));
 
-// Rien de configuré (ou événements introuvables) : les trois derniers événements passent à la une.
+// Rien de configuré (ou événement introuvable) : le dernier événement passe à la une.
 if (!slides.length) {
   slides = events
     .filter((event) => event.cover)
-    .slice(0, 3)
+    .slice(0, 1)
     .map((event) => ({ photo: event.cover!, event, position: event.coverPosition }));
 }
+
+// Une seule photo fixe à la une, pas de défilement.
+slides = slides.slice(0, 1);
 
 const jsonLd = [
   {

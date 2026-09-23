@@ -9,7 +9,6 @@ import Picture from './Picture.astro';
 import type { SiteEvent } from '@/lib/events';
 import type { Photo } from '@/lib/media';
 import { site } from '@/lib/site';
-import { fitDivisor } from '@/lib/type-metrics';
 
 export interface Slide {
   photo: Photo;
@@ -25,11 +24,9 @@ interface Props {
 const { slides, autoplaySeconds = 7 } = Astro.props;
 const many = slides.length > 1;
 const pad = (n: number) => String(n).padStart(2, '0');
-// Largeur réelle de la plus longue ligne du slogan : le titre s'ajuste pour qu'elle tienne sur une seule ligne.
-const sloganFit = fitDivisor(site.slogan);
 ---
 
-<section class="hero" data-hero data-autoplay={many ? autoplaySeconds : 0} style={`--hero-duration:${autoplaySeconds}s;--hero-fit:${sloganFit}`} aria-roledescription="carrousel" aria-label="À la une">
+<section class="hero" data-hero data-autoplay={many ? autoplaySeconds : 0} style={`--hero-duration:${autoplaySeconds}s`} aria-roledescription="carrousel" aria-label="À la une">
   <div class="hero__slides">
     {
       slides.map((slide, index) => (
@@ -51,12 +48,8 @@ const sloganFit = fitDivisor(site.slogan);
   <div class="hero__inner">
     <div class="hero__content">
       <p class="kicker hero__kicker">{site.tagline}</p>
-      <h1 class="display hero__title">
-        <span class="sr-only">{site.name}, photographe et vidéaste sportif. </span>
-        {site.slogan.map((line) => <span class="hero__line">{line} </span>)}
-      </h1>
+      <h1 class="sr-only">{site.name}, photographe et vidéaste sportif.</h1>
       <div class="hero__actions">
-        <a class="btn btn--accent" href="/evenements/">Voir les événements <Icon name="arrow-right" /></a>
         <a class="btn btn--ghost" href="/contact/">Me contacter</a>
       </div>
     </div>
@@ -171,12 +164,6 @@ const sloganFit = fitDivisor(site.slogan);
     gap: clamp(1rem, 1.6vw, 1.75rem);
     justify-items: start;
     container-type: inline-size;
-  }
-  .hero__title {
-    font-size: clamp(1.4rem, 6.5vw, 2.4rem);
-  }
-  .hero__line {
-    display: block;
   }
   .hero__actions {
     display: flex;
@@ -316,15 +303,6 @@ const sloganFit = fitDivisor(site.slogan);
     }
   }
 
-  /* À partir de la tablette : chaque ligne du slogan tient sur une ligne
-     (--hero-fit = largeur de la ligne la plus longue, en em ; voir src/lib/type-metrics.ts).
-     Le facteur 1.2 garde une marge : le titre n'a pas besoin de remplir toute la colonne. */
-  @media (min-width: 700px) {
-    .hero__title {
-      font-size: clamp(1.75rem, calc(100cqi / (var(--hero-fit) * 1.5)), 3.5rem);
-    }
-  }
-
   @media (min-width: 1000px) {
     .hero__inner {
       grid-template-columns: minmax(0, 1fr) auto;
@@ -348,9 +326,6 @@ const sloganFit = fitDivisor(site.slogan);
   }
 
   @media (max-height: 560px) and (orientation: landscape) {
-    .hero__title {
-      font-size: clamp(1.3rem, 3.8vw, 2.2rem);
-    }
     .hero__kicker {
       display: none;
     }
