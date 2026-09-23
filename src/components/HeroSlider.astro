@@ -124,8 +124,11 @@ const pad = (n: number) => String(n).padStart(2, '0');
     }
   }
   .hero__slides,
-  .hero__slide,
   .hero__shade {
+    position: absolute;
+    inset: clamp(3.5rem, 11vh, 7rem) clamp(1.25rem, 7vw, 7rem);
+  }
+  .hero__slide {
     position: absolute;
     inset: 0;
   }

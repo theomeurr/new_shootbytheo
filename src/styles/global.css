@@ -490,6 +490,11 @@ ol {
 .picture--fit img {
   object-fit: contain;
 }
+.picture--fit {
+  /* La zone visible dépasse souvent l'image (contain) : fond neutre plutôt que la couleur dominante de l'aperçu flou. */
+  background-color: var(--bg) !important;
+  background-image: none !important;
+}
 
 /* Apparition progressive des images (l'aperçu flou reste visible dessous). */
 .js img[data-fade] {
