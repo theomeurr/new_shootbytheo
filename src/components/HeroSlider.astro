@@ -1,8 +1,7 @@
 ---
 /**
- * Image à la une, plein écran. Les diapositives viennent de content/site.json (hero.slides).
- * Composition reprise du site actuel : titre massif en bas à gauche, commandes,
- * compteur et vignettes en bas à droite, barres de progression tout en bas.
+ * Image à la une : une petite vignette centrée, avec des flèches de part et
+ * d'autre quand il y a plusieurs événements à la une. Pas de défilement automatique.
  */
 import Icon from './Icon.astro';
 import Picture from './Picture.astro';
@@ -18,29 +17,43 @@ export interface Slide {
 
 interface Props {
   slides: Slide[];
-  autoplaySeconds?: number;
 }
 
-const { slides, autoplaySeconds = 7 } = Astro.props;
+const { slides } = Astro.props;
 const many = slides.length > 1;
-const pad = (n: number) => String(n).padStart(2, '0');
 ---
 
-<section class="hero" data-hero data-autoplay={many ? autoplaySeconds : 0} style={`--hero-duration:${autoplaySeconds}s`} aria-roledescription="carrousel" aria-label="À la une">
-  <div class="hero__slides">
+<section class="hero" data-hero aria-roledescription="carrousel" aria-label="À la une">
+  <div class="hero__frame">
     {
-      slides.map((slide, index) => (
-        <div class:list={['hero__slide', index === 0 && 'is-active']} data-hero-slide aria-hidden={index === 0 ? undefined : 'true'}>
-          <Picture
-            photo={slide.photo}
-            alt={slide.event ? `${slide.event.seoTitle} — photo ShootByTheo` : 'Photographie sportive ShootByTheo'}
-            sizes="100vw"
-            fit
-            priority={index === 0}
-            deferred={index > 0}
-          />
-        </div>
-      ))
+      many && (
+        <button class="hero__arrow" type="button" data-hero-prev aria-label="Image précédente">
+          <Icon name="arrow-left" />
+        </button>
+      )
+    }
+    <div class="hero__slides">
+      {
+        slides.map((slide, index) => (
+          <div class:list={['hero__slide', index === 0 && 'is-active']} data-hero-slide aria-hidden={index === 0 ? undefined : 'true'}>
+            <Picture
+              photo={slide.photo}
+              alt={slide.event ? `${slide.event.seoTitle} — photo ShootByTheo` : 'Photographie sportive ShootByTheo'}
+              sizes="90vw"
+              fit
+              priority={index === 0}
+              deferred={index > 0}
+            />
+          </div>
+        ))
+      }
+    </div>
+    {
+      many && (
+        <button class="hero__arrow" type="button" data-hero-next aria-label="Image suivante">
+          <Icon name="arrow-right" />
+        </button>
+      )
     }
   </div>
   <div class="hero__shade" aria-hidden="true"></div>
@@ -74,35 +87,7 @@ const pad = (n: number) => String(n).padStart(2, '0');
         }
       </div>
 
-      {
-        many && (
-          <div class="hero__controls" data-hero-controls>
-            <button class="hero__arrow" type="button" data-hero-prev aria-label="Image précédente">
-              <Icon name="arrow-left" />
-            </button>
-            <p class="hero__counter" aria-live="polite">
-              <span data-hero-current>01</span> / {pad(slides.length)}
-            </p>
-            <button class="hero__arrow" type="button" data-hero-next aria-label="Image suivante">
-              <Icon name="arrow-right" />
-            </button>
-          </div>
-        )
-      }
-
     </div>
-
-    {
-      many && (
-        <div class="hero__progress" aria-hidden="true">
-          {slides.map((_, index) => (
-            <span class:list={['hero__bar', index === 0 && 'is-active']} data-hero-bar>
-              <i />
-            </span>
-          ))}
-        </div>
-      )
-    }
   </div>
 </section>
 
@@ -115,13 +100,26 @@ const pad = (n: number) => String(n).padStart(2, '0');
     background: var(--bg);
     isolation: isolate;
   }
-  .hero__slides,
+  .hero__frame {
+    position: absolute;
+    top: calc(var(--header-h) + 1.5rem);
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    gap: clamp(0.75rem, 2.5vw, 1.75rem);
+  }
+  .hero__slides {
+    position: relative;
+    width: min(72vw, 34rem);
+    aspect-ratio: 3 / 2;
+  }
   .hero__shade {
     position: absolute;
     top: calc(var(--header-h) + 1.5rem);
     left: 50%;
     transform: translateX(-50%);
-    width: min(82vw, 19rem);
+    width: min(72vw, 34rem);
     aspect-ratio: 3 / 2;
   }
   .hero__slide {
@@ -156,6 +154,12 @@ const pad = (n: number) => String(n).padStart(2, '0');
     align-content: end;
     gap: 1.75rem;
     padding: calc(var(--header-h) + 1rem) var(--edge) calc(1.5rem + env(safe-area-inset-bottom));
+    /* Ne couvre que son contenu (en bas) : laisse passer les clics vers les flèches de l'image. */
+    pointer-events: none;
+  }
+  .hero__content,
+  .hero__aside {
+    pointer-events: auto;
   }
 
   .hero__content {
@@ -173,9 +177,6 @@ const pad = (n: number) => String(n).padStart(2, '0');
 
   .hero__aside {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) auto;
-    align-items: end;
-    gap: 1rem 1.5rem;
   }
   .hero__captions {
     display: grid;
@@ -223,19 +224,9 @@ const pad = (n: number) => String(n).padStart(2, '0');
     transform: translate(0.15em, -0.15em);
   }
 
-  .hero__controls {
-    display: flex;
-    align-items: center;
-    gap: 0.9rem;
-  }
-  /* Sur téléphone : la légende garde la place, les barres du bas indiquent déjà la position. */
   @media (max-width: 699px) {
-    .hero__counter,
     .hero__caption-date {
       display: none;
-    }
-    .hero__controls {
-      gap: 0.5rem;
     }
   }
   .hero__arrow {
@@ -259,48 +250,6 @@ const pad = (n: number) => String(n).padStart(2, '0');
     border-color: var(--text);
     color: var(--bg);
   }
-  .hero__counter {
-    min-width: 4.75rem;
-    font-family: var(--font-mono);
-    font-size: 0.8125rem;
-    letter-spacing: 0.22em;
-    text-align: center;
-    color: var(--text);
-  }
-
-  .hero__progress {
-    display: flex;
-    gap: 0.5rem;
-  }
-  .hero__bar {
-    position: relative;
-    flex: 1;
-    height: 2px;
-    background: rgba(243, 239, 233, 0.22);
-    overflow: hidden;
-  }
-  .hero__bar i {
-    position: absolute;
-    inset: 0;
-    background: var(--accent);
-    transform: scaleX(0);
-    transform-origin: left;
-  }
-  .hero__bar.is-active i {
-    animation: hero-progress var(--hero-duration) linear forwards;
-  }
-  .hero.is-paused .hero__bar.is-active i {
-    animation-play-state: paused;
-  }
-  .hero.is-static .hero__bar.is-active i {
-    animation: none;
-    transform: none;
-  }
-  @keyframes hero-progress {
-    to {
-      transform: scaleX(1);
-    }
-  }
 
   @media (min-width: 1000px) {
     .hero__inner {
@@ -310,17 +259,12 @@ const pad = (n: number) => String(n).padStart(2, '0');
       padding-bottom: 2rem;
     }
     .hero__aside {
-      grid-template-columns: auto;
       justify-items: end;
-      gap: 1.25rem;
       max-width: 24rem;
     }
     .hero__caption {
       justify-items: end;
       text-align: right;
-    }
-    .hero__progress {
-      grid-column: 1 / -1;
     }
   }
 
@@ -337,10 +281,6 @@ const pad = (n: number) => String(n).padStart(2, '0');
   if (hero) {
     const slides = [...hero.querySelectorAll<HTMLElement>('[data-hero-slide]')];
     const captions = [...hero.querySelectorAll<HTMLElement>('[data-hero-caption]')];
-    const bars = [...hero.querySelectorAll<HTMLElement>('[data-hero-bar]')];
-    const current = hero.querySelector<HTMLElement>('[data-hero-current]');
-    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const autoplay = Number(hero.dataset.autoplay) > 0 && !reducedMotion;
     let index = 0;
 
     /** Les diapositives suivantes ne sont téléchargées qu'au moment utile. */
@@ -368,42 +308,12 @@ const pad = (n: number) => String(n).padStart(2, '0');
         caption.classList.toggle('is-active', i === index);
         if (caption instanceof HTMLAnchorElement) caption.tabIndex = i === index ? 0 : -1;
       });
-      bars.forEach((bar, i) => {
-        bar.classList.remove('is-active');
-        if (i === index) {
-          void bar.offsetWidth; // relance l'animation de progression
-          bar.classList.add('is-active');
-        }
-      });
-      if (current) current.textContent = String(index + 1).padStart(2, '0');
       hydrate(slides[(index + 1) % slides.length]);
     };
 
     if (slides.length > 1) {
       hero.querySelector('[data-hero-next]')?.addEventListener('click', () => goTo(index + 1));
       hero.querySelector('[data-hero-prev]')?.addEventListener('click', () => goTo(index - 1));
-
-      if (autoplay) {
-        // La barre de progression sert de minuterie : quand elle est pleine, on passe à la suite.
-        bars.forEach((bar) => bar.addEventListener('animationend', () => goTo(index + 1)));
-
-        const pauseReasons = new Set<string>();
-        const setPaused = (reason: string, paused: boolean) => {
-          if (paused) pauseReasons.add(reason);
-          else pauseReasons.delete(reason);
-          hero.classList.toggle('is-paused', pauseReasons.size > 0);
-        };
-        hero.querySelectorAll('[data-hero-controls]').forEach((zone) => {
-          zone.addEventListener('pointerenter', () => setPaused('hover', true));
-          zone.addEventListener('pointerleave', () => setPaused('hover', false));
-          zone.addEventListener('focusin', () => setPaused('focus', true));
-          zone.addEventListener('focusout', () => setPaused('focus', false));
-        });
-        document.addEventListener('visibilitychange', () => setPaused('hidden', document.hidden));
-        new IntersectionObserver(([entry]) => setPaused('offscreen', !entry.isIntersecting), { threshold: 0.25 }).observe(hero);
-      } else {
-        hero.classList.add('is-static');
-      }
 
       // Balayage tactile
       let startX = 0;
