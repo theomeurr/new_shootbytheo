@@ -97,17 +97,6 @@ const sloganFit = fitDivisor(site.slogan);
         )
       }
 
-      {
-        many && (
-          <div class="hero__thumbs" data-hero-controls>
-            {slides.map((slide, index) => (
-              <button class:list={['hero__thumb', index === 0 && 'is-active']} type="button" data-hero-thumb={index} aria-label={`Afficher l’image ${index + 1}`} aria-current={index === 0 ? 'true' : undefined}>
-                <Picture photo={slide.photo} alt="" sizes="96px" cover position={slide.position} max={480} placeholder="color" />
-              </button>
-            ))}
-          </div>
-        )
-      }
     </div>
 
     {
@@ -160,18 +149,6 @@ const sloganFit = fitDivisor(site.slogan);
     transition:
       opacity 1.4s var(--ease),
       visibility 0s;
-  }
-  /* Zoom très lent sur l'image affichée */
-  .hero__slide :global(img) {
-    transform: scale(1.001);
-  }
-  .hero__slide.is-active :global(img) {
-    animation: hero-zoom 14s linear forwards;
-  }
-  @keyframes hero-zoom {
-    to {
-      transform: scale(1.07);
-    }
   }
   .hero__shade {
     background:
@@ -305,35 +282,6 @@ const sloganFit = fitDivisor(site.slogan);
     color: var(--text);
   }
 
-  .hero__thumbs {
-    display: none;
-    grid-column: 1 / -1;
-    justify-content: flex-end;
-    gap: 0.6rem;
-  }
-  .hero__thumb {
-    width: 5rem;
-    aspect-ratio: 3 / 2;
-    overflow: hidden;
-    outline: 1px solid transparent;
-    outline-offset: 0;
-    opacity: 0.6;
-    transition:
-      opacity 0.4s var(--ease),
-      outline-color 0.4s var(--ease);
-  }
-  .hero__thumb:hover {
-    opacity: 1;
-  }
-  .hero__thumb.is-active {
-    opacity: 1;
-    outline: 2px solid var(--accent);
-  }
-  .hero__thumb:focus-visible {
-    outline: 2px solid var(--text);
-    outline-offset: 2px;
-  }
-
   .hero__progress {
     display: flex;
     gap: 0.5rem;
@@ -394,9 +342,6 @@ const sloganFit = fitDivisor(site.slogan);
       justify-items: end;
       text-align: right;
     }
-    .hero__thumbs {
-      display: flex;
-    }
     .hero__progress {
       grid-column: 1 / -1;
     }
@@ -418,7 +363,6 @@ const sloganFit = fitDivisor(site.slogan);
   if (hero) {
     const slides = [...hero.querySelectorAll<HTMLElement>('[data-hero-slide]')];
     const captions = [...hero.querySelectorAll<HTMLElement>('[data-hero-caption]')];
-    const thumbs = [...hero.querySelectorAll<HTMLButtonElement>('[data-hero-thumb]')];
     const bars = [...hero.querySelectorAll<HTMLElement>('[data-hero-bar]')];
     const current = hero.querySelector<HTMLElement>('[data-hero-current]');
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -450,11 +394,6 @@ const sloganFit = fitDivisor(site.slogan);
         caption.classList.toggle('is-active', i === index);
         if (caption instanceof HTMLAnchorElement) caption.tabIndex = i === index ? 0 : -1;
       });
-      thumbs.forEach((thumb, i) => {
-        thumb.classList.toggle('is-active', i === index);
-        if (i === index) thumb.setAttribute('aria-current', 'true');
-        else thumb.removeAttribute('aria-current');
-      });
       bars.forEach((bar, i) => {
         bar.classList.remove('is-active');
         if (i === index) {
@@ -469,7 +408,6 @@ const sloganFit = fitDivisor(site.slogan);
     if (slides.length > 1) {
       hero.querySelector('[data-hero-next]')?.addEventListener('click', () => goTo(index + 1));
       hero.querySelector('[data-hero-prev]')?.addEventListener('click', () => goTo(index - 1));
-      thumbs.forEach((thumb, i) => thumb.addEventListener('click', () => goTo(i)));
 
       if (autoplay) {
         // La barre de progression sert de minuterie : quand elle est pleine, on passe à la suite.
