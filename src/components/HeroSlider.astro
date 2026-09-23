@@ -38,8 +38,7 @@ const sloganFit = fitDivisor(site.slogan);
             photo={slide.photo}
             alt={slide.event ? `${slide.event.seoTitle} — photo ShootByTheo` : 'Photographie sportive ShootByTheo'}
             sizes="100vw"
-            cover
-            position={slide.position}
+            fit
             priority={index === 0}
             deferred={index > 0}
           />

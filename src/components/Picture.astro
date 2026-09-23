@@ -12,6 +12,8 @@ interface Props {
   sizes: string;
   /** Remplit son conteneur (object-fit: cover). */
   cover?: boolean;
+  /** Tient entière dans son conteneur, sans recadrage (object-fit: contain). */
+  fit?: boolean;
   /** Point focal, comme object-position : "50% 35%". */
   position?: string;
   /** Image au-dessus de la ligne de flottaison : chargée immédiatement, en priorité. */
@@ -24,7 +26,7 @@ interface Props {
   class?: string;
 }
 
-const { photo, alt, sizes, cover = false, position, priority = false, deferred = false, placeholder = 'blur', min, max, class: className } = Astro.props;
+const { photo, alt, sizes, cover = false, fit = false, position, priority = false, deferred = false, placeholder = 'blur', min, max, class: className } = Astro.props;
 
 const fallback = fallbackFormat(photo);
 const modern = photo.formats.filter((format) => format !== fallback);
@@ -39,7 +41,7 @@ const background =
       : undefined;
 ---
 
-<picture class:list={['picture', cover && 'picture--cover', className]} style={background}>
+<picture class:list={['picture', cover && 'picture--cover', fit && 'picture--fit', className]} style={background}>
   {
     modern.map((format) =>
       deferred ? (

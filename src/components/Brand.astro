@@ -4,12 +4,14 @@ import { site } from '@/lib/site';
 
 interface Props {
   class?: string;
+  /** Logo nettement plus grand (utilisé dans l'en-tête). */
+  large?: boolean;
 }
-const { class: className } = Astro.props;
+const { class: className, large = false } = Astro.props;
 ---
 
-<a class:list={['brand', className]} href="/" aria-label={`${site.name} — retour à l’accueil`}>
-  {site.logo ? <img src={site.logo} alt="" height="40" /> : <span aria-hidden="true">Shoot<i>by</i>Theo</span>}
+<a class:list={['brand', large && 'brand--large', className]} href="/" aria-label={`${site.name} — retour à l’accueil`}>
+  {site.logo ? <img src={site.logo} alt="" height={large ? '160' : '40'} /> : <span aria-hidden="true">Shoot<i>by</i>Theo</span>}
 </a>
 
 <style>
@@ -30,5 +32,9 @@ const { class: className } = Astro.props;
   .brand img {
     height: clamp(2rem, 3vw, 2.75rem);
     width: auto;
+  }
+  .brand--large img {
+    height: clamp(6rem, 9vw, 9.5rem);
+    transition: height 0.45s var(--ease-out);
   }
 </style>

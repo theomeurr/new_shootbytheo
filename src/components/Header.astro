@@ -8,7 +8,7 @@ const { pathname } = Astro.url;
 
 <header class="header" data-header>
   <div class="header__inner">
-    <Brand />
+    <Brand large />
     <span class="header__tag" aria-hidden="true">{site.headerTagline}</span>
 
     <nav class="nav" aria-label="Navigation principale">
@@ -87,6 +87,10 @@ const { pathname } = Astro.url;
     -webkit-backdrop-filter: blur(16px) saturate(1.2);
     backdrop-filter: blur(16px) saturate(1.2);
     box-shadow: 0 1px 0 var(--line);
+  }
+  .header.is-scrolled :global(.brand--large img) {
+    height: 2.5rem;
+    transition: height 0.45s var(--ease-out);
   }
   .header.is-scrolled::before {
     opacity: 0;
