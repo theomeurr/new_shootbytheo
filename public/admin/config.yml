@@ -125,16 +125,14 @@ singletons:
     format: json
     fields:
       - { name: name, label: Nom du site, widget: string }
-      - { name: url, label: Adresse du site, widget: string, hint: 'Ex. https://shootbytheo.com — sans le / final.' }
-      - { name: logo, label: Logo (optionnel), widget: string, required: false, hint: 'Chemin d’un logo déposé dans public/, ex. /logo.svg. Laisser vide pour le mot-symbole « ShootByTheo ».' }
-      - { name: tagline, label: Signature courte, widget: string, hint: 'Ex. « Photographie • Vidéo • Sport ».' }
-      - { name: headerTagline, label: Signature du menu, widget: string, hint: 'Affichée à côté du logo, sur grand écran.' }
-      - name: slogan
-        label: Slogan de l’accueil
-        widget: list
-        hint: 'Une ligne par entrée. Deux lignes fonctionnent le mieux avec la mise en page actuelle.'
-        min: 1
-        max: 3
+      # Réglages techniques ou plus utilisés par la mise en page actuelle : cachés
+      # (les valeurs existantes sont conservées).
+      - { name: url, widget: hidden }
+      - { name: logo, widget: hidden, required: false }
+      - { name: headerTagline, widget: hidden, required: false }
+      - { name: slogan, widget: hidden, required: false }
+      - { name: mediaBaseUrl, widget: hidden, required: false }
+      - { name: tagline, label: Signature courte, widget: string, hint: 'Affichée en orange sur l’accueil, au-dessus de « Me contacter ». Ex. « Photographie • Sport ».' }
       - { name: description, label: Description du site (SEO), widget: text, hint: 'Utilisée par Google et les partages quand une page n’a pas sa propre description.' }
       - { name: email, label: E-mail de contact, widget: string }
       - name: socials
@@ -149,12 +147,12 @@ singletons:
         label: Image(s) à la une
         widget: object
         fields:
-          - { name: autoplaySeconds, label: Durée entre deux photos (secondes), widget: number, value_type: int, min: 3, max: 30, default: 7 }
+          - { name: autoplaySeconds, widget: hidden, default: 7 }
           - name: slides
             label: Photos à la une
             widget: list
             summary: '{{fields.event}}'
-            hint: 'Choisis simplement le ou les événements à mettre en avant — leur photo de couverture est utilisée automatiquement. Vide = les 3 derniers événements sont utilisés automatiquement.'
+            hint: 'Choisis le ou les événements à mettre en avant (flèches ← → sur l’accueil) — leur photo de couverture est utilisée automatiquement. Vide = les 3 derniers événements.'
             fields:
               - name: event
                 label: Événement
@@ -173,7 +171,6 @@ singletons:
         required: false
         fields:
           - { name: formEndpoint, label: Adresse du service de formulaire, widget: string, required: false, hint: 'Ex. https://formspree.io/f/xxxxxxxx. Laisser vide : le bouton ouvre un e-mail prérempli dans la messagerie du visiteur (aucun service tiers).' }
-      - { name: mediaBaseUrl, label: Adresse externe des photos (avancé), widget: string, required: false, hint: 'Uniquement si public/media/ est déplacé vers un stockage séparé (ex. https://media.shootbytheo.com). Laisser vide sinon.' }
       - name: legal
         label: Mentions légales
         widget: object
