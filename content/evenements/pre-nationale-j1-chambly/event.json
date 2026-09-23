@@ -1,12 +1,21 @@
 {
-  "id": 7,
-  "slug": "pre-nationale-j1-chambly",
   "title": "Pré-Nationale • Journée 1",
-  "date": "19 septembre 2026",
-  "sport": "Badminton",
+  "date": "2026-09-19",
   "competition": "Pré-Nationale",
   "location": "Chambly",
-  "description": "Première journée de la saison à domicile. Des regards concentrés, des échanges tendus et un banc qui pousse jusqu’au dernier volant.",
-  "cover": "cover.jpg",
-  "coverPosition": "50% 40%"
+  "description": "Première journée de la saison à domicile. Une belle victoire contre Cholet !",
+  "cover": "DSC_5538J1_PRE NAT.jpg",
+  "gallery": [],
+  "sport": "Badminton",
+  "type": "",
+  "category": "badminton",
+  "venue": "",
+  "teams": [],
+  "dateEnd": "",
+  "coverPosition": "50% 40%",
+  "seoTitle": "",
+  "seoDescription": "",
+  "draft": false,
+  "id": 7,
+  "slug": "pre-nationale-j1-chambly"
 }
