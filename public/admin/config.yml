@@ -92,22 +92,6 @@ collections:
         required: false
         default: Badminton
 
-      - name: type
-        label: Type (si pas de compétition)
-        widget: string
-        required: false
-        hint: 'Tournoi, Cérémonie, Événement spécial… Affiché uniquement quand « Compétition » est vide.'
-
-      - name: category
-        label: Univers
-        widget: select
-        required: false
-        options:
-          - { label: Badminton, value: badminton }
-          - { label: Autres sports, value: autres-sports }
-          - { label: Événementiel, value: evenementiel }
-        hint: 'Filtre en haut de la page Événements. Par défaut : Badminton si le sport est le badminton, sinon Autres sports.'
-
       - name: venue
         label: Salle / gymnase
         widget: string
@@ -119,42 +103,17 @@ collections:
         required: false
         allow_add: true
 
-      - name: dateEnd
-        label: Date de fin
-        widget: datetime
-        type: date
-        required: false
-        hint: 'Uniquement pour un événement sur plusieurs jours (ex. un tournoi de deux jours).'
-
-      - name: coverPosition
-        label: Cadrage de la couverture
-        widget: select
-        required: false
-        options:
-          - { label: 'Centré', value: '50% 50%' }
-          - { label: 'Centré, un peu en haut', value: '50% 35%' }
-          - { label: 'Centré, un peu en bas', value: '50% 65%' }
-          - { label: 'Vers la gauche', value: '30% 50%' }
-          - { label: 'Vers la droite', value: '70% 50%' }
-        hint: 'Où centrer le zoom sur la photo, selon la taille de l’écran. « Centré » convient presque toujours.'
-
-      - name: seoTitle
-        label: Titre SEO
-        widget: string
-        required: false
-        hint: 'Remplace le titre généré automatiquement pour Google et les partages. Laisser vide sauf besoin particulier.'
-
-      - name: seoDescription
-        label: Description SEO
-        widget: text
-        required: false
-
-      - name: draft
-        label: Brouillon (masqué du site publié)
-        widget: boolean
-        required: false
-        default: false
-        hint: 'Visible seulement en développement (npm run dev), absent du site une fois publié.'
+      # --- Champs avancés, cachés du formulaire pour ne pas surcharger l'ajout d'un
+      # événement : demande-le à Claude si tu en as besoin (tournoi/cérémonie sans
+      # compétition, événement sur plusieurs jours, cadrage précis de la couverture,
+      # SEO personnalisé, brouillon). Les valeurs déjà présentes sont conservées. ---
+      - { name: type, widget: hidden, required: false }
+      - { name: category, widget: hidden, required: false }
+      - { name: dateEnd, widget: hidden, required: false }
+      - { name: coverPosition, widget: hidden, required: false, default: '50% 40%' }
+      - { name: seoTitle, widget: hidden, required: false }
+      - { name: seoDescription, widget: hidden, required: false }
+      - { name: draft, widget: hidden, required: false, default: false }
 
 # ---------------------------------------------------------------------------
 # Textes et réglages du site : un formulaire par fichier, pas de liste à parcourir.
@@ -195,7 +154,7 @@ singletons:
             label: Photos à la une
             widget: list
             summary: '{{fields.event}}'
-            hint: 'Une seule entrée = image fixe. Vide = les 3 derniers événements sont utilisés automatiquement.'
+            hint: 'Choisis simplement le ou les événements à mettre en avant — leur photo de couverture est utilisée automatiquement. Vide = les 3 derniers événements sont utilisés automatiquement.'
             fields:
               - name: event
                 label: Événement
@@ -204,18 +163,10 @@ singletons:
                 value_field: '{{slug}}'
                 search_fields: [title, competition, location]
                 display_fields: [title]
-              - { name: photo, label: Photo, widget: string, default: cover, hint: '« cover » pour la couverture de l’événement, ou le nom d’un fichier de sa galerie (ex. 003.jpg).' }
-              - name: position
-                label: Cadrage
-                widget: select
-                required: false
-                options:
-                  - { label: 'Centré', value: '50% 50%' }
-                  - { label: 'Centré, un peu en haut', value: '50% 35%' }
-                  - { label: 'Centré, un peu en bas', value: '50% 65%' }
-                  - { label: 'Vers la gauche', value: '30% 50%' }
-                  - { label: 'Vers la droite', value: '70% 50%' }
-                hint: 'Où centrer le zoom sur la photo, selon la taille de l’écran. « Centré » convient presque toujours.'
+              # Cachés : la couverture de l'événement suffit dans presque tous les cas.
+              # Demande à Claude si tu veux une photo précise de la galerie ou un cadrage différent.
+              - { name: photo, widget: hidden, default: cover }
+              - { name: position, widget: hidden, default: '50% 40%' }
       - name: contact
         label: Formulaire de contact
         widget: object
