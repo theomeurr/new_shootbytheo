@@ -280,6 +280,26 @@ export async function runMediaPipeline(options = {}) {
 
   for (const set of sets) {
     const files = await listImages(set.dir);
+
+    // Photo choisie dans le dossier général du CMS (content/images/) plutôt que dans celui de
+    // l'événement : on la traite quand même avec l'événement, pour que la couverture et la
+    // galerie la retrouvent (le CMS propose les deux dossiers, il est facile de se tromper).
+    const sourceDirOf = new Map(files.map((file) => [file, set.dir]));
+    if (set.eventData) {
+      const siteFiles = await listImages(PATHS.siteImages);
+      const referenced = [set.eventData.cover, ...(Array.isArray(set.eventData.gallery) ? set.eventData.gallery : [])]
+        .filter(Boolean)
+        .map((value) => path.basename(String(value)).toLowerCase());
+      for (const name of referenced) {
+        if (files.some((file) => file.toLowerCase() === name)) continue;
+        const match = siteFiles.find((file) => file.toLowerCase() === name);
+        if (match) {
+          files.push(match);
+          sourceDirOf.set(match, PATHS.siteImages);
+        }
+      }
+    }
+
     const previous = manifest.sets[set.key];
     const outDir = path.join(PATHS.out, set.outName);
 
@@ -314,7 +334,7 @@ export async function runMediaPipeline(options = {}) {
     let done = 0;
 
     await pool(jobs, concurrency, async (job, i) => {
-      const source = path.join(set.dir, job.file);
+      const source = path.join(sourceDirOf.get(job.file) ?? set.dir, job.file);
       try {
         const stat = await fs.stat(source);
         const src = { size: stat.size, mtime: Math.round(stat.mtimeMs) };
@@ -362,7 +382,7 @@ export async function runMediaPipeline(options = {}) {
       const target = path.join(outDir, og);
       if (force || !existsSync(target)) {
         try {
-          await buildOgImage(path.join(set.dir, cover.file), target, position);
+          await buildOgImage(path.join(sourceDirOf.get(cover.file) ?? set.dir, cover.file), target, position);
           generatedHere++;
         } catch (error) {
           warn(`${set.key} : image de partage non générée (${error.message}).`);

@@ -132,7 +132,7 @@ singletons:
       - { name: headerTagline, widget: hidden, required: false }
       - { name: slogan, widget: hidden, required: false }
       - { name: mediaBaseUrl, widget: hidden, required: false }
-      - { name: tagline, label: Signature courte, widget: string, hint: 'Affichée en orange sur l’accueil, au-dessus de « Me contacter ». Ex. « Photographie • Sport ».' }
+      - { name: tagline, label: Signature courte, widget: string, hint: 'Affichée sur l’accueil, au-dessus de « Me contacter ». Ex. « Photographie • Sport ».' }
       - { name: description, label: Description du site (SEO), widget: text, hint: 'Utilisée par Google et les partages quand une page n’a pas sa propre description.' }
       - { name: email, label: E-mail de contact, widget: string }
       - name: socials

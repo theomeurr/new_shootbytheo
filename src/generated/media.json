@@ -3,8 +3,8 @@
  "sets": {
   "pre-nationale-j1-chambly": {
    "dir": "pre-nationale-j1-chambly",
-   "cover": "cover.jpg",
-   "og": "og.5354ece3.jpg",
+   "cover": "DSC_5518J1_PRE NAT.jpg",
+   "og": "og.7f536187.jpg",
    "photos": [
     {
      "id": "001",
@@ -303,8 +303,7 @@
       480,
       960,
       1440,
-      2048,
-      2560
+      2048
      ],
      "formats": [
       "avif",
@@ -314,6 +313,31 @@
       "size": 974546,
       "mtime": 1790347255050,
       "hash": "cccaf986e0c9b7b7f4b007f86953f558708ab5d4"
+     }
+    },
+    {
+     "id": "dsc-5518j1-pre-nat",
+     "file": "DSC_5518J1_PRE NAT.jpg",
+     "hash": "8f1f66f9",
+     "w": 5568,
+     "h": 3712,
+     "color": "#4f4f4f",
+     "lqip": "data:image/webp;base64,UklGRnwAAABXRUJQVlA4IHAAAADQAwCdASoUAA0APwFqrE6rJiQiMAgBYCAJaQAAW/EkKa9U/rdzGMAA/nhjZdtGyx+XARRMWqyUL+AX0ogKW/H7vkFWFkUS0HJWOHUyoAYrrsfurQ7k8OYzaDmfqEl2uBx3sN/dTUHjnMJJzTzoAAAA",
+     "widths": [
+      480,
+      960,
+      1440,
+      2048,
+      2560
+     ],
+     "formats": [
+      "avif",
+      "webp"
+     ],
+     "src": {
+      "size": 1813536,
+      "mtime": 1790347594476,
+      "hash": "66adf38b5902d2bd017a6aa2f39be4e771a57b9e"
      }
     }
    ]
