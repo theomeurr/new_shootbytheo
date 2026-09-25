@@ -26,7 +26,7 @@
      ],
      "src": {
       "size": 93853,
-      "mtime": 1790105321678,
+      "mtime": 1789995421175,
       "hash": "309febde2a31ac7b16d7bd3fd98ebaf770518bb4"
      }
     },
@@ -49,7 +49,7 @@
      ],
      "src": {
       "size": 94308,
-      "mtime": 1790105321683,
+      "mtime": 1789995421954,
       "hash": "52e1295790c8f472ff00849b27dca3e69fb72892"
      }
     },
@@ -73,7 +73,7 @@
      ],
      "src": {
       "size": 93253,
-      "mtime": 1790105321683,
+      "mtime": 1789995422886,
       "hash": "0ee2d1f937cdf2d8401ab5fb15365fdc12eaa4eb"
      }
     },
@@ -96,7 +96,7 @@
      ],
      "src": {
       "size": 104551,
-      "mtime": 1790105321683,
+      "mtime": 1789995424852,
       "hash": "3e4b7fe2faceece263f88423a4ee6570bc28bda6"
      }
     },
@@ -120,7 +120,7 @@
      ],
      "src": {
       "size": 83228,
-      "mtime": 1790105321683,
+      "mtime": 1789995425197,
       "hash": "ce947c9c4aa0e692a77833dd0ec5f5022e425c35"
      }
     },
@@ -144,7 +144,7 @@
      ],
      "src": {
       "size": 96755,
-      "mtime": 1790105321686,
+      "mtime": 1789995426262,
       "hash": "76c35a1bc5a878666d4d84b96390f08e19962e31"
      }
     },
@@ -168,7 +168,7 @@
      ],
      "src": {
       "size": 109587,
-      "mtime": 1790105321686,
+      "mtime": 1789995427265,
       "hash": "8ec990fc2eb6df500e05f8ff08aa5b2eedbf94c8"
      }
     },
@@ -192,7 +192,7 @@
      ],
      "src": {
       "size": 95744,
-      "mtime": 1790105321686,
+      "mtime": 1789995428325,
       "hash": "a363cf10ffecfe08517ed69d8a1e0f4b8794e7ea"
      }
     },
@@ -216,7 +216,7 @@
      ],
      "src": {
       "size": 87522,
-      "mtime": 1790105321686,
+      "mtime": 1789995428501,
       "hash": "aa06d49bc1e21380ca30266eb59fce70fb2f5445"
      }
     },
@@ -240,7 +240,7 @@
      ],
      "src": {
       "size": 92325,
-      "mtime": 1790105321686,
+      "mtime": 1789995429854,
       "hash": "aa0039011365297c122bc0ae719dc599503b5d08"
      }
     },
@@ -264,7 +264,7 @@
      ],
      "src": {
       "size": 90311,
-      "mtime": 1790105321690,
+      "mtime": 1789995430800,
       "hash": "7738e0b7a1d30a4a1aefb2f58379e546fdd2fd31"
      }
     },
@@ -287,7 +287,7 @@
      ],
      "src": {
       "size": 92602,
-      "mtime": 1790105321690,
+      "mtime": 1789995431668,
       "hash": "e9bebf222e18b157d0527063f28bd961071f0045"
      }
     },
@@ -312,111 +312,8 @@
      ],
      "src": {
       "size": 974546,
-      "mtime": 1790161547515,
+      "mtime": 1790347255050,
       "hash": "cccaf986e0c9b7b7f4b007f86953f558708ab5d4"
-     }
-    }
-   ]
-  },
-  "site-images": {
-   "dir": "site-images",
-   "cover": "prestation-complete.jpg",
-   "og": null,
-   "photos": [
-    {
-     "id": "prestation-complete",
-     "file": "prestation-complete.jpg",
-     "hash": "d9c1656f",
-     "w": 2200,
-     "h": 1467,
-     "color": "#1b3b2d",
-     "lqip": "data:image/webp;base64,UklGRmQAAABXRUJQVlA4IFgAAACQAwCdASoUAA0APwFqrU8rJaQiMAgBYCAJYgAAK6GwnDbAJiiAAP7u3gQuYluQ9qATnOZiNpU1ucqPPOzJCWDBsk9m9V84HepUsEw3Ps+Ro+Rhp5A08AAA",
-     "widths": [
-      480,
-      960,
-      1440,
-      2048
-     ],
-     "formats": [
-      "avif",
-      "webp"
-     ],
-     "src": {
-      "size": 102999,
-      "mtime": 1790105321747,
-      "hash": "31c0a2c53c5214ff03ccda78f928a87a1bd86c28"
-     }
-    },
-    {
-     "id": "prestation-photo",
-     "file": "prestation-photo.jpg",
-     "hash": "adbfc35e",
-     "w": 2200,
-     "h": 1467,
-     "color": "#122c4d",
-     "lqip": "data:image/webp;base64,UklGRlwAAABXRUJQVlA4IFAAAADwAwCdASoUAA0APwForE6rJiQiMAgBYCAJZACdMoADg7SPIkx3PgkgAP7u5uftKrOnHo160woI2u1qErbvZsAI+6R+yWfyBAMaE6z51IAAAA==",
-     "widths": [
-      480,
-      960,
-      1440,
-      2048
-     ],
-     "formats": [
-      "avif",
-      "webp"
-     ],
-     "src": {
-      "size": 95964,
-      "mtime": 1790105321747,
-      "hash": "fa241dfd269990de0f13b50de41e06a28ddfae79"
-     }
-    },
-    {
-     "id": "prestation-reseaux",
-     "file": "prestation-reseaux.jpg",
-     "hash": "09f64d4b",
-     "w": 2200,
-     "h": 1467,
-     "color": "#472e19",
-     "lqip": "data:image/webp;base64,UklGRmIAAABXRUJQVlA4IFYAAADwAwCdASoUAA0APwFqrE6rJiQiMAgBYCAJZACdMoACtRhSnUM/4PMAAP7sQ+UillqnCX/jrqfVST2L+DiTEFEi6cj+PiYv3+kG9JYNGN/YpAkc25kAAA==",
-     "widths": [
-      480,
-      960,
-      1440,
-      2048
-     ],
-     "formats": [
-      "avif",
-      "webp"
-     ],
-     "src": {
-      "size": 100107,
-      "mtime": 1790105321747,
-      "hash": "4b01ac7bd2503e9656e303a465f5b7af3da9eb7a"
-     }
-    },
-    {
-     "id": "prestation-video",
-     "file": "prestation-video.jpg",
-     "hash": "2ce1a672",
-     "w": 2200,
-     "h": 1467,
-     "color": "#141827",
-     "lqip": "data:image/webp;base64,UklGRlgAAABXRUJQVlA4IEwAAADQAwCdASoUAA0APwFqrU8rJaQiMAgBYCAJYwCnFCHgCvAiieqV/MgA/u7Yyx0QtASXs/qLRSe7b0pHsFNxH0x0yI6UVavYYPXTBWAA",
-     "widths": [
-      480,
-      960,
-      1440,
-      2048
-     ],
-     "formats": [
-      "avif",
-      "webp"
-     ],
-     "src": {
-      "size": 76238,
-      "mtime": 1790105321747,
-      "hash": "e23b1ca94ee473c5c97bfcb6b9cb01b03358c3b2"
      }
     }
    ]
@@ -446,7 +343,7 @@
      ],
      "src": {
       "size": 81766,
-      "mtime": 1790105321702,
+      "mtime": 1789995445117,
       "hash": "28d82c88156d00955d785044e4208548bc71b065"
      }
     },
@@ -470,7 +367,7 @@
      ],
      "src": {
       "size": 76255,
-      "mtime": 1790105321704,
+      "mtime": 1789995446727,
       "hash": "727894df1d2a0f673362ac736e5ec7ac82212df9"
      }
     },
@@ -494,7 +391,7 @@
      ],
      "src": {
       "size": 81073,
-      "mtime": 1790105321704,
+      "mtime": 1789995447759,
       "hash": "f774981daf53b043e0b02d64fd3488d50ccf4686"
      }
     },
@@ -517,7 +414,7 @@
      ],
      "src": {
       "size": 72579,
-      "mtime": 1790105321704,
+      "mtime": 1789995448608,
       "hash": "c9b2717c4b0686255e3c1c8226b545b346055c61"
      }
     },
@@ -541,7 +438,7 @@
      ],
      "src": {
       "size": 76431,
-      "mtime": 1790105321704,
+      "mtime": 1789995450127,
       "hash": "bbd3eaf9b39963a2b97c76a204161827edb6e844"
      }
     },
@@ -564,7 +461,7 @@
      ],
      "src": {
       "size": 81623,
-      "mtime": 1790105321704,
+      "mtime": 1789995450578,
       "hash": "026da5439c59953a37de806bc826e1f1ead35ed2"
      }
     },
@@ -588,7 +485,7 @@
      ],
      "src": {
       "size": 62779,
-      "mtime": 1790105321704,
+      "mtime": 1789995450877,
       "hash": "6e625a58a30a7ee9dbed46c81ac999827ba6b6cd"
      }
     },
@@ -612,7 +509,7 @@
      ],
      "src": {
       "size": 75576,
-      "mtime": 1790105321706,
+      "mtime": 1789995452304,
       "hash": "af27783f045b4c27633ab54427dfb7c7dd5ef89c"
      }
     },
@@ -636,7 +533,7 @@
      ],
      "src": {
       "size": 92063,
-      "mtime": 1790105321706,
+      "mtime": 1789995454494,
       "hash": "33556c2c3eb0391100c1a2de4f8c47cc3fbe34b4"
      }
     },
@@ -660,7 +557,7 @@
      ],
      "src": {
       "size": 74979,
-      "mtime": 1790105321706,
+      "mtime": 1789995454183,
       "hash": "80d1ced245518a1d26dca84d44399973ee8c19b1"
      }
     },
@@ -685,7 +582,7 @@
      ],
      "src": {
       "size": 1440318,
-      "mtime": 1790155889700,
+      "mtime": 1790347255064,
       "hash": "dde7d389246900808cf5fcffc90728229ec5fcfe"
      }
     }

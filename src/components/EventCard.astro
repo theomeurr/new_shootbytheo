@@ -23,7 +23,7 @@ const titleParts = event.title
   .filter(Boolean);
 ---
 
-<a class:list={['card', `card--${variant}`]} href={event.url} data-card data-category={event.category} data-season={event.seasonId}>
+<a class:list={['card', 'theme-dark', `card--${variant}`]} href={event.url} data-card data-category={event.category} data-season={event.seasonId}>
   <div class="card__media">
     {
       event.cover ? (

@@ -175,7 +175,7 @@ Supprimer un événement = supprimer son dossier.
 ## Changer l'image à la une
 
 L'accueil n'affiche **que** les photos à la une, en plein écran, avec une ligne de pied de page : pas de
-sections en dessous, chaque rubrique (Événements, Prestations, À propos, Contact) a sa propre page dans le menu.
+sections en dessous, chaque rubrique (Événements, Contact) a sa propre page dans le menu.
 
 Dans `content/site.json` :
 
@@ -198,9 +198,8 @@ Dans `content/site.json` :
 | Fichier | Contenu |
 | --- | --- |
 | `content/site.json` | Nom, slogan, e-mail, réseaux sociaux, image à la une, formulaire, mentions légales, `logo` (chemin d'un logo placé dans `public/`, ex. `"/logo.svg"`). |
-| `content/prestations.json` | Les prestations : titres, textes, listes, image (dans `content/images/`). |
 | `content/a-propos.json` | Texte et photo de la page À propos. |
-| `content/images/` | Images hors événements (à propos, prestations). |
+| `content/images/` | Images hors événements (vide pour l'instant). |
 | `media.config.mjs` | Tailles, formats (AVIF / WebP) et qualité des images générées. |
 | `src/styles/global.css` | Couleurs (`--accent`…), typographie, espacements. |
 
@@ -300,6 +299,6 @@ src/
   components/       ← en-tête, hero, carte, galerie masonry, visionneuse…
   layouts/          ← gabarit commun (SEO, Open Graph, données structurées)
   lib/              ← lecture des événements, images, dates, métriques typographiques
-  pages/            ← accueil, événements, prestations, à propos, contact, pages légales
+  pages/            ← accueil, événements, contact, pages légales
   styles/global.css ← système visuel
 ```

@@ -12,7 +12,7 @@ backend:
   branch: main
   base_url: https://sbt-cms-admin.t-meurier13.workers.dev
 
-# Images « libres » (à propos, prestations…) : content/images/
+# Images hors événements : content/images/
 media_folder: content/images
 public_folder: /images
 
@@ -189,36 +189,3 @@ singletons:
               - { name: name, label: Nom de l’hébergeur, widget: string, required: false }
               - { name: address, label: Adresse de l’hébergeur, widget: string, required: false }
               - { name: contact, label: Téléphone ou site de l’hébergeur, widget: string, required: false }
-
-  - name: prestations
-    label: Prestations
-    file: content/prestations.json
-    format: json
-    fields:
-      - { name: intro, label: Texte d’introduction, widget: text }
-      - { name: quoteNote, label: Note sur les devis, widget: text }
-      - name: services
-        label: Prestations
-        widget: list
-        summary: '{{fields.title}}'
-        fields:
-          - { name: title, label: Titre, widget: string }
-          - name: formValue
-            label: Type (dans le formulaire de contact)
-            widget: select
-            options: ['Photographie', 'Vidéo', 'Photo + Vidéo', 'Réseaux sociaux', 'Autre']
-            hint: 'Présélectionné quand quelqu’un clique « Demander un devis » sur cette prestation.'
-          - { name: summary, label: Résumé, widget: text }
-          - { name: includes, label: Ce qui est inclus, widget: list, hint: 'Une ligne par élément (affichés en petites étiquettes).' }
-          - { name: image, label: Photo, widget: image, media_folder: content/images, public_folder: /images }
-          - name: imagePosition
-            label: Cadrage de la photo
-            widget: select
-            required: false
-            options:
-              - { label: 'Centré', value: '50% 50%' }
-              - { label: 'Centré, un peu en haut', value: '50% 35%' }
-              - { label: 'Centré, un peu en bas', value: '50% 65%' }
-              - { label: 'Vers la gauche', value: '30% 50%' }
-              - { label: 'Vers la droite', value: '70% 50%' }
-            hint: 'Où centrer le zoom sur la photo, selon la taille de l’écran. « Centré » convient presque toujours.'

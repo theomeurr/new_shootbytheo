@@ -194,7 +194,7 @@ const hiddenFields = Object.entries((site.contact.hiddenFields ?? {}) as Record<
     min-height: 3rem;
     padding: 0.6rem 0;
     border: 0;
-    border-bottom: 1px solid rgba(243, 239, 233, 0.28);
+    border-bottom: 1px solid var(--line-strong);
     border-radius: 0;
     background: transparent;
     font-size: 1rem;
@@ -209,7 +209,7 @@ const hiddenFields = Object.entries((site.contact.hiddenFields ?? {}) as Record<
   }
   .field select {
     padding-right: 2rem;
-    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23e8553a' stroke-width='1.8'%3E%3Cpath d='m5 9 7 7 7-7'/%3E%3C/svg%3E") right center / 1.15rem no-repeat;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='1.8'%3E%3Cpath d='m5 9 7 7 7-7'/%3E%3C/svg%3E") right center / 1.15rem no-repeat;
     cursor: pointer;
   }
   .field select:invalid {
@@ -220,12 +220,12 @@ const hiddenFields = Object.entries((site.contact.hiddenFields ?? {}) as Record<
     color: var(--text);
   }
   .field input[type='date'] {
-    color-scheme: dark;
+    color-scheme: light;
   }
   .field input:hover,
   .field select:hover,
   .field textarea:hover {
-    border-bottom-color: rgba(243, 239, 233, 0.55);
+    border-bottom-color: var(--text);
   }
   .field input:focus,
   .field select:focus,

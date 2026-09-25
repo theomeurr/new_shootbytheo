@@ -37,7 +37,7 @@ const background =
   placeholder === 'blur'
     ? `background-color:${photo.color};background-image:url("${photo.lqip}")`
     : placeholder === 'color'
-      ? `background-color:color-mix(in srgb, ${photo.color} 55%, #0a0a0b)`
+      ? `background-color:color-mix(in srgb, ${photo.color} 55%, var(--bg))`
       : undefined;
 ---
 

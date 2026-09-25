@@ -8,7 +8,7 @@ const { pathname } = Astro.url;
 const events = await getEvents();
 ---
 
-<header class="header" data-header>
+<header class="header theme-dark" data-header>
   <div class="header__inner">
     <div class="header__brand">
       <Brand large />
@@ -54,7 +54,7 @@ const events = await getEvents();
   </div>
 </header>
 
-<div class="menu" id="menu" data-menu inert>
+<div class="menu theme-dark" id="menu" data-menu inert>
   <nav class="menu__nav" aria-label="Menu">
     {
       NAV.map((item, index) => (
@@ -98,22 +98,13 @@ const events = await getEvents();
 </div>
 
 <style>
+  /* Bandeau noir permanent : le logo blanc reste lisible, le reste du site est sur fond blanc. */
   .header {
     position: fixed;
     inset: 0 0 auto;
     z-index: 60;
-    transition:
-      transform 0.55s var(--ease-out),
-      background-color 0.45s var(--ease);
-  }
-  /* Voile léger pour garder le menu lisible sur n'importe quelle photo */
-  .header::before {
-    content: '';
-    position: absolute;
-    inset: 0 0 -60% 0;
-    background: linear-gradient(rgba(10, 10, 11, 0.62), rgba(10, 10, 11, 0));
-    pointer-events: none;
-    transition: opacity 0.45s var(--ease);
+    background: var(--bg);
+    transition: transform 0.55s var(--ease-out);
   }
   .header__inner {
     position: relative;
@@ -134,9 +125,6 @@ const events = await getEvents();
   }
 
   .header.is-scrolled {
-    background: rgba(10, 10, 11, 0.8);
-    -webkit-backdrop-filter: blur(16px) saturate(1.2);
-    backdrop-filter: blur(16px) saturate(1.2);
     box-shadow: 0 1px 0 var(--line);
   }
   .header.is-scrolled .header__inner {
@@ -147,21 +135,12 @@ const events = await getEvents();
     height: 2.5rem;
     transition: height 0.45s var(--ease-out);
   }
-  .header.is-scrolled::before {
-    opacity: 0;
-  }
   .header.is-hidden {
     transform: translateY(-101%);
   }
   .header.is-menu-open {
-    background: transparent;
     box-shadow: none;
-    -webkit-backdrop-filter: none;
-    backdrop-filter: none;
     transform: none;
-  }
-  .header.is-menu-open::before {
-    opacity: 0;
   }
 
   .nav {
@@ -178,7 +157,7 @@ const events = await getEvents();
     font-weight: 600;
     letter-spacing: 0.14em;
     text-transform: uppercase;
-    color: rgba(243, 239, 233, 0.82);
+    color: var(--text-dim);
     transition: color 0.3s var(--ease);
   }
   .nav__link::after {
@@ -261,7 +240,7 @@ const events = await getEvents();
   }
   .nav__dropdown-link:hover,
   .nav__dropdown-link:focus-visible {
-    background: rgba(243, 239, 233, 0.06);
+    background: rgba(255, 255, 255, 0.06);
     color: var(--text);
   }
   .nav__dropdown-title {

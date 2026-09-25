@@ -140,10 +140,9 @@ const many = slides.length > 1;
       opacity 1.4s var(--ease),
       visibility 0s;
   }
+  /* Le texte est sous la photo, pas dessus : aucun voile sombre sur l'image. */
   .hero__shade {
-    background:
-      linear-gradient(to top, rgba(10, 10, 11, 0.94) 0%, rgba(10, 10, 11, 0.55) 26%, rgba(10, 10, 11, 0) 58%),
-      linear-gradient(to right, rgba(10, 10, 11, 0.35), rgba(10, 10, 11, 0) 55%);
+    background: none;
   }
 
   .hero__inner {
@@ -235,7 +234,7 @@ const many = slides.length > 1;
     place-items: center;
     width: 2.75rem;
     height: 2.75rem;
-    border: 1px solid rgba(243, 239, 233, 0.4);
+    border: 1px solid var(--line-strong);
     border-radius: 50%;
     transition:
       background-color 0.3s var(--ease),

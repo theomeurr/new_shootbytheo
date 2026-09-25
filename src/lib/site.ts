@@ -17,7 +17,6 @@ export const instagram = site.socials.find((social) => social.label.toLowerCase(
 export const NAV = [
   { label: 'Accueil', href: '/' },
   { label: 'Événements', href: '/evenements/' },
-  { label: 'Prestations', href: '/prestations/' },
   { label: 'Contact', href: '/contact/' },
 ] as const;
 

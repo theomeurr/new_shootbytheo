@@ -1,24 +1,27 @@
 /* ==========================================================================
    ShootByTheo — système visuel
-   Sombre, éditorial, priorité aux images. Un seul accent : le corail.
+   Fond blanc, texte noir, aucune couleur d'accent : les photos apportent la couleur.
+   Le bandeau du haut (logo), les textes posés sur une photo et la visionneuse restent
+   en noir : ils utilisent la classe .theme-dark ci-dessous.
    ========================================================================== */
 
 @import '@fontsource-variable/archivo/wght.css';
 @import '@fontsource-variable/jetbrains-mono/wght.css';
 
 :root {
-  color-scheme: dark;
+  color-scheme: light;
 
-  --bg: #0a0a0b;
-  --bg-soft: #101012;
-  --bg-elev: #17171a;
-  --text: #f3efe9;
-  --text-dim: rgba(243, 239, 233, 0.74);
-  --muted: rgba(243, 239, 233, 0.52);
-  --line: rgba(243, 239, 233, 0.14);
-  --accent: #e8553a;
-  --accent-bright: #ff6f52;
-  --accent-ink: #0a0a0b;
+  --bg: #ffffff;
+  --bg-soft: #f4f4f4;
+  --bg-elev: #ebebeb;
+  --text: #0a0a0b;
+  --text-dim: rgba(10, 10, 11, 0.74);
+  --muted: rgba(10, 10, 11, 0.52);
+  --line: rgba(10, 10, 11, 0.14);
+  --line-strong: rgba(10, 10, 11, 0.45);
+  --accent: #0a0a0b;
+  --accent-bright: rgba(10, 10, 11, 0.6);
+  --accent-ink: #ffffff;
 
   --font-sans: 'Archivo Variable', 'Archivo', system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
   --font-mono: 'JetBrains Mono Variable', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
@@ -41,6 +44,23 @@
 
 html.header-hidden {
   --sticky-top: 0px;
+}
+
+/* Zones sombres : bandeau du logo, texte posé sur une photo, visionneuse. */
+.theme-dark {
+  color-scheme: dark;
+  --bg: #0a0a0b;
+  --bg-soft: #101012;
+  --bg-elev: #17171a;
+  --text: #ffffff;
+  --text-dim: rgba(255, 255, 255, 0.78);
+  --muted: rgba(255, 255, 255, 0.55);
+  --line: rgba(255, 255, 255, 0.16);
+  --line-strong: rgba(255, 255, 255, 0.55);
+  --accent: #ffffff;
+  --accent-bright: rgba(255, 255, 255, 0.7);
+  --accent-ink: #0a0a0b;
+  color: var(--text);
 }
 
 /* Transitions douces entre les pages (navigateurs compatibles, sans JavaScript). */
@@ -381,13 +401,11 @@ ol {
   color: var(--accent-ink);
 }
 .btn--accent:hover {
-  background: var(--text);
+  background: var(--accent-bright);
 }
 .btn--ghost {
-  border-color: rgba(243, 239, 233, 0.55);
-  background: rgba(10, 10, 11, 0.18);
-  -webkit-backdrop-filter: blur(8px);
-  backdrop-filter: blur(8px);
+  border-color: var(--line-strong);
+  background: transparent;
 }
 .btn--ghost:hover {
   background: var(--text);
@@ -452,7 +470,7 @@ ol {
 }
 .chip:hover {
   color: var(--text);
-  border-color: rgba(243, 239, 233, 0.45);
+  border-color: var(--line-strong);
 }
 .chip[aria-pressed='true'] {
   background: var(--text);
@@ -460,7 +478,8 @@ ol {
   color: var(--bg);
 }
 .chip[aria-pressed='true'] small {
-  color: rgba(10, 10, 11, 0.6);
+  color: var(--bg);
+  opacity: 0.6;
 }
 
 /* --------------------------------------------------------------------------
