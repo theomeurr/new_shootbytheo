@@ -3,7 +3,6 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
 import Gallery, { type GalleryItem } from '@/components/Gallery.astro';
 import Icon from '@/components/Icon.astro';
 import Lightbox from '@/components/Lightbox.astro';
-import Picture from '@/components/Picture.astro';
 import { getEvents, type SiteEvent } from '@/lib/events';
 import { closestWidth, fallbackFormat, photoUrl } from '@/lib/media';
 import { absoluteUrl, site } from '@/lib/site';
@@ -85,16 +84,7 @@ const jsonLd = [
 
 <BaseLayout title={event.seoTitle} description={event.seoDescription} image={event.ogImage} imageAlt={event.seoTitle} type="article" jsonLd={jsonLd}>
   <article>
-    <header class="cover theme-dark">
-      {
-        event.cover && (
-          <div class="cover__media">
-            <Picture photo={event.cover} alt={`${event.seoTitle} — photo de couverture`} sizes="100vw" cover position={event.coverPosition} priority />
-          </div>
-        )
-      }
-      <div class="cover__shade" aria-hidden="true"></div>
-
+    <header class="cover">
       <div class="cover__inner">
         <nav class="cover__crumbs" aria-label="Fil d’Ariane">
           <a href="/evenements/"><Icon name="arrow-left" /> Événements</a>
@@ -170,38 +160,11 @@ const jsonLd = [
 </BaseLayout>
 
 <style>
-  .cover {
-    position: relative;
-    height: 76svh;
-    min-height: 28rem;
-    max-height: 60rem;
-    overflow: hidden;
-    isolation: isolate;
-    background: var(--bg-elev);
-  }
-  .cover__media,
-  .cover__shade {
-    position: absolute;
-    inset: 0;
-    z-index: -1;
-  }
-  .cover__media :global(img) {
-    animation: cover-settle 2.4s var(--ease-out) both;
-  }
-  @keyframes cover-settle {
-    from {
-      transform: scale(1.06);
-    }
-  }
-  .cover__shade {
-    background: linear-gradient(to top, rgba(10, 10, 11, 0.96) 0%, rgba(10, 10, 11, 0.5) 30%, rgba(10, 10, 11, 0) 62%);
-  }
+  /* En-tête en texte simple (plus de grande photo de couverture) : on arrive directement sur la galerie. */
   .cover__inner {
-    position: absolute;
-    inset: auto 0 0;
     display: grid;
     gap: clamp(0.75rem, 1.4vw, 1.4rem);
-    padding: 0 var(--edge) clamp(1.75rem, 3vw, 3rem);
+    padding: calc(var(--header-h) + clamp(1.5rem, 3vw, 3rem)) var(--edge) 0;
   }
   .cover__crumbs {
     display: flex;
