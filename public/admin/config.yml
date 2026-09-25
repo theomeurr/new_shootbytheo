@@ -80,10 +80,11 @@ collections:
 
       - name: gallery
         label: Galerie photo
-        widget: list
+        # Plusieurs photos d'un coup (glisser-déposer un lot ou sélection multiple).
+        widget: image
+        multiple: true
         required: false
-        field: { name: image, label: Photo, widget: image }
-        hint: 'Glissez vos photos ici (JPEG, ~2560 px de large conseillé). L’ordre ci-dessus est celui de la galerie sur le site.'
+        hint: 'Glissez toutes vos photos d’un coup (JPEG, ~2560 px de large conseillé), ou sélectionnez-en plusieurs avec Cmd (Mac) / Ctrl (PC).'
 
       # --- Plus rare : à ne remplir que si besoin ---
       - name: sport
