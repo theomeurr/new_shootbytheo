@@ -1,18 +1,28 @@
 ---
 /**
  * Visionneuse plein écran, partagée par toutes les galeries de la page.
- * Clavier : ← → (Début / Fin), Échap. Tactile : balayage gauche/droite, vers le bas pour fermer.
+ * Clavier : ← → (Début / Fin), Z ou + / − pour zoomer, D pour télécharger (si autorisé), Échap.
+ * Tactile : balayage gauche/droite, vers le bas pour fermer, double-tap pour zoomer.
  * Le bouton « retour » du téléphone ferme la visionneuse, et chaque photo a son adresse (#photo-12).
  */
 import Icon from './Icon.astro';
 ---
 
-<dialog class="lb theme-dark" data-lightbox aria-label="Visionneuse de photos">
+<dialog class="lb" data-lightbox aria-label="Visionneuse de photos">
   <div class="lb__bar">
-    <p class="lb__counter" aria-live="polite"><span data-lb-current>01</span> / <span data-lb-total>01</span></p>
-    <button class="lb__button" type="button" data-lb-close aria-label="Fermer la visionneuse">
-      <Icon name="close" />
-    </button>
+    <p class="lb__counter" aria-live="polite"><b data-lb-current>01</b> / <span data-lb-total>01</span></p>
+    <p class="lb__title" data-lb-title></p>
+    <div class="lb__tools">
+      <button class="lb__button" type="button" data-lb-zoom aria-pressed="false" aria-label="Zoomer" title="Zoomer (Z)">
+        <Icon name="zoom" />
+      </button>
+      <a class="lb__button" data-lb-save hidden aria-label="Télécharger cette photo" title="Télécharger (D)">
+        <Icon name="download" />
+      </a>
+      <button class="lb__button" type="button" data-lb-close aria-label="Fermer la visionneuse" title="Fermer (Échap)">
+        <Icon name="close" />
+      </button>
+    </div>
   </div>
 
   <div class="lb__stage" data-lb-stage>
@@ -26,12 +36,15 @@ import Icon from './Icon.astro';
     <Icon name="arrow-right" />
   </button>
 
-  <p class="lb__caption" data-lb-caption></p>
+  <div class="lb__foot">
+    <p class="lb__caption" data-lb-caption></p>
+    <p class="lb__keys" aria-hidden="true"><kbd>←</kbd><kbd>→</kbd> naviguer <kbd>Z</kbd> zoomer <kbd>Échap</kbd> fermer</p>
+  </div>
 </dialog>
 
 <style>
   .lb {
-    --lb-bar: 4rem;
+    --lb-bar: 4.25rem;
     --lb-foot: 3.75rem;
     --lb-side: 0px;
     position: fixed;
@@ -41,13 +54,13 @@ import Icon from './Icon.astro';
     height: 100dvh;
     max-height: none;
     margin: 0;
-    padding: 0;
+    padding: env(safe-area-inset-top, 0px) env(safe-area-inset-right, 0px) env(safe-area-inset-bottom, 0px) env(safe-area-inset-left, 0px);
     border: 0;
     overflow: hidden;
-    background: #060607;
+    background: #060608;
     color: var(--text);
     opacity: 0;
-    transition: opacity 0.35s var(--ease);
+    transition: opacity 0.3s var(--ease);
   }
   .lb::backdrop {
     background: transparent;
@@ -61,73 +74,110 @@ import Icon from './Icon.astro';
 
   .lb__bar {
     position: absolute;
-    inset: 0 0 auto;
-    z-index: 2;
+    inset: env(safe-area-inset-top, 0px) env(safe-area-inset-right, 0px) auto env(safe-area-inset-left, 0px);
+    z-index: 3;
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    gap: 1rem;
     height: var(--lb-bar);
-    padding-inline: clamp(1rem, 2vw, 2rem) clamp(0.5rem, 1.4vw, 1.5rem);
+    padding-inline: max(1rem, 2vw);
   }
   .lb__counter {
+    flex: none;
     font-family: var(--font-mono);
-    font-size: 0.75rem;
-    letter-spacing: 0.22em;
-    color: var(--text-dim);
+    font-size: 0.8125rem;
+    letter-spacing: 0.14em;
+    font-variant-numeric: tabular-nums;
+    color: var(--muted);
+  }
+  .lb__counter b {
+    font-weight: 500;
+    color: var(--accent);
+  }
+  .lb__title {
+    min-width: 0;
+    overflow: hidden;
+    font-size: 0.8125rem;
+    color: var(--muted);
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+  .lb__tools {
+    display: flex;
+    gap: 0.5rem;
+    margin-left: auto;
   }
   .lb__button {
     display: grid;
     place-items: center;
-    width: 3rem;
-    height: 3rem;
+    width: 2.75rem;
+    height: 2.75rem;
+    border: 1px solid rgba(255, 255, 255, 0.18);
     border-radius: 50%;
+    background: rgba(255, 255, 255, 0.04);
     color: var(--text);
     transition:
-      background-color 0.3s var(--ease),
-      color 0.3s var(--ease),
-      opacity 0.3s var(--ease);
+      background-color 0.2s var(--ease),
+      border-color 0.2s var(--ease),
+      opacity 0.2s var(--ease);
   }
   .lb__button :global(svg) {
-    width: 1.35rem;
-    height: 1.35rem;
+    width: 1.2rem;
+    height: 1.2rem;
   }
   .lb__button:hover {
-    background: var(--text);
-    color: var(--bg);
+    border-color: var(--accent);
+    background: rgba(226, 84, 58, 0.14);
+  }
+  .lb__button[aria-pressed='true'] {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: var(--accent-ink);
   }
   .lb__button[disabled] {
     opacity: 0.25;
     pointer-events: none;
   }
+  .lb__button[hidden] {
+    display: none;
+  }
 
   .lb__stage {
     position: absolute;
-    inset: var(--lb-bar) var(--lb-side) var(--lb-foot);
+    inset: calc(var(--lb-bar) + env(safe-area-inset-top, 0px)) var(--lb-side) calc(var(--lb-foot) + env(safe-area-inset-bottom, 0px));
     display: grid;
     place-items: center;
+    overflow: hidden;
     touch-action: pinch-zoom;
     cursor: zoom-out;
   }
   .lb.is-zoomed .lb__stage {
-    touch-action: auto;
+    touch-action: none;
   }
   .lb__frame {
     --r: 1.5;
     --w: 4000;
     position: relative;
     /* Le plus grand rectangle aux proportions de la photo qui tient dans la scène */
-    width: min(100vw - var(--lb-side) * 2, (100dvh - var(--lb-bar) - var(--lb-foot)) * var(--r), var(--w) * 1px);
+    width: min(100vw - var(--lb-side) * 2, (100dvh - var(--lb-bar) - var(--lb-foot) - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px)) * var(--r), var(--w) * 1px);
     aspect-ratio: var(--r);
     background-position: center;
     background-size: cover;
-    cursor: default;
+    cursor: zoom-in;
     transition:
-      transform 0.45s var(--ease-out),
+      transform 0.4s var(--ease-out),
       opacity 0.3s var(--ease);
     will-change: transform;
   }
-  .lb.is-dragging .lb__frame {
+  .lb.is-zoomed .lb__frame {
+    cursor: grab;
+  }
+  .lb.is-dragging .lb__frame,
+  .lb.is-panning .lb__frame {
     transition: none;
+  }
+  .lb.is-panning .lb__frame {
+    cursor: grabbing;
   }
   .lb__frame :global(picture),
   .lb__frame :global(img) {
@@ -138,7 +188,7 @@ import Icon from './Icon.astro';
   .lb__frame :global(img) {
     object-fit: contain;
     opacity: 0;
-    transition: opacity 0.45s ease;
+    transition: opacity 0.4s ease;
     -webkit-user-drag: none;
     user-select: none;
   }
@@ -148,31 +198,39 @@ import Icon from './Icon.astro';
 
   .lb__nav {
     position: absolute;
-    bottom: 0.4rem;
+    bottom: calc(0.5rem + env(safe-area-inset-bottom, 0px));
     z-index: 2;
   }
   .lb__nav--prev {
-    left: clamp(0.5rem, 1.4vw, 1.5rem);
+    left: max(1rem, 2vw);
   }
   .lb__nav--next {
-    right: clamp(0.5rem, 1.4vw, 1.5rem);
+    right: max(1rem, 2vw);
   }
 
-  .lb__caption {
+  .lb__foot {
     position: absolute;
-    inset: auto 4rem 0;
+    inset: auto 4.5rem env(safe-area-inset-bottom, 0px);
     z-index: 1;
     display: flex;
     flex-wrap: wrap;
     align-items: center;
     justify-content: center;
-    gap: 0.15rem 1rem;
+    gap: 0.25rem 1.5rem;
     min-height: var(--lb-foot);
     padding-block: 0.5rem;
     font-size: 0.8125rem;
-    line-height: 1.4;
     text-align: center;
-    color: var(--text-dim);
+    color: var(--muted);
+  }
+  .lb__caption {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.15rem 1rem;
+  }
+  .lb__caption:empty {
+    display: none;
   }
   .lb__caption :global(a) {
     color: var(--text);
@@ -181,23 +239,37 @@ import Icon from './Icon.astro';
     text-underline-offset: 0.25em;
     white-space: nowrap;
   }
-  .lb__caption :global(a:hover) {
-    color: var(--accent-bright);
+  .lb__keys {
+    display: none;
+  }
+  .lb__keys kbd {
+    margin-inline: 0.15rem;
+    padding: 0.1rem 0.4rem;
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    color: var(--text);
   }
 
   @media (min-width: 900px) {
     .lb {
       --lb-side: 5.5rem;
-      --lb-bar: 4.5rem;
-      --lb-foot: 4.5rem;
     }
     .lb__nav {
       top: 50%;
       bottom: auto;
-      width: 3.5rem;
-      height: 3.5rem;
-      margin-top: -1.75rem;
-      border: 1px solid rgba(243, 239, 233, 0.28);
+      width: 3.375rem;
+      height: 3.375rem;
+      margin-top: -1.7rem;
+    }
+    .lb__keys {
+      display: block;
+    }
+  }
+  @media (max-width: 560px) {
+    .lb__title {
+      display: none;
     }
   }
 </style>
@@ -215,6 +287,8 @@ import Icon from './Icon.astro';
     caption?: string;
     link?: string;
     linkLabel?: string;
+    download?: string;
+    downloadName?: string;
   }
 
   const dialog = document.querySelector<HTMLDialogElement>('[data-lightbox]');
@@ -223,6 +297,9 @@ import Icon from './Icon.astro';
     const stage = dialog.querySelector<HTMLElement>('[data-lb-stage]')!;
     const frame = dialog.querySelector<HTMLElement>('[data-lb-frame]')!;
     const captionEl = dialog.querySelector<HTMLElement>('[data-lb-caption]')!;
+    const titleEl = dialog.querySelector<HTMLElement>('[data-lb-title]')!;
+    const zoomButton = dialog.querySelector<HTMLButtonElement>('[data-lb-zoom]')!;
+    const downloadLink = dialog.querySelector<HTMLAnchorElement>("[data-lb-save]")!;
     const currentEl = dialog.querySelector<HTMLElement>('[data-lb-current]')!;
     const totalEl = dialog.querySelector<HTMLElement>('[data-lb-total]')!;
     const prevButton = dialog.querySelector<HTMLButtonElement>('[data-lb-prev]')!;
@@ -239,6 +316,47 @@ import Icon from './Icon.astro';
     let opener: HTMLElement | null = null;
 
     const pad = (n: number) => String(n).padStart(2, '0');
+
+    // ----- Zoom : ×2,5 centré sur le point cliqué, puis glisser pour se déplacer -----
+    const ZOOM = 2.5;
+    let zoomed = false;
+    let panX = 0;
+    let panY = 0;
+
+    const clampPan = () => {
+      const rect = frame.getBoundingClientRect();
+      const baseW = rect.width / (zoomed ? ZOOM : 1);
+      const baseH = rect.height / (zoomed ? ZOOM : 1);
+      const maxX = (baseW * (ZOOM - 1)) / 2;
+      const maxY = (baseH * (ZOOM - 1)) / 2;
+      panX = Math.max(-maxX, Math.min(maxX, panX));
+      panY = Math.max(-maxY, Math.min(maxY, panY));
+    };
+    const applyZoom = () => {
+      frame.style.transform = zoomed ? `translate3d(${panX}px, ${panY}px, 0) scale(${ZOOM})` : '';
+      dialog.classList.toggle('is-zoomed', zoomed);
+      zoomButton.setAttribute('aria-pressed', String(zoomed));
+      zoomButton.setAttribute('aria-label', zoomed ? 'Dézoomer' : 'Zoomer');
+    };
+    const setZoom = (on: boolean, clientX?: number, clientY?: number) => {
+      if (on === zoomed) return;
+      zoomed = on;
+      panX = panY = 0;
+      if (on) {
+        // Charge la meilleure définition disponible pour le zoom.
+        const img = frame.querySelector('img');
+        const width = Math.round(frame.getBoundingClientRect().width * ZOOM);
+        frame.querySelectorAll('source, img').forEach((el) => el.setAttribute('sizes', `${width}px`));
+        if (img && clientX !== undefined && clientY !== undefined) {
+          const rect = frame.getBoundingClientRect();
+          panX = (rect.left + rect.width / 2 - clientX) * (ZOOM - 1);
+          panY = (rect.top + rect.height / 2 - clientY) * (ZOOM - 1);
+          zoomed = true;
+          clampPan();
+        }
+      }
+      applyZoom();
+    };
     const hashFor = (i: number) => `#photo-${i + 1}`;
     const cleanUrl = () => location.pathname + location.search;
 
@@ -257,6 +375,8 @@ import Icon from './Icon.astro';
           caption: el.dataset.lbCaption,
           link: el.dataset.lbLink,
           linkLabel: el.dataset.lbLinkLabel,
+          download: el.dataset.lbDownload,
+          downloadName: el.dataset.lbDownloadName,
         }));
 
     const thumbSrc = (item: Item) => item.el.querySelector('img')?.currentSrc ?? '';
@@ -282,7 +402,9 @@ import Icon from './Icon.astro';
       frame.style.setProperty('--w', String(item.w));
       frame.style.backgroundColor = item.color;
       frame.style.backgroundImage = thumbSrc(item) ? `url("${thumbSrc(item)}")` : 'none';
-      frame.style.transform = '';
+      zoomed = false;
+      panX = panY = 0;
+      applyZoom();
 
       // Nouvelle balise à chaque photo : l'ancienne image ne s'affiche jamais dans le mauvais cadre.
       const picture = document.createElement('picture');
@@ -314,6 +436,16 @@ import Icon from './Icon.astro';
 
       currentEl.textContent = pad(index + 1);
       totalEl.textContent = pad(items.length);
+
+      titleEl.textContent = document.querySelector<HTMLElement>('[data-lb-heading]')?.dataset.lbHeading ?? '';
+      if (item.download) {
+        downloadLink.href = item.download;
+        downloadLink.download = item.downloadName || '';
+        downloadLink.hidden = false;
+      } else {
+        downloadLink.removeAttribute('href');
+        downloadLink.hidden = true;
+      }
 
       captionEl.replaceChildren();
       if (item.caption) captionEl.append(Object.assign(document.createElement('span'), { textContent: item.caption }));
@@ -352,7 +484,8 @@ import Icon from './Icon.astro';
       isOpen = false;
       closing = false;
       token++;
-      dialog.classList.remove('is-open', 'is-dragging');
+      dialog.classList.remove('is-open', 'is-dragging', 'is-zoomed', 'is-panning');
+      zoomed = false;
       document.body.classList.remove('is-locked');
       const target = items[index]?.el ?? opener;
       window.setTimeout(() => {
@@ -404,16 +537,67 @@ import Icon from './Icon.astro';
     nextButton.addEventListener('click', () => show(index + 1));
     closeButton.addEventListener('click', close);
     stage.addEventListener('click', (event) => {
-      if (event.target === stage) close();
+      if (event.target === stage) {
+        if (zoomed) setZoom(false);
+        else close();
+      }
     });
-    dialog.addEventListener('cancel', (event) => {
-      event.preventDefault(); // Échap : on passe par notre fermeture (historique + animation)
-      close();
+    zoomButton.addEventListener('click', () => setZoom(!zoomed));
+
+    // Clic sur la photo : zoom à cet endroit ; glisser pour se déplacer une fois zoomé.
+    let pointer: { id: number; x: number; y: number; px: number; py: number; moved: boolean } | null = null;
+    frame.addEventListener('pointerdown', (event) => {
+      if (event.pointerType === 'touch' && !zoomed) return;
+      pointer = { id: event.pointerId, x: event.clientX, y: event.clientY, px: panX, py: panY, moved: false };
+      if (zoomed) frame.setPointerCapture(event.pointerId);
     });
+    frame.addEventListener('pointermove', (event) => {
+      if (!pointer || pointer.id !== event.pointerId || !zoomed) return;
+      const dx = event.clientX - pointer.x;
+      const dy = event.clientY - pointer.y;
+      if (!pointer.moved && Math.hypot(dx, dy) < 4) return;
+      pointer.moved = true;
+      dialog.classList.add('is-panning');
+      panX = pointer.px + dx;
+      panY = pointer.py + dy;
+      clampPan();
+      applyZoom();
+    });
+    const endPointer = (event: PointerEvent) => {
+      if (!pointer || pointer.id !== event.pointerId) return;
+      const { moved } = pointer;
+      pointer = null;
+      dialog.classList.remove('is-panning');
+      if (event.type === 'pointerup' && !moved && event.pointerType !== 'touch') setZoom(!zoomed, event.clientX, event.clientY);
+    };
+    frame.addEventListener('pointerup', endPointer);
+    frame.addEventListener('pointercancel', endPointer);
+
+    // Double-tap (tactile) : zoom / dézoom.
+    let lastTap = 0;
+    frame.addEventListener('touchend', (event) => {
+      if (event.changedTouches.length !== 1) return;
+      const now = Date.now();
+      if (now - lastTap < 300) {
+        const touch = event.changedTouches[0];
+        setZoom(!zoomed, touch.clientX, touch.clientY);
+        lastTap = 0;
+        event.preventDefault();
+      } else lastTap = now;
+    });
+    // Échap est géré par le raccourci clavier ci-dessous (dézoome d'abord, puis ferme).
+    dialog.addEventListener('cancel', (event) => event.preventDefault());
     dialog.addEventListener('keydown', (event) => {
-      if (event.key === 'Escape') close();
-      else if (event.key === 'ArrowRight') show(index + 1);
+      if (event.metaKey || event.ctrlKey || event.altKey) return;
+      if (event.key === 'Escape') {
+        if (zoomed) setZoom(false);
+        else close();
+      } else if (event.key === 'ArrowRight') show(index + 1);
       else if (event.key === 'ArrowLeft') show(index - 1);
+      else if (event.key === 'z' || event.key === 'Z') setZoom(!zoomed);
+      else if (event.key === '+' || event.key === '=') setZoom(true);
+      else if (event.key === '-') setZoom(false);
+      else if ((event.key === 'd' || event.key === 'D') && !downloadLink.hidden) downloadLink.click();
       else if (event.key === 'Home') show(0);
       else if (event.key === 'End') show(items.length - 1);
       else return;
@@ -435,14 +619,14 @@ import Icon from './Icon.astro';
       tracking = false;
       axis = null;
       dialog.classList.remove('is-dragging');
-      frame.style.transform = '';
+      if (!zoomed) frame.style.transform = '';
       dialog.style.opacity = '';
     };
 
     stage.addEventListener(
       'touchstart',
       (event) => {
-        if (event.touches.length !== 1 || isZoomed()) return resetDrag();
+        if (event.touches.length !== 1 || isZoomed() || zoomed) return resetDrag();
         tracking = true;
         axis = null;
         dx = dy = 0;

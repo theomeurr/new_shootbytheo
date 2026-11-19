@@ -102,14 +102,23 @@ async function listImages(dir) {
 
 const isCoverFile = (file) => /^cover\.[a-z]+$/i.test(file);
 
-/** Couverture : champ "cover" de event.json → fichier cover.* → première photo. */
+/**
+ * Couverture : champ "cover" de event.json → première photo de la galerie (ordre choisi dans
+ * l'administration) → fichier cover.* → première photo du dossier.
+ */
 function resolveCover(files, eventData, warn, key) {
   if (!files.length) return null;
+  const find = (name) => files.find((f) => f.toLowerCase() === path.basename(String(name)).toLowerCase());
   const wanted = eventData?.cover ? path.basename(String(eventData.cover)) : null;
   if (wanted) {
-    const match = files.find((f) => f.toLowerCase() === wanted.toLowerCase());
+    const match = find(wanted);
     if (match) return match;
     if (!isCoverFile(wanted)) warn(`${key} : couverture "${wanted}" introuvable dans le dossier, choix automatique.`);
+  }
+  const gallery = Array.isArray(eventData?.gallery) ? eventData.gallery : [];
+  for (const name of gallery) {
+    const match = name && find(name);
+    if (match) return match;
   }
   return files.find(isCoverFile) ?? files[0];
 }

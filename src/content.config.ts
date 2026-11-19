@@ -32,10 +32,17 @@ const events = defineCollection({
     sport: z.string().default(''),
     competition: z.string().default(''),
     type: z.string().default(''),
-    category: z.preprocess((value) => (value === '' ? undefined : value), z.enum(['badminton', 'autres-sports', 'evenementiel']).optional()),
+    /** Ancien classement (badminton / autres-sports / evenementiel), conservé pour compatibilité. */
+    category: z.string().optional(),
     location: z.string().default(''),
     venue: z.string().default(''),
     teams: z.array(z.string()).default([]),
+    /** Rencontres disputées ce jour-là : "BC Chambly — Béthune". */
+    matches: z.array(z.string()).default([]),
+    /** Téléchargement autorisé : bouton dans la page et dans la visionneuse. */
+    download: z.boolean().default(false),
+    /** Lien vers l'album complet en haute définition (Google Drive, WeTransfer…). */
+    downloadUrl: z.string().default(''),
     description: z.string().default(''),
     cover: z.string().optional(),
     coverPosition: z.string().default('50% 40%'),
@@ -46,4 +53,13 @@ const events = defineCollection({
   }),
 });
 
-export const collections = { events };
+// Catégories (filtres de la page Galeries) : content/categories/<slug>.json.
+const categories = defineCollection({
+  loader: glob({ pattern: '*.json', base: './content/categories' }),
+  schema: z.object({
+    name: z.string().min(1),
+    order: z.number().default(99),
+  }),
+});
+
+export const collections = { events, categories };

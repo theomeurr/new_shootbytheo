@@ -11,8 +11,6 @@
     "photos": "node scripts/media.mjs",
     "photos:force": "node scripts/media.mjs --force",
     "new-event": "node scripts/new-event.mjs",
-    "categories": "node scripts/list-categories.mjs",
-    "rename-category": "node scripts/rename-category.mjs",
     "demo-photos": "node scripts/demo-photos.mjs"
   },
   "engines": {

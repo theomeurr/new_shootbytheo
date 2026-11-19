@@ -1,6 +1,6 @@
 ---
 import '@/styles/global.css';
-import archivoFont from '@fontsource-variable/archivo/files/archivo-latin-wght-normal.woff2?url';
+import archivoFont from '@fontsource-variable/archivo/files/archivo-latin-wdth-normal.woff2?url';
 import Header from '@/components/Header.astro';
 import Footer from '@/components/Footer.astro';
 import { getEvents } from '@/lib/events';
@@ -18,12 +18,10 @@ interface Props {
   type?: 'website' | 'article';
   noindex?: boolean;
   jsonLd?: Record<string, unknown> | Record<string, unknown>[];
-  /** "compact" : pied de page réduit à une seule ligne (accueil). */
-  footer?: 'full' | 'compact';
   bodyClass?: string;
 }
 
-const { title, fullTitle, description = site.description, image, imageAlt, type = 'website', noindex = false, jsonLd, footer = 'full', bodyClass } = Astro.props;
+const { title, fullTitle, description = site.description, image, imageAlt, type = 'website', noindex = false, jsonLd, bodyClass } = Astro.props;
 
 const pageTitle = fullTitle ?? (title ? `${title} | ${site.name}` : site.name);
 const canonical = absoluteUrl(Astro.url.pathname);
@@ -43,8 +41,8 @@ const schemas = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
     {noindex && <meta name="robots" content="noindex, follow" />}
-    <meta name="theme-color" content="#0a0a0b" />
-    <meta name="color-scheme" content="light" />
+    <meta name="theme-color" content="#0b0b0d" />
+    <meta name="color-scheme" content="dark" />
     <meta name="author" content={site.name} />
 
     <link rel="icon" href="/favicon-48.png" type="image/png" sizes="48x48" />
@@ -94,7 +92,7 @@ const schemas = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
     <main id="contenu">
       <slot />
     </main>
-    <Footer compact={footer === 'compact'} />
+    <Footer />
 
     <script>
       // Apparitions discrètes au défilement

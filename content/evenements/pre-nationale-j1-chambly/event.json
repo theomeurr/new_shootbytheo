@@ -1,10 +1,13 @@
 {
   "title": "Pré-Nationale • Journée 1",
   "date": "2026-09-19",
-  "competition": "Pré-Nationale",
+  "competition": "pre-nationale",
   "location": "Chambly",
-  "description": "Première journée de la saison à domicile. Une belle victoire contre Béthunes !",
-  "cover": "/images/DSC_5518J1_PRE NAT.jpg",
+  "venue": "",
+  "matches": [
+    "BC Chambly — Béthune"
+  ],
+  "description": "Première journée de la saison à domicile. Une belle victoire contre Béthune !",
   "gallery": [
     "cover.jpg",
     "DSC_5229J1_PRE NAT.jpg",
@@ -22,13 +25,15 @@
     "DSC_5620J1_PRE NAT.jpg",
     "DSC_5656J1_PRE NAT.jpg"
   ],
-  "sport": "Badminton",
-  "venue": "",
-  "teams": [],
-  "type": "",
-  "category": "badminton",
-  "dateEnd": "",
+  "cover": "DSC_5518J1_PRE NAT.jpg",
   "coverPosition": "48% 20%",
+  "download": true,
+  "downloadUrl": "https://drive.google.com/drive/folders/185HtoSYGZeth0i646EzUK2G8l4wLdEMs?usp=share_link",
+  "sport": "Badminton",
+  "teams": [],
+  "dateEnd": "",
+  "type": "",
+  "category": "",
   "seoTitle": "",
   "seoDescription": "",
   "draft": false,

@@ -1,11 +1,17 @@
 ---
+/**
+ * Page d'un reportage : couverture, titre, description, fiche (date, lieu, rencontres, photos),
+ * partage, téléchargement si autorisé, galerie masonry et visionneuse plein écran.
+ */
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import Gallery, { type GalleryItem } from '@/components/Gallery.astro';
 import Icon from '@/components/Icon.astro';
 import Lightbox from '@/components/Lightbox.astro';
+import Picture from '@/components/Picture.astro';
 import { getEvents, type SiteEvent } from '@/lib/events';
+import { keepBullet } from '@/lib/dates';
 import { closestWidth, fallbackFormat, photoUrl } from '@/lib/media';
-import { absoluteUrl, site } from '@/lib/site';
+import { absoluteUrl, instagram, site } from '@/lib/site';
 
 export async function getStaticPaths() {
   const events = await getEvents();
@@ -24,22 +30,20 @@ interface Props {
 
 const { event, newer, older } = Astro.props;
 const count = event.photos.length;
-// « Pré-Nationale • Journée 1 » : une ligne par partie, la puce ne sert plus que de séparateur sémantique.
-const titleParts = event.title
-  .split(/[•|]/)
-  .map((part) => part.trim())
-  .filter(Boolean);
+const pad = (n: number) => String(n).padStart(2, '0');
 
 const items: GalleryItem[] = event.photos.map((photo, index) => ({
   photo,
   alt: `${event.seoTitle} — photo ${index + 1}`,
+  download: event.download ? `${event.slug}-${pad(index + 1)}` : undefined,
 }));
 
 const facts = [
   { label: 'Date', value: event.dateLabel },
   { label: 'Lieu', value: [event.venue, event.location].filter(Boolean).join(', ') },
   { label: 'Compétition', value: event.competition || event.type },
-  { label: event.teams.length > 2 ? 'Participants' : 'Équipes', value: event.teams.join(' · ') },
+  { label: event.matches.length > 1 ? 'Rencontres' : 'Rencontre', value: event.matches.join('\n') },
+  { label: 'Photos', value: `${count} photographie${count > 1 ? 's' : ''}` },
 ].filter((fact) => fact.value);
 
 const jsonLd = [
@@ -51,8 +55,8 @@ const jsonLd = [
     url: absoluteUrl(event.url),
     datePublished: event.isoDate,
     inLanguage: 'fr-FR',
-    author: { '@type': 'Organization', name: site.name, url: absoluteUrl('/') },
-    copyrightHolder: { '@type': 'Organization', name: site.name },
+    author: { '@type': 'Person', name: 'Théo Meurier', url: absoluteUrl('/a-propos/') },
+    copyrightHolder: { '@type': 'Person', name: 'Théo Meurier' },
     about: {
       '@type': 'SportsEvent',
       name: event.title,
@@ -66,7 +70,7 @@ const jsonLd = [
       width: photo.w,
       height: photo.h,
       creditText: site.name,
-      creator: { '@type': 'Organization', name: site.name },
+      creator: { '@type': 'Person', name: 'Théo Meurier' },
       copyrightNotice: `© ${site.name}`,
     })),
   },
@@ -75,246 +79,334 @@ const jsonLd = [
     '@type': 'BreadcrumbList',
     itemListElement: [
       { '@type': 'ListItem', position: 1, name: 'Accueil', item: absoluteUrl('/') },
-      { '@type': 'ListItem', position: 2, name: 'Événements', item: absoluteUrl('/evenements/') },
+      { '@type': 'ListItem', position: 2, name: 'Galeries', item: absoluteUrl('/evenements/') },
       { '@type': 'ListItem', position: 3, name: event.title, item: absoluteUrl(event.url) },
     ],
   },
 ];
 ---
 
-<BaseLayout title={event.seoTitle} description={event.seoDescription} image={event.ogImage} imageAlt={event.seoTitle} type="article" jsonLd={jsonLd}>
+<BaseLayout title={event.seoTitle} description={event.seoDescription} image={event.ogImage} imageAlt={event.seoTitle} type="article" jsonLd={jsonLd} bodyClass="has-hero">
   <article>
     <header class="cover">
-      <div class="cover__inner">
-        <nav class="cover__crumbs" aria-label="Fil d’Ariane">
-          <a href="/evenements/"><Icon name="arrow-left" /> Événements</a>
-          <span aria-hidden="true">/</span>
-          <span>{event.season}</span>
+      {event.cover && <Picture photo={event.cover} alt="" sizes="100vw" cover position={event.coverPosition} priority />}
+      <div class="cover__content container">
+        <nav class="crumbs" aria-label="Fil d’Ariane">
+          <a href="/evenements/">Galeries</a>
+          {
+            event.category && (
+              <>
+                <span aria-hidden="true">/</span>
+                <a href={`/evenements/?categorie=${event.category.id}`}>{event.category.name}</a>
+              </>
+            )
+          }
         </nav>
-        {event.tag && <p class="kicker">{event.tag}</p>}
-        <h1 class="display cover__title">
-          {titleParts.map((part, index) => (
-            <Fragment>
-              {index > 0 && <span class="sr-only"> • </span>}
-              <span class="cover__line">{part}</span>
-            </Fragment>
-          ))}
-        </h1>
+        <h1 class="display cover__title" data-lb-heading={event.title}>{keepBullet(event.title)}</h1>
         <p class="cover__meta">
           <time datetime={event.isoDate}>{event.dateLabel}</time>
-          {event.location && <span>{event.location}</span>}
-          {count > 0 && <span>{count} photo{count > 1 ? 's' : ''}</span>}
+          {event.location && <span>· {event.location}</span>}
+          {count > 0 && <span class="cover__count">· {count} photo{count > 1 ? 's' : ''}</span>}
         </p>
       </div>
     </header>
 
-    <section class="container details" data-reveal>
-      <dl class="facts">
+    <section class="container story">
+      <div class="story__text" data-reveal>
+        {event.description && <p class="story__lead">{event.description}</p>}
+        <div class="actions">
+          <button class="btn btn--quiet" type="button" data-share data-title={event.title}>
+            Partager la galerie <Icon name="share" />
+          </button>
+          {
+            event.download && event.downloadUrl && (
+              <a class="btn btn--accent" href={event.downloadUrl} target="_blank" rel="noopener">
+                Télécharger les photos <Icon name="download" />
+              </a>
+            )
+          }
+        </div>
+        {
+          event.download ? (
+            <p class="note">
+              Téléchargement autorisé : {event.downloadUrl ? 'l’album complet en haute définition, ou ' : ''}chaque photo depuis la visionneuse. Merci de créditer <strong>{instagram?.handle ?? site.name}</strong> en cas de publication.
+            </p>
+          ) : (
+            <p class="note">
+              Les photos de ce reportage se consultent en ligne. Pour une utilisation, <a href="/contact/">écrivez-moi</a>.
+            </p>
+          )
+        }
+        <p class="toast" role="status" aria-live="polite" data-share-status hidden></p>
+      </div>
+
+      <dl class="facts" data-reveal style="--reveal-delay:80ms">
         {
           facts.map((fact) => (
-            <div class="facts__item">
-              <dt class="meta">{fact.label}</dt>
+            <>
+              <dt>{fact.label}</dt>
               <dd>{fact.value}</dd>
-            </div>
+            </>
           ))
         }
       </dl>
-      {event.description && <p class="lead details__text">{event.description}</p>}
     </section>
 
-    <section class="container gallery" aria-label="Galerie photo">
-      {
-        count > 0 ? (
-          <Gallery items={items} group="evenement" eager={4} />
-        ) : (
-          <p class="gallery__empty">Les photos de cet événement arrivent très bientôt.</p>
-        )
-      }
+    <section class="container photos" aria-label="Photos du reportage">
+      {count > 0 ? <Gallery items={items} group={event.slug} eager={3} /> : <p class="note">Les photos de ce reportage arrivent bientôt.</p>}
     </section>
+
+    {
+      (newer || older) && (
+        <nav class="container siblings" aria-label="Autres reportages">
+          {newer ? (
+            <a class="sibling" href={newer.url}>
+              {newer.cover && <Picture photo={newer.cover} alt="" sizes="(min-width: 700px) 50vw, 100vw" cover position={newer.coverPosition} max={1440} />}
+              <span class="sibling__content">
+                <span class="kicker">← Plus récent</span>
+                <strong>{keepBullet(newer.title)}</strong>
+              </span>
+            </a>
+          ) : (
+            <span />
+          )}
+          {older ? (
+            <a class="sibling sibling--right" href={older.url}>
+              {older.cover && <Picture photo={older.cover} alt="" sizes="(min-width: 700px) 50vw, 100vw" cover position={older.coverPosition} max={1440} />}
+              <span class="sibling__content">
+                <span class="kicker">Plus ancien →</span>
+                <strong>{keepBullet(older.title)}</strong>
+              </span>
+            </a>
+          ) : (
+            <span />
+          )}
+        </nav>
+      )
+    }
   </article>
-
-  {
-    (newer || older) && (
-      <nav class="container siblings" aria-label="Autres événements">
-        {older ? (
-          <a class="siblings__link" href={older.url} rel="prev">
-            <span class="meta"><Icon name="arrow-left" /> Événement précédent</span>
-            <span class="siblings__title">{older.title}</span>
-            <span class="siblings__sub">{older.dateLabel}{older.location && ` · ${older.location}`}</span>
-          </a>
-        ) : (
-          <span />
-        )}
-        {newer && (
-          <a class="siblings__link siblings__link--next" href={newer.url} rel="next">
-            <span class="meta">Événement suivant <Icon name="arrow-right" /></span>
-            <span class="siblings__title">{newer.title}</span>
-            <span class="siblings__sub">{newer.dateLabel}{newer.location && ` · ${newer.location}`}</span>
-          </a>
-        )}
-      </nav>
-    )
-  }
 
   <Lightbox />
 </BaseLayout>
 
 <style>
-  /* En-tête en texte simple (plus de grande photo de couverture) : on arrive directement sur la galerie. */
-  .cover__inner {
-    display: grid;
-    gap: clamp(0.75rem, 1.4vw, 1.4rem);
-    padding: calc(var(--header-h) + clamp(1.5rem, 3vw, 3rem)) var(--edge) 0;
-  }
-  .cover__crumbs {
+  .cover {
+    position: relative;
     display: flex;
-    align-items: center;
-    gap: 0.9em;
-    margin-bottom: 0.5rem;
+    align-items: flex-end;
+    min-height: min(78svh, 51rem);
+    overflow: hidden;
+    isolation: isolate;
+  }
+  .cover > :global(.picture) {
+    position: absolute;
+    inset: 0;
+    z-index: -2;
+  }
+  .cover::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: linear-gradient(180deg, rgba(11, 11, 13, 0.55) 0%, rgba(11, 11, 13, 0.15) 35%, rgba(11, 11, 13, 0.5) 65%, var(--bg) 100%);
+  }
+  .cover__content {
+    display: grid;
+    gap: 1.1rem;
+    padding-top: calc(var(--header-h) + 5rem);
+    padding-bottom: clamp(2rem, 4vw, 3.5rem);
+  }
+  .crumbs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.625rem;
     font-family: var(--font-mono);
-    font-size: 0.7rem;
-    letter-spacing: 0.16em;
+    font-size: 0.75rem;
+    letter-spacing: 0.12em;
     text-transform: uppercase;
-    color: var(--text-dim);
+    color: rgba(255, 255, 255, 0.7);
   }
-  .cover__crumbs a {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.6em;
-    padding-block: 0.4rem;
-    color: var(--text);
-    transition: color 0.3s var(--ease);
-  }
-  .cover__crumbs a:hover {
-    color: var(--accent-bright);
-  }
-  .cover__crumbs :global(svg) {
-    width: 1.2em;
-    height: 1.2em;
-  }
-  .cover__line {
-    display: block;
+  .crumbs a:hover {
+    color: var(--accent);
   }
   .cover__title {
-    max-width: 18ch;
-    margin-left: -0.04em;
-    font-size: clamp(1.8rem, 4.5vw, 4.5rem);
+    font-size: clamp(2rem, 6.6vw, 6.5rem);
   }
   .cover__meta {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.2rem 0;
-    font-size: clamp(0.9375rem, 0.4vw + 0.85rem, 1.125rem);
-    color: var(--text-dim);
+    gap: 0 0.5rem;
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
   }
-  .cover__meta span::before {
-    content: '·';
-    margin-inline: 0.7em;
-    color: var(--accent);
+  .cover__count {
+    color: var(--text);
   }
 
-  .details {
+  .story {
     display: grid;
-    gap: clamp(2rem, 4vw, 4rem);
-    padding-block: clamp(2.5rem, 5vw, 5rem);
+    grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
+    align-items: start;
+    gap: clamp(1.75rem, 5vw, 5rem);
+    padding-block: clamp(2.25rem, 5vw, 4rem);
+  }
+  .story__lead {
+    max-width: 44ch;
+    font-size: clamp(1.125rem, 1.6vw, 1.375rem);
+    line-height: 1.55;
+    text-wrap: pretty;
+  }
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.625rem;
+    margin-top: 1.25rem;
+  }
+  .note {
+    max-width: 60ch;
+    margin-top: 0.875rem;
+    font-size: 0.8125rem;
+    color: var(--muted);
+  }
+  .note a,
+  .note strong {
+    color: var(--text);
+  }
+  .note a {
+    text-decoration: underline;
+    text-decoration-color: var(--accent);
+    text-underline-offset: 0.2em;
+  }
+  .toast {
+    margin-top: 0.75rem;
+    font-size: 0.8125rem;
+    color: var(--accent);
   }
   .facts {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));
-    gap: 1.5rem 2rem;
+    grid-template-columns: auto 1fr;
+    gap: 0.75rem 1.4rem;
+    padding: 1.4rem 1.5rem;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: var(--bg-soft);
   }
-  .facts__item {
-    display: grid;
-    gap: 0.45rem;
-    padding-top: 1rem;
-    border-top: 1px solid var(--line);
+  .facts dt {
+    padding-top: 0.2rem;
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
   }
-  .facts__item dd {
-    font-size: 1rem;
-    font-weight: 500;
-    line-height: 1.4;
+  .facts dd {
+    margin: 0;
+    font-weight: 600;
+    white-space: pre-line;
   }
-  .details__text {
-    max-width: 48ch;
-    color: var(--text-dim);
-  }
-  @media (min-width: 1000px) {
-    .details {
-      grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
-      align-items: start;
+  @media (max-width: 860px) {
+    .story {
+      grid-template-columns: 1fr;
     }
   }
 
-  .gallery {
-    padding-bottom: var(--section);
-  }
-  .gallery__empty {
-    padding-block: 5rem;
-    text-align: center;
-    color: var(--muted);
+  .photos {
+    padding-bottom: clamp(4rem, 8vw, 7rem);
   }
 
   .siblings {
     display: grid;
-    gap: 0;
-    margin-bottom: var(--section);
-    border-block: 1px solid var(--line);
+    grid-template-columns: 1fr 1fr;
+    gap: clamp(0.75rem, 1.5vw, 1.25rem);
+    padding-bottom: clamp(4rem, 8vw, 7rem);
   }
-  .siblings__link {
+  .sibling {
+    position: relative;
+    display: block;
+    aspect-ratio: 21 / 9;
+    border-radius: var(--radius);
+    overflow: hidden;
+    isolation: isolate;
+    background: var(--bg-soft);
+  }
+  .sibling :global(.picture) {
+    position: absolute;
+    inset: 0;
+    z-index: -2;
+  }
+  .sibling :global(img) {
+    transition:
+      transform 1s var(--ease),
+      opacity 0.8s ease;
+  }
+  .sibling::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: rgba(11, 11, 13, 0.62);
+  }
+  .sibling__content {
+    position: absolute;
+    inset: auto 0 0;
     display: grid;
-    gap: 0.5rem;
-    padding-block: clamp(1.5rem, 3vw, 2.75rem);
-    transition: color 0.3s var(--ease);
+    gap: 0.375rem;
+    padding: clamp(1rem, 2vw, 1.6rem);
   }
-  .siblings__link + .siblings__link {
-    border-top: 1px solid var(--line);
-  }
-  .siblings__link .meta {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.7em;
-  }
-  .siblings__link :global(svg) {
-    width: 1.3em;
-    height: 1.3em;
-    color: var(--accent);
-    transition: transform 0.4s var(--ease-out);
-  }
-  .siblings__title {
-    font-weight: 900;
-    font-size: clamp(1.2rem, 2.1vw, 2.05rem);
+  .sibling__content strong {
+    font-weight: 800;
+    font-stretch: 108%;
+    font-size: clamp(1.125rem, 1.8vw, 1.6rem);
     line-height: 1.05;
-    letter-spacing: -0.025em;
     text-transform: uppercase;
   }
-  .siblings__sub {
-    font-size: 0.9375rem;
-    color: var(--muted);
+  .sibling--right .sibling__content {
+    text-align: right;
   }
-  .siblings__link:hover .siblings__title {
-    color: var(--accent-bright);
+  @media (hover: hover) {
+    .sibling:hover :global(img) {
+      transform: scale(1.05);
+    }
   }
-  .siblings__link:hover :global(svg) {
-    transform: translateX(-0.3em);
-  }
-  .siblings__link--next:hover :global(svg) {
-    transform: translateX(0.3em);
-  }
-  @media (min-width: 800px) {
+  @media (max-width: 700px) {
     .siblings {
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: 1fr;
     }
-    .siblings__link + .siblings__link {
-      border-top: 0;
-      border-left: 1px solid var(--line);
-    }
-    .siblings__link--next {
-      justify-items: end;
-      padding-left: 2rem;
-      text-align: right;
-    }
-    .siblings__link:not(.siblings__link--next) {
-      padding-right: 2rem;
+    .sibling--right .sibling__content {
+      text-align: left;
     }
   }
 </style>
+
+<script>
+  // Partager : feuille de partage du téléphone, sinon copie du lien.
+  const button = document.querySelector<HTMLButtonElement>('[data-share]');
+  const status = document.querySelector<HTMLElement>('[data-share-status]');
+  const say = (text: string) => {
+    if (!status) return;
+    status.textContent = text;
+    status.hidden = false;
+    window.setTimeout(() => (status.hidden = true), 4000);
+  };
+  button?.addEventListener('click', async () => {
+    const url = location.origin + location.pathname;
+    const title = button.dataset.title ?? document.title;
+    if (navigator.share) {
+      try {
+        await navigator.share({ title, url });
+        return;
+      } catch (error) {
+        if ((error as DOMException).name === 'AbortError') return;
+      }
+    }
+    try {
+      await navigator.clipboard.writeText(url);
+      say('Lien de la galerie copié.');
+    } catch {
+      window.prompt('Copiez le lien de la galerie :', url);
+    }
+  });
+</script>

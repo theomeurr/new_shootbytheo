@@ -14,10 +14,27 @@ npm run preview    # vérifie le résultat du build
 
 ## Interface d'administration (CMS)
 
-En plus des commandes ci-dessous, tout (événements, catégories, photos, textes du site) peut se
-gérer depuis une interface visuelle : **[Sveltia CMS](https://sveltiacms.app)**, un panneau qui lit
-et écrit directement les mêmes fichiers que les commandes `npm run …`. Les deux approches restent
-utilisables à tout moment, y compris sur le même événement.
+Tout (reportages, photos, catégories, pages Prestations et À propos, réglages) se gère depuis
+**[Sveltia CMS](https://sveltiacms.app)**, à l'adresse `/admin/`. Le panneau lit et écrit directement les
+mêmes fichiers que les commandes `npm run …` : les deux approches restent utilisables à tout moment.
+
+### Publier un reportage en 1 minute
+
+1. **Reportages → Nouveau.**
+2. Titre (« Top 12 • Journée 2 »), date, **catégorie** dans la liste — absente ? bouton **« Ajouter Catégorie »**,
+   sans quitter la fiche —, puis les **rencontres** (une ligne chacune, ex. « BC Chambly — Béthune »).
+3. **Glissez toutes les photos d'un coup** dans « Photos ». Chacune est réduite à 2560 px et convertie en WebP
+   directement dans le navigateur (un JPEG de 10-20 Mo devient ~0,5-1 Mo) : l'envoi est rapide, le dépôt reste léger.
+   Les photos HEIC de l'iPhone sont converties aussi.
+4. **Couverture** : la première photo. Pour en changer, faites glisser la vignette voulue en tête de liste
+   (ou choisissez-en une dans « Couverture »).
+5. Cochez **« Autoriser le téléchargement »** si les joueurs peuvent récupérer les photos (bouton sur chaque photo
+   de la visionneuse ; ajoutez un lien Drive/WeTransfer pour l'album complet).
+6. **Enregistrer** : le site se reconstruit et se publie seul (≈ 3-5 min).
+
+Dans la liste des reportages : tri par date (plus récents en premier), vignettes, groupement par catégorie,
+filtres « Brouillons » / « Téléchargement autorisé », et **« Modifier en masse »** pour corriger titres, dates,
+catégories, lieux ou téléchargement de plusieurs reportages dans un seul tableau.
 
 ### Utilisation locale (déjà prête, sans rien configurer)
 
@@ -94,114 +111,105 @@ content/evenements/pre-nationale-j2-beauvais/
 
 - **Export conseillé** : JPEG, 2560 px de large, qualité 85 (sRGB). Inutile de déposer les originaux pleine définition.
 - **Ordre** : celui des noms de fichiers (`001.jpg`, `002.jpg`…).
-- **Couverture** : le fichier `cover.*` s'il existe (il n'apparaît alors pas dans la galerie), sinon le fichier indiqué
-  par `"cover"` dans `event.json`, sinon la première photo.
+- **Couverture** : le fichier indiqué par `"cover"` dans `event.json`, sinon la première photo de `"gallery"`,
+  sinon un fichier `cover.*` (il n'apparaît alors pas dans la galerie), sinon la première photo du dossier.
 - Formats acceptés : jpg, jpeg, png, webp, tif, avif.
 
 ### 3. C'est tout
 
 `npm run dev` (ou `npm run build`) génère automatiquement la carte de l'événement, sa page
 `/evenements/<slug>/`, sa galerie, ses balises SEO, son image de partage et son entrée dans le sitemap.
-Il apparaît sur la page Événements, rangé par saison, sport et compétition.
+Il apparaît sur la page Galeries (filtre de sa catégorie) et dans « Derniers reportages » sur l'accueil.
 
-### Créer, changer et gérer les catégories (Top 12, Pré-Nationale…)
+### Catégories (filtres de la page Galeries)
 
-**Il n'y a pas de liste des catégories à tenir à jour quelque part.** Une « catégorie » — au sens des
-sections titrées sur `/evenements/` (Top 12, Pré-Nationale, Nationale 2…) — est simplement la valeur du
-champ `"competition"` dans `event.json`. Dès qu'un événement porte une nouvelle valeur, sa section apparaît
-automatiquement, avec le bon décompte de journées et le bon regroupement par saison. Il n'y a rien à
-déclarer ni à configurer ailleurs.
+Une catégorie = un petit fichier `content/categories/<identifiant>.json` (`{ "name": "Top 12", "order": 1 }`).
+Elles s'affichent comme filtres sur `/evenements/` (Toutes · Top 12 · Nationale 2 · Pré-Nationale · Tournois ·
+Événements), dans l'ordre de `order`.
 
 | Je veux… | Comment faire |
 | --- | --- |
-| **Voir les catégories actuelles** | `npm run categories` — liste tout ce que `/evenements/` affiche en ce moment, par univers. |
-| **Créer une catégorie** | `npm run new-event -- --competition "Nationale 2" …` (ou en réponse à la question « Compétition » du mode interactif). Le premier événement avec ce nom crée la section. |
-| **Renommer une catégorie** | `npm run rename-category -- "Ancien nom" "Nouveau nom"` — renomme d'un coup tous les événements concernés (inutile de modifier les fichiers un par un). |
-| **Fusionner deux catégories** | `npm run rename-category -- "Nom A" "Nom B"` — les événements de A rejoignent B. |
-| **Supprimer une catégorie** | Supprimez ses événements (dossiers), ou renommez-les vers une autre catégorie : la section disparaît d'elle-même dès qu'elle n'a plus aucun événement. |
+| **Créer une catégorie** | Admin → Catégories → Nouveau, ou bouton « Ajouter Catégorie » directement dans la fiche d'un reportage. |
+| **Renommer** | Admin → Catégories → modifier le nom. Les reportages stockent l'identifiant (`top-12`), pas le nom : ils suivent automatiquement. |
+| **Changer l'ordre des filtres** | Admin → Catégories → « Réorganiser », puis glisser-déposer. |
+| **Supprimer** | Admin → Catégories → Supprimer (l'admin signale les reportages qui l'utilisent encore). |
 
-Rappels utiles :
-
-- Un événement **sans** `"competition"` (tournoi, cérémonie, événement spécial…) ne crée pas sa propre
-  section : il rejoint le bloc commun « Autres événements » de son sport et de sa saison, distingué
-  seulement par son `"type"` sur la carte.
-- Les trois **univers** (Badminton / Autres sports / Événementiel — les filtres en haut de la page) sont un
-  niveau au-dessus des catégories, contrôlés par `"category"` (voir le tableau des champs ci-dessous).
-- Si vous éditez les `event.json` pendant que `npm run dev` tourne, le changement est visible en
-  quelques secondes, sans redémarrer. S'il ne se met pas à jour après avoir modifié `package.json` ou
-  `astro.config.mjs`, relancez `npm run dev`.
+Le champ `"competition"` d'un reportage contient l'identifiant de sa catégorie (`"pre-nationale"`). Un ancien nom
+complet (« Pré-Nationale ») est aussi reconnu ; une valeur inconnue crée un filtre à part plutôt que de perdre le
+reportage.
 
 ### `event.json` — tous les champs
 
 ```json
 {
   "title": "Pré-Nationale • Journée 1",
-  "slug": "pre-nationale-j1-chambly",
   "date": "2026-09-19",
-  "sport": "Badminton",
-  "competition": "Pré-Nationale",
+  "competition": "pre-nationale",
   "location": "Chambly",
+  "matches": ["BC Chambly — Béthune"],
   "description": "Première journée de la saison à domicile…",
-  "cover": "cover.jpg",
-  "coverPosition": "50% 40%"
+  "gallery": ["DSC_5518.webp", "DSC_5229.webp"],
+  "cover": "",
+  "download": true,
+  "downloadUrl": "https://drive.google.com/…"
 }
 ```
 
 | Champ | Obligatoire | Rôle |
 | --- | --- | --- |
-| `title` | oui | Titre affiché. Le « • » sépare les deux lignes du titre sur la page de l'événement. |
-| `date` | oui | `"2026-09-19"` (recommandé) ou `"19 septembre 2026"`. Sert au tri, à l'affichage et à la saison. |
+| `title` | oui | Titre affiché. Le « • » ne passe jamais seul en début de ligne. |
+| `date` | oui | `"2026-09-19"` (recommandé) ou `"19 septembre 2026"`. Sert au tri et à l'affichage. |
+| `competition` | non | Identifiant de la catégorie (voir ci-dessus). |
+| `matches` | non | Rencontres du jour : `["BC Chambly — Béthune"]`. Affichées dans la fiche du reportage. |
+| `gallery` | non | Photos et ordre de la galerie. Par défaut : tout le dossier, par nom de fichier. |
+| `cover` | non | Couverture imposée. Par défaut : la première photo de `gallery`, sinon un fichier `cover.*`, sinon la première du dossier. |
+| `coverPosition` | non | Point focal de la couverture, comme en CSS : `"50% 40%"`. |
+| `download` | non | `true` = bouton « Télécharger » sur chaque photo de la visionneuse. |
+| `downloadUrl` | non | Lien vers l'album complet (Drive, WeTransfer…), affiché si `download` est `true`. |
+| `location`, `venue` | non | Ville, et salle / gymnase éventuel. |
+| `description` | non | Une ou deux phrases sur la journée. |
+| `sport` | non | « Badminton » par défaut (utilisé pour le référencement). |
 | `dateEnd` | non | Pour un événement sur plusieurs jours → « 23 – 24 mai 2026 ». |
 | `slug` | non | Adresse de la page. Par défaut : le nom du dossier. |
-| `id` | non | Identifiant libre, non utilisé par le site. |
-| `sport` | non | « Badminton », « Athlétisme »… |
-| `competition` | non | « Pré-Nationale », « Top 12 », « Nationale 2 »… Regroupe les journées sur la page Événements. **Vide** = rangé dans « Autres événements ». |
-| `type` | non | « Tournoi », « Cérémonie », « Événement spécial »… (affiché quand il n'y a pas de compétition). |
-| `category` | non | Filtre de la page Événements : `badminton`, `autres-sports` ou `evenementiel`. Par défaut : `badminton` si le sport est le badminton, sinon `autres-sports`. |
-| `location`, `venue` | non | Ville, et salle / gymnase éventuel. |
-| `teams` | non | `["BC Chambly", "…"]` — équipes ou participants. |
-| `description` | non | Une ou deux phrases sur la journée. |
-| `cover` | non | Nom du fichier de couverture dans le dossier. |
-| `coverPosition` | non | Point focal de la couverture, comme en CSS : `"50% 40%"` (horizontal, vertical). Utile pour les recadrages mobile et l'image de partage. |
-| `gallery` | non | `["012.jpg", "003.jpg"]` pour imposer une sélection et un ordre. Par défaut : tout le dossier. |
-| `year`, `season` | non | Calculés depuis la date (saison = à partir du 1er août). À renseigner seulement pour forcer une valeur, ex. `"season": "2026 / 2027"`. |
-| `seoTitle`, `seoDescription` | non | Pour remplacer le titre / la description générés (« Pré-Nationale Badminton • Journée 1 à Chambly \| ShootByTheo »). |
+| `seoTitle`, `seoDescription` | non | Pour remplacer le titre / la description générés automatiquement. |
 | `draft` | non | `true` = visible en développement, absent du site publié. |
+| `teams`, `type`, `category`, `id`, `year`, `season` | non | Anciens champs, conservés pour compatibilité. |
 
 Supprimer un événement = supprimer son dossier.
 
 ---
 
-## Changer l'image à la une
+## Changer la grande photo de l'accueil
 
-L'accueil n'affiche **que** les photos à la une, en plein écran, avec une ligne de pied de page : pas de
-sections en dessous, chaque rubrique (Événements, Contact) a sa propre page dans le menu.
-
-Dans `content/site.json` :
+Admin → Réglages du site → « Grande photo de l'accueil » : choisissez un ou plusieurs reportages, leur couverture
+s'affiche en grand (fondu enchaîné s'il y en a plusieurs). Dans `content/site.json` :
 
 ```json
 "hero": {
-  "autoplaySeconds": 7,
   "slides": [
-    { "event": "pre-nationale-j1-chambly", "photo": "cover", "position": "50% 40%" },
-    { "event": "top-12-j1-chambly", "photo": "014.jpg", "position": "60% 30%" }
+    { "event": "pre-nationale-j1-chambly", "photo": "cover", "position": "48% 20%" }
   ]
 }
 ```
 
-- `event` : le slug (ou le dossier) de l'événement ; `photo` : `"cover"` ou un nom de fichier du dossier.
-- `position` : point focal pour le recadrage plein écran.
-- Une seule diapositive = image fixe. Liste vide = les trois derniers événements passent à la une.
+- `photo` : `"cover"` ou un nom de fichier du dossier ; `position` : point focal du recadrage.
+- Liste vide = la couverture du dernier reportage.
+
+Le reste de l'accueil se met à jour seul : la carte « Galeries » prend la couverture d'un reportage récent,
+la mosaïque « Les images de la saison » pioche 7 photos dans les reportages récents, et « Derniers reportages »
+montre les 3 plus récents.
 
 ## Les autres contenus
 
 | Fichier | Contenu |
 | --- | --- |
-| `content/site.json` | Nom, slogan, e-mail, réseaux sociaux, image à la une, formulaire, mentions légales, `logo` (chemin d'un logo placé dans `public/`, ex. `"/logo.svg"`). |
-| `content/a-propos.json` | Texte et photo de la page À propos. |
-| `content/images/` | Images hors événements (vide pour l'instant). |
+| `content/prestations.json` | Page Prestations : titre, introduction et les prestations (photo, texte, points forts, type présélectionné dans le formulaire de contact). |
+| `content/a-propos.json` | Page À propos : nom, portrait, présentation, approche. |
+| `content/site.json` | Nom, sous-titre, e-mail, réseaux sociaux, grande photo de l'accueil, bandeau de la page Galeries, formulaire, mentions légales. |
+| `content/categories/` | Catégories (filtres de la page Galeries). |
+| `content/images/` | Images hors reportages (prestations, portrait, bandeau). |
 | `media.config.mjs` | Tailles, formats (AVIF / WebP) et qualité des images générées. |
-| `src/styles/global.css` | Couleurs (`--accent`…), typographie, espacements. |
+| `src/styles/global.css` | Couleurs (`--bg`, `--accent`…), typographie, espacements. |
 
 ### Ajuster la taille générale
 
@@ -209,7 +217,7 @@ Trois réglages, en haut de `src/styles/global.css`, pilotent l'échelle de tout
 
 | Réglage | Effet |
 | --- | --- |
-| `html { font-size: 93.75%; }` | Taille de base (15 px). `100%` = plus grand, `87.5%` = plus petit : textes, boutons et espacements suivent. |
+| `html { font-size: 100%; }` | Taille de base (16 px). `93.75%` = plus petit : textes, boutons et espacements suivent. |
 | `--gutter` | Marges latérales sur grand écran. Plus elles sont larges, plus les photos (cartes, galeries) sont petites. |
 | `--page-max` | Largeur maximale du contenu sur les très grands écrans. |
 
@@ -291,14 +299,14 @@ Pensez à vérifier `"url"` dans `content/site.json` : il sert aux adresses cano
 ## Structure
 
 ```
-content/            ← tout ce qui se modifie au quotidien (événements, textes, réglages)
+content/            ← tout ce qui se modifie au quotidien (reportages, catégories, textes, réglages)
 public/             ← favicon, fichiers de cache, media/ (images générées) et admin/ (interface CMS)
 public/admin/       ← Sveltia CMS : config.yml décrit les mêmes champs que ce README
 scripts/            ← pipeline d'images, création d'événement, photos de démo
 src/
-  components/       ← en-tête, hero, carte, galerie masonry, visionneuse…
+  components/       ← en-tête, pied de page, carte, galerie masonry, visionneuse (zoom, téléchargement)…
   layouts/          ← gabarit commun (SEO, Open Graph, données structurées)
   lib/              ← lecture des événements, images, dates, métriques typographiques
-  pages/            ← accueil, événements, contact, pages légales
+  pages/            ← accueil, galeries (/evenements/), reportage, prestations, à propos, contact, pages légales
   styles/global.css ← système visuel
 ```

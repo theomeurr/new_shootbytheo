@@ -50,3 +50,11 @@ export function seasonOf(date: Date): string {
   const year = date.getUTCFullYear();
   return date.getUTCMonth() >= 7 ? `${year} / ${year + 1}` : `${year - 1} / ${year}`;
 }
+
+const shortDate = new Intl.DateTimeFormat('fr-FR', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' });
+
+/** "19 sept. 2026" (cartes, listes). */
+export const formatShortDate = (date: Date) => shortDate.format(date);
+
+/** La puce d'un titre ne commence jamais une ligne : "Pré-Nationale • Journée 1". */
+export const keepBullet = (title: string) => title.replace(/\s+([•|])\s+/g, ' $1 ');

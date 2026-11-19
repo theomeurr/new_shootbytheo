@@ -1,17 +1,30 @@
 ---
 /**
- * Accueil — « à la une » : uniquement les photos, en plein écran.
- * Tout le reste (événements, prestations, à propos, contact) vit dans sa propre page, via le menu.
+ * Accueil : grande photo + titre, trois portes d'entrée (Galeries, Prestations, À propos),
+ * une mosaïque de photos à la une et les derniers reportages.
+ * Tout se met à jour seul à chaque nouveau reportage publié.
  */
 import BaseLayout from '@/layouts/BaseLayout.astro';
-import HeroSlider, { type Slide } from '@/components/HeroSlider.astro';
-import { getEvents } from '@/lib/events';
-import { findPhoto } from '@/lib/media';
+import EventCard from '@/components/EventCard.astro';
+import Icon from '@/components/Icon.astro';
+import Lightbox from '@/components/Lightbox.astro';
+import Picture from '@/components/Picture.astro';
+import { getEvents, type SiteEvent } from '@/lib/events';
+import { keepBullet } from '@/lib/dates';
+import { type Photo, findPhoto, sitePhoto } from '@/lib/media';
+import { lightboxAttrs } from '@/lib/lightbox';
 import { absoluteUrl, site } from '@/lib/site';
+import prestations from '@content/prestations.json';
+import about from '@content/a-propos.json';
 
 const events = await getEvents();
 
-// ---- Image(s) à la une : content/site.json → hero.slides ----
+// ---- Grande photo : content/site.json → hero.slides (sinon la couverture du dernier reportage) ----
+interface Slide {
+  photo: Photo;
+  position: string;
+  event: SiteEvent;
+}
 let slides: Slide[] = (site.hero.slides ?? [])
   .map((entry): Slide | undefined => {
     const event = events.find((e) => e.slug === entry.event || e.folder === entry.event);
@@ -20,14 +33,49 @@ let slides: Slide[] = (site.hero.slides ?? [])
     return photo ? { photo, event, position: entry.position ?? event.coverPosition } : undefined;
   })
   .filter((slide): slide is Slide => Boolean(slide));
-
-// Rien de configuré (ou événements introuvables) : les trois derniers événements passent à la une.
 if (!slides.length) {
   slides = events
     .filter((event) => event.cover)
-    .slice(0, 3)
+    .slice(0, 1)
     .map((event) => ({ photo: event.cover!, event, position: event.coverPosition }));
 }
+slides = slides.slice(0, 4);
+const heroIds = new Set(slides.map((slide) => `${slide.photo.dir}/${slide.photo.id}`));
+
+// ---- Trois portes d'entrée ----
+const galleriesPhoto = events.find((event) => event.cover && !heroIds.has(`${event.cover.dir}/${event.cover.id}`))?.cover ?? events[0]?.cover;
+const doors = [
+  { href: '/evenements/', title: 'Galeries', text: 'Les reportages, journée par journée.', photo: galleriesPhoto, position: '50% 35%' },
+  { href: '/prestations/', title: 'Prestations', text: 'Reportages, compétitions, portraits.', photo: sitePhoto(prestations.services[0]?.image), position: '50% 35%' },
+  { href: '/a-propos/', title: 'À propos', text: 'Le photographe derrière l’objectif.', photo: sitePhoto(about.portrait), position: '50% 25%' },
+];
+
+// ---- Mosaïque : 7 photos prises à tour de rôle dans les reportages récents ----
+// Cases larges pour les photos horizontales, cases hautes pour les verticales.
+const SLOTS = ['wide', 'tall', 'any', 'any', 'tall', 'tall', 'wide'] as const;
+const pools = events.map((event) => ({ event, photos: event.photos.filter((photo) => !heroIds.has(`${photo.dir}/${photo.id}`)) }));
+const used = new Set<string>();
+const picked: { photo: Photo; event: SiteEvent; index: number }[] = [];
+let turn = 0;
+for (const slot of SLOTS) {
+  const fits = (photo: Photo) => (slot === 'wide' ? photo.w > photo.h : slot === 'tall' ? photo.h > photo.w : true);
+  let choice: { photo: Photo; event: SiteEvent; index: number } | undefined;
+  for (let attempt = 0; attempt < pools.length * 2 && !choice; attempt++) {
+    const pool = pools[(turn + attempt) % pools.length];
+    const strict = attempt < pools.length;
+    const index = pool.photos.findIndex((photo) => !used.has(`${photo.dir}/${photo.id}`) && (!strict || fits(photo)));
+    if (index >= 0) {
+      const photo = pool.photos[index];
+      choice = { photo, event: pool.event, index: pool.event.photos.indexOf(photo) };
+    }
+  }
+  if (!choice) break;
+  used.add(`${choice.photo.dir}/${choice.photo.id}`);
+  picked.push(choice);
+  turn++;
+}
+
+const latest = events.slice(0, 3);
 
 const jsonLd = [
   {
@@ -45,20 +93,465 @@ const jsonLd = [
     url: absoluteUrl('/'),
     email: site.email,
     description: site.description,
+    founder: { '@type': 'Person', name: about.name, jobTitle: 'Photographe sportif' },
     image: slides[0]?.event?.ogImage ? absoluteUrl(slides[0].event.ogImage) : undefined,
     sameAs: site.socials.map((social) => social.url),
-    knowsAbout: ['Photographie sportive', 'Vidéo sportive', 'Badminton', 'Événementiel sportif', 'Contenu pour les réseaux sociaux'],
+    knowsAbout: ['Photographie sportive', 'Badminton', 'Reportage sportif', 'Portraits de sportifs', 'Événements sportifs'],
   },
 ];
 ---
 
-<BaseLayout
-  fullTitle={`${site.name} — Photographe & vidéaste sportif | ${site.tagline}`}
-  description={site.description}
-  image={slides[0]?.event?.ogImage}
-  jsonLd={jsonLd}
-  footer="compact"
-  bodyClass="page-home"
->
-  {slides.length > 0 && <HeroSlider slides={slides} />}
+<BaseLayout fullTitle={`${site.name} — Photographe sportif, badminton | Chambly, Oise`} description={site.description} image={slides[0]?.event?.ogImage} jsonLd={jsonLd} bodyClass="has-hero">
+  <section class="hero" data-hero>
+    {
+      slides.map((slide, index) => (
+        <div class:list={['hero__slide', index === 0 && 'is-active']} data-hero-slide>
+          <Picture photo={slide.photo} alt={index === 0 ? `${slide.event.title} — photo ${site.name}` : ''} sizes="100vw" cover position={slide.position} priority={index === 0} deferred={index > 0} placeholder={index === 0 ? 'blur' : 'none'} />
+        </div>
+      ))
+    }
+    <div class="hero__content container">
+      <p class="kicker hero__kicker">{site.tagline}</p>
+      <h1 class="display hero__title">{site.name}</h1>
+      <div class="hero__bottom">
+        <p class="hero__lead">Reportages de badminton, compétitions et portraits de sportifs, pour les clubs, les joueurs et les organisateurs.</p>
+        <a class="btn btn--accent" href="/evenements/">Découvrir mon travail <Icon name="arrow-right" /></a>
+      </div>
+      <a class="hero__credit" href={slides[0]?.event.url}>{slides[0] && keepBullet(slides[0].event.title)}</a>
+    </div>
+  </section>
+
+  <section class="doors container" aria-label="Rubriques">
+    {
+      doors.map((door, index) => (
+        <a class="door" href={door.href} data-reveal style={`--reveal-delay:${index * 80}ms`}>
+          {door.photo && <Picture photo={door.photo} alt="" sizes="(min-width: 900px) 31vw, 100vw" cover position={door.position} max={1440} />}
+          <div class="door__content">
+            <h2 class="door__title">{door.title}</h2>
+            <p class="door__foot">
+              <span>{door.text}</span>
+              <span class="door__go" aria-hidden="true">
+                <Icon name="arrow-right" />
+              </span>
+            </p>
+          </div>
+        </a>
+      ))
+    }
+  </section>
+
+  {
+    picked.length >= 4 && (
+      <section class="featured section">
+        <div class="container">
+          <div class="head" data-reveal>
+            <div>
+              <p class="kicker">À la une</p>
+              <h2 class="display section-title">
+                Les images
+                <br />
+                de la saison
+              </h2>
+            </div>
+            <a class="link-arrow" href="/evenements/">
+              Toutes les galeries <Icon name="arrow-right" />
+            </a>
+          </div>
+          <div class:list={['mosaic', `mosaic--${picked.length}`]} data-reveal>
+            {picked.map(({ photo, event, index }, i) => (
+              <a class="mosaic__item" {...lightboxAttrs(photo, { group: 'une', index: i, caption: keepBullet(event.title), link: { href: event.url, label: 'Voir le reportage' }, download: event.download ? `${event.slug}-${String(index + 1).padStart(2, '0')}` : undefined })} aria-label={`Agrandir — ${event.title}`}>
+                <Picture photo={photo} alt={`${event.seoTitle} — photo ${index + 1}`} sizes="(min-width: 700px) 50vw, 100vw" cover max={1440} />
+                <span class="mosaic__info">{keepBullet(event.title)}</span>
+              </a>
+            ))}
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  {
+    latest.length > 0 && (
+      <section class="latest section">
+        <div class="container">
+          <div class="head" data-reveal>
+            <div>
+              <p class="kicker">Derniers reportages</p>
+              <h2 class="display section-title">
+                Fraîchement
+                <br />
+                publiés
+              </h2>
+            </div>
+            <a class="link-arrow" href="/evenements/">
+              Voir les {events.length} reportages <Icon name="arrow-right" />
+            </a>
+          </div>
+          <div class="grid">
+            {latest.map((event) => (
+              <EventCard event={event} />
+            ))}
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  <Lightbox />
 </BaseLayout>
+
+<style>
+  /* ---------- grande photo ---------- */
+  .hero {
+    position: relative;
+    display: flex;
+    align-items: flex-end;
+    min-height: min(88svh, 60rem);
+    overflow: hidden;
+    isolation: isolate;
+  }
+  .hero__slide {
+    position: absolute;
+    inset: 0;
+    z-index: -2;
+    opacity: 0;
+    transition: opacity 1.6s ease;
+  }
+  .hero__slide.is-active {
+    opacity: 1;
+  }
+  .hero__slide :global(.picture) {
+    width: 100%;
+    height: 100%;
+  }
+  .hero__slide.is-active :global(img) {
+    animation: breathe 18s ease-out both;
+  }
+  @keyframes breathe {
+    from {
+      transform: scale(1.08);
+    }
+    to {
+      transform: scale(1);
+    }
+  }
+  .hero::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background:
+      linear-gradient(180deg, rgba(11, 11, 13, 0.55) 0%, rgba(11, 11, 13, 0.1) 30%, rgba(11, 11, 13, 0.35) 58%, var(--bg) 100%),
+      linear-gradient(90deg, rgba(11, 11, 13, 0.7) 0%, rgba(11, 11, 13, 0) 60%);
+  }
+  .hero__content {
+    position: relative;
+    padding-top: calc(var(--header-h) + 4rem);
+    padding-bottom: clamp(2.5rem, 7vw, 6rem);
+  }
+  .hero__kicker {
+    display: flex;
+    align-items: center;
+    gap: 0.875rem;
+    margin-bottom: 1.4rem;
+  }
+  .hero__kicker::before {
+    content: '';
+    width: 2.125rem;
+    height: 2px;
+    background: var(--accent);
+  }
+  .hero__title {
+    max-width: 12ch;
+    font-size: clamp(2.6rem, 8.4vw, 8.5rem);
+  }
+  .hero__bottom {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 1.75rem;
+    margin-top: 2.1rem;
+  }
+  .hero__lead {
+    max-width: 52ch;
+    font-size: clamp(1rem, 1.35vw, 1.2rem);
+    color: rgba(255, 255, 255, 0.82);
+  }
+  .hero__credit {
+    position: absolute;
+    right: max(var(--edge), var(--gutter-r));
+    top: calc(var(--header-h) + 1.25rem);
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.55);
+    transition: color 0.2s var(--ease);
+  }
+  .hero__credit:hover {
+    color: var(--text);
+  }
+
+  /* ---------- trois portes d'entrée ---------- */
+  .doors {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: clamp(0.75rem, 1.5vw, 1.25rem);
+    padding-top: clamp(1.75rem, 4vw, 3.5rem);
+  }
+  .door {
+    position: relative;
+    display: block;
+    aspect-ratio: 4 / 5;
+    border-radius: var(--radius);
+    overflow: hidden;
+    isolation: isolate;
+    background: var(--bg-soft);
+  }
+  .door :global(.picture) {
+    position: absolute;
+    inset: 0;
+    z-index: -2;
+  }
+  .door :global(img) {
+    transition:
+      transform 1.1s var(--ease),
+      opacity 0.8s ease;
+  }
+  .door::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: linear-gradient(180deg, rgba(11, 11, 13, 0) 40%, rgba(11, 11, 13, 0.92) 100%);
+  }
+  .door__content {
+    position: absolute;
+    inset: auto 0 0;
+    display: grid;
+    gap: 0.625rem;
+    padding: clamp(1.1rem, 2vw, 1.9rem);
+  }
+  .door__title {
+    font-weight: 800;
+    font-stretch: 112%;
+    font-size: clamp(1.65rem, 2.6vw, 2.5rem);
+    line-height: 1;
+    text-transform: uppercase;
+  }
+  .door__foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.75);
+  }
+  .door__go {
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 2.625rem;
+    height: 2.625rem;
+    border: 1px solid var(--line-strong);
+    border-radius: 50%;
+    transition:
+      background-color 0.3s var(--ease),
+      border-color 0.3s var(--ease),
+      color 0.3s var(--ease);
+  }
+  .door__go :global(svg) {
+    width: 1.1rem;
+    height: 1.1rem;
+  }
+  @media (hover: hover) {
+    .door:hover :global(img) {
+      transform: scale(1.06);
+    }
+    .door:hover .door__go {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: var(--accent-ink);
+    }
+  }
+  @media (max-width: 900px) {
+    .doors {
+      grid-template-columns: 1fr;
+    }
+    .door {
+      aspect-ratio: 16 / 10;
+    }
+  }
+
+  /* ---------- en-têtes de section ---------- */
+  .head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 1.25rem;
+    margin-bottom: clamp(1.75rem, 4vw, 3rem);
+  }
+  .head .kicker {
+    margin-bottom: 0.875rem;
+  }
+
+  /* ---------- mosaïque ---------- */
+  .featured {
+    margin-top: var(--section);
+    background: var(--bg-soft);
+  }
+  .mosaic {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-auto-rows: clamp(8.75rem, 15vw, 15rem);
+    gap: clamp(0.5rem, 1vw, 0.875rem);
+    grid-template-areas:
+      'a a b c'
+      'a a b d'
+      'e f g g'
+      'e f g g';
+  }
+  .mosaic--6 {
+    grid-template-areas:
+      'a a b c'
+      'a a b d'
+      'e f f f'
+      'e f f f';
+  }
+  .mosaic--5 {
+    grid-template-areas:
+      'a a b c'
+      'a a b d'
+      'e e e e'
+      'e e e e';
+  }
+  .mosaic--4 {
+    grid-template-areas:
+      'a a b c'
+      'a a b d';
+  }
+  .mosaic__item {
+    position: relative;
+    overflow: hidden;
+    border-radius: var(--radius);
+    background: var(--bg-elev);
+    cursor: zoom-in;
+  }
+  .mosaic__item :global(.picture) {
+    width: 100%;
+    height: 100%;
+  }
+  .mosaic__item :global(img) {
+    transition:
+      transform 0.9s var(--ease),
+      opacity 0.8s ease;
+  }
+  .mosaic__item:nth-child(1) {
+    grid-area: a;
+  }
+  .mosaic__item:nth-child(2) {
+    grid-area: b;
+  }
+  .mosaic__item:nth-child(3) {
+    grid-area: c;
+  }
+  .mosaic__item:nth-child(4) {
+    grid-area: d;
+  }
+  .mosaic__item:nth-child(5) {
+    grid-area: e;
+  }
+  .mosaic__item:nth-child(6) {
+    grid-area: f;
+  }
+  .mosaic__item:nth-child(7) {
+    grid-area: g;
+  }
+  .mosaic__info {
+    position: absolute;
+    inset: auto 0 0;
+    padding: 0.875rem 1rem;
+    background: linear-gradient(transparent, rgba(11, 11, 13, 0.85));
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    opacity: 0;
+    transform: translateY(8px);
+    transition:
+      opacity 0.3s var(--ease),
+      transform 0.3s var(--ease);
+  }
+  .mosaic__item:focus-visible .mosaic__info {
+    opacity: 1;
+    transform: none;
+  }
+  @media (hover: hover) {
+    .mosaic__item:hover :global(img) {
+      transform: scale(1.05);
+    }
+    .mosaic__item:hover .mosaic__info {
+      opacity: 1;
+      transform: none;
+    }
+  }
+  @media (max-width: 700px) {
+    .mosaic,
+    .mosaic--6,
+    .mosaic--5,
+    .mosaic--4 {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-auto-rows: 9.5rem;
+      grid-template-areas: 'a a' 'a a' 'b c' 'b d' 'e f' 'e f' 'g g' 'g g';
+    }
+    .mosaic__info {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  /* ---------- derniers reportages ---------- */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: clamp(1.75rem, 2.4vw, 2.25rem) clamp(0.875rem, 1.6vw, 1.5rem);
+  }
+  @media (max-width: 1100px) {
+    .grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+  @media (max-width: 640px) {
+    .grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
+<script>
+  // Fondu enchaîné entre les photos à la une (désactivé si l'animation est réduite).
+  const slides = [...document.querySelectorAll<HTMLElement>('[data-hero-slide]')];
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (slides.length > 1 && !reduce) {
+    const load = (slide: HTMLElement) =>
+      slide.querySelectorAll<HTMLElement>('[data-srcset], [data-src]').forEach((el) => {
+        if (el.dataset.srcset) el.setAttribute('srcset', el.dataset.srcset);
+        if (el.dataset.src) el.setAttribute('src', el.dataset.src);
+        delete el.dataset.srcset;
+        delete el.dataset.src;
+      });
+    let current = 0;
+    window.setTimeout(() => slides.slice(1).forEach(load), 2500);
+    window.setInterval(() => {
+      if (document.hidden) return;
+      const next = (current + 1) % slides.length;
+      const img = slides[next].querySelector('img');
+      if (img && !img.complete) return;
+      slides[current].classList.remove('is-active');
+      slides[next].classList.add('is-active');
+      current = next;
+    }, 7000);
+  }
+</script>

@@ -1,14 +1,19 @@
 {
   "title": "Top 12 - 9e journée",
   "date": "2026-03-28",
-  "competition": "Top 12",
+  "competition": "top-12",
   "location": "Chambly",
-  "description": "Dernière journée de la saison a la maison, Chambly s’incline face à Fos.",
-  "cover": "TOP12-CC-20.jpg",
-  "gallery": [],
-  "sport": "Badminton",
   "venue": "",
-  "teams": [],
+  "matches": [
+    "BC Chambly — Fos"
+  ],
+  "description": "Dernière journée de la saison à la maison : Chambly s’incline face à Fos.",
+  "gallery": [],
+  "cover": "TOP12-CC-20.jpg",
   "coverPosition": "50% 40%",
+  "download": false,
+  "downloadUrl": "",
+  "sport": "Badminton",
+  "teams": [],
   "draft": false
 }

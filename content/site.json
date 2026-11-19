@@ -1,8 +1,8 @@
 {
-  "name": "ShootByTheo",
+  "name": "Shoot by Théo",
   "url": "https://shootbytheo.com",
-  "logo": "/logo-black.png",
-  "tagline": "Photographie • Sport",
+  "logo": "/logo-white.png",
+  "tagline": "Photographe sportif",
   "headerTagline": "Sport · Événementiel",
   "slogan": [
     "Capturer l’intensité."
@@ -47,5 +47,6 @@
       "address": "",
       "contact": ""
     }
-  }
+  },
+  "galleryBanner": "/images/banniere-galeries.webp"
 }

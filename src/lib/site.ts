@@ -16,9 +16,12 @@ export const instagram = site.socials.find((social) => social.label.toLowerCase(
 
 export const NAV = [
   { label: 'Accueil', href: '/' },
-  { label: 'Événements', href: '/evenements/' },
-  { label: 'Contact', href: '/contact/' },
+  { label: 'Galeries', href: '/evenements/' },
+  { label: 'Prestations', href: '/prestations/' },
+  { label: 'À propos', href: '/a-propos/' },
 ] as const;
+
+export const CONTACT_LINK = { label: 'Contact', href: '/contact/' } as const;
 
 /** Options du menu « Type de prestation » du formulaire de contact. */
 export const SERVICE_OPTIONS = ['Photographie', 'Vidéo', 'Photo + Vidéo', 'Réseaux sociaux', 'Autre'] as const;

@@ -1,0 +1,183 @@
+---
+/** Prestations : contenu modifiable dans l'administration (content/prestations.json). */
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Icon from '@/components/Icon.astro';
+import Picture from '@/components/Picture.astro';
+import { sitePhoto } from '@/lib/media';
+import { absoluteUrl, site } from '@/lib/site';
+import prestations from '@content/prestations.json';
+
+const services = prestations.services.map((service) => ({ ...service, photo: sitePhoto(service.image) }));
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'ProfessionalService',
+  name: site.name,
+  url: absoluteUrl('/prestations/'),
+  areaServed: 'France',
+  hasOfferCatalog: {
+    '@type': 'OfferCatalog',
+    name: 'Prestations photo',
+    itemListElement: services.map((service) => ({ '@type': 'Offer', itemOffered: { '@type': 'Service', name: service.title, description: service.text } })),
+  },
+};
+---
+
+<BaseLayout
+  title="Prestations — reportages, compétitions, portraits"
+  description={`Les prestations de ${site.name} : ${services.map((service) => service.title.toLowerCase()).join(', ')}. Devis personnalisé pour clubs, joueurs et organisateurs.`}
+  jsonLd={jsonLd}
+>
+  <section class="container page">
+    <div class="intro" data-reveal>
+      <div>
+        <p class="kicker">Prestations</p>
+        <h1 class="display page__title">{prestations.title}</h1>
+      </div>
+      <p class="lead">{prestations.intro}</p>
+    </div>
+
+    <div class="services">
+      {
+        services.map((service, index) => (
+          <article class="service" data-reveal>
+            <div class="service__media">{service.photo && <Picture photo={service.photo} alt={service.title} sizes="(min-width: 860px) 55vw, 100vw" cover max={1440} priority={index === 0} />}</div>
+            <div class="service__body">
+              <p class="kicker">{service.label}</p>
+              <h2 class="service__title">{service.title}</h2>
+              <p class="service__text">{service.text}</p>
+              {service.points.length > 0 && (
+                <ul class="service__points">
+                  {service.points.map((point) => (
+                    <li>{point}</li>
+                  ))}
+                </ul>
+              )}
+              <a class="btn btn--accent" href={`/contact/?prestation=${encodeURIComponent(service.contactType || '')}`}>
+                Demander un devis <Icon name="arrow-right" />
+              </a>
+            </div>
+          </article>
+        ))
+      }
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .page {
+    padding-top: calc(var(--header-h) + clamp(3rem, 7vw, 6rem));
+    padding-bottom: var(--section);
+  }
+  .intro {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 1.25rem 3rem;
+    margin-bottom: clamp(2rem, 4vw, 3rem);
+  }
+  .intro .kicker {
+    margin-bottom: 0.875rem;
+  }
+  .intro .lead {
+    max-width: 46ch;
+  }
+  .page__title {
+    max-width: 12ch;
+    font-size: clamp(1.6rem, 8vw, 7rem);
+  }
+  .services {
+    display: grid;
+    gap: clamp(1.1rem, 2vw, 1.75rem);
+  }
+  .service {
+    display: grid;
+    grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+    min-height: 26rem;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    overflow: hidden;
+    background: var(--bg-soft);
+  }
+  .service:nth-child(even) {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr);
+  }
+  .service:nth-child(even) .service__media {
+    order: 2;
+  }
+  .service__media {
+    position: relative;
+    min-height: 17.5rem;
+    overflow: hidden;
+  }
+  .service__media :global(.picture) {
+    position: absolute;
+    inset: 0;
+  }
+  .service__media :global(img) {
+    transition:
+      transform 1.2s var(--ease),
+      opacity 0.8s ease;
+  }
+  @media (hover: hover) {
+    .service:hover .service__media :global(img) {
+      transform: scale(1.04);
+    }
+  }
+  .service__body {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 1.1rem;
+    padding: clamp(1.6rem, 3.4vw, 3.25rem);
+  }
+  .service__title {
+    font-weight: 800;
+    font-stretch: 112%;
+    font-size: clamp(1.6rem, 2.8vw, 2.6rem);
+    line-height: 1;
+    text-transform: uppercase;
+    text-wrap: balance;
+  }
+  .service__text {
+    max-width: 46ch;
+    color: var(--muted);
+  }
+  .service__points {
+    display: grid;
+    gap: 0.55rem;
+  }
+  .service__points li {
+    display: flex;
+    align-items: baseline;
+    gap: 0.75rem;
+    font-size: 0.95rem;
+  }
+  .service__points li::before {
+    content: '';
+    flex: none;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--accent);
+    transform: translateY(-2px);
+  }
+  .service .btn {
+    align-self: flex-start;
+    margin-top: 0.375rem;
+  }
+  @media (max-width: 860px) {
+    .service,
+    .service:nth-child(even) {
+      grid-template-columns: 1fr;
+    }
+    .service:nth-child(even) .service__media {
+      order: 0;
+    }
+    .service__media {
+      aspect-ratio: 16 / 10;
+      min-height: 0;
+    }
+  }
+</style>

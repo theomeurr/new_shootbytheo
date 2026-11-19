@@ -1,0 +1,167 @@
+---
+/** À propos : contenu modifiable dans l'administration (content/a-propos.json). */
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Icon from '@/components/Icon.astro';
+import Picture from '@/components/Picture.astro';
+import { getEvents } from '@/lib/events';
+import { sitePhoto } from '@/lib/media';
+import { absoluteUrl, site } from '@/lib/site';
+import about from '@content/a-propos.json';
+
+const events = await getEvents();
+const photoCount = events.reduce((total, event) => total + event.photos.length, 0);
+const categoryCount = new Set(events.map((event) => event.category?.id).filter(Boolean)).size;
+const portrait = sitePhoto(about.portrait);
+const [firstName, ...lastNames] = about.name.split(' ');
+
+const stats = [
+  { value: events.length, label: `reportage${events.length > 1 ? 's' : ''} publié${events.length > 1 ? 's' : ''}` },
+  { value: photoCount, label: 'photos en ligne' },
+  { value: categoryCount, label: `compétition${categoryCount > 1 ? 's' : ''} suivie${categoryCount > 1 ? 's' : ''}` },
+].filter((stat) => stat.value > 0);
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'ProfilePage',
+  url: absoluteUrl('/a-propos/'),
+  mainEntity: {
+    '@type': 'Person',
+    name: about.name,
+    jobTitle: 'Photographe sportif',
+    url: absoluteUrl('/'),
+    sameAs: site.socials.map((social) => social.url),
+    ...(portrait ? { image: absoluteUrl(`/media/${portrait.dir}/${portrait.id}.${portrait.hash}-960.webp`) } : {}),
+  },
+};
+---
+
+<BaseLayout title={`À propos — ${about.name}, photographe sportif`} description={about.bio[0]?.slice(0, 158) ?? site.description} jsonLd={jsonLd} type="article">
+  <section class="container about">
+    <div class="about__portrait" data-reveal>
+      {portrait && <Picture photo={portrait} alt={about.portraitAlt || about.name} sizes="(min-width: 860px) 45vw, 100vw" cover position="50% 25%" priority max={1440} />}
+    </div>
+
+    <div class="about__text">
+      <p class="kicker" data-reveal>À propos</p>
+      <h1 class="display about__title" data-reveal>
+        {firstName}
+        {
+          lastNames.length > 0 && (
+            <>
+              <br />
+              {lastNames.join(' ')}
+            </>
+          )
+        }
+      </h1>
+      {about.bio.map((paragraph) => <p data-reveal>{paragraph}</p>)}
+
+      {
+        stats.length > 0 && (
+          <div class="stats" data-reveal>
+            {stats.map((stat) => (
+              <div>
+                <strong>{stat.value}</strong>
+                <span>{stat.label}</span>
+              </div>
+            ))}
+          </div>
+        )
+      }
+
+      {about.approach.length > 0 && <h2 class="about__subtitle" data-reveal>{about.approachTitle}</h2>}
+      {about.approach.map((paragraph) => <p data-reveal>{paragraph}</p>)}
+
+      <div class="actions" data-reveal>
+        <a class="btn btn--accent" href="/contact/">Prendre contact <Icon name="arrow-right" /></a>
+        <a class="btn btn--quiet" href="/evenements/">Voir les galeries</a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .about {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
+    align-items: start;
+    gap: clamp(1.75rem, 5vw, 5.5rem);
+    padding-top: calc(var(--header-h) + clamp(3rem, 7vw, 6rem));
+    padding-bottom: var(--section);
+  }
+  .about__portrait {
+    position: sticky;
+    top: calc(var(--header-h) + 1.5rem);
+    aspect-ratio: 4 / 5;
+    border-radius: var(--radius);
+    overflow: hidden;
+    background: var(--bg-soft);
+  }
+  .about__portrait :global(.picture) {
+    width: 100%;
+    height: 100%;
+  }
+  .about__text {
+    display: grid;
+    gap: 1.6rem;
+  }
+  .about__title {
+    font-size: clamp(2.1rem, 6.4vw, 6.25rem);
+  }
+  .about__text > p:not(.kicker) {
+    max-width: 56ch;
+    font-size: clamp(1.0625rem, 1.35vw, 1.2rem);
+    line-height: 1.7;
+    color: rgba(255, 255, 255, 0.86);
+  }
+  .about__subtitle {
+    margin-top: 0.875rem;
+    font-weight: 700;
+    font-stretch: 108%;
+    font-size: 1.375rem;
+    text-transform: uppercase;
+  }
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.75rem;
+  }
+  .stats div {
+    padding: clamp(0.75rem, 2.5vw, 1.1rem);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: var(--bg-soft);
+  }
+  .stats strong {
+    display: block;
+    font-weight: 800;
+    font-stretch: 112%;
+    font-size: 2.25rem;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+  }
+  .stats span {
+    font-size: 0.8125rem;
+    color: var(--muted);
+  }
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.625rem;
+  }
+  @media (max-width: 860px) {
+    .about {
+      grid-template-columns: 1fr;
+    }
+    .about__portrait {
+      position: relative;
+      top: 0;
+      aspect-ratio: 4 / 3;
+    }
+  }
+  @media (max-width: 340px) {
+    .stats {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

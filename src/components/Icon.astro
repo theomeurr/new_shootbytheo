@@ -1,7 +1,7 @@
 ---
 /** Icônes au trait, dessinées en SVG pour un rendu identique partout. */
 interface Props {
-  name: 'arrow-right' | 'arrow-left' | 'arrow-up-right' | 'close' | 'instagram' | 'mail';
+  name: 'arrow-right' | 'arrow-left' | 'arrow-up-right' | 'close' | 'instagram' | 'mail' | 'zoom' | 'download' | 'share';
   class?: string;
 }
 const { name, class: className } = Astro.props;
@@ -13,6 +13,9 @@ const { name, class: className } = Astro.props;
   {name === 'arrow-up-right' && <path d="M6 18 18 6M8 6h10v10" />}
   {name === 'close' && <path d="M5 5l14 14M19 5 5 19" />}
   {name === 'mail' && <path d="M3 6h18v12H3zM3 7l9 7 9-7" />}
+  {name === 'zoom' && <path d="M10.5 4a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13ZM15.5 15.5 20 20M10.5 7.5v6M7.5 10.5h6" />}
+  {name === 'download' && <path d="M12 4v11M7 10l5 5 5-5M5 19h14" />}
+  {name === 'share' && <path d="M12 15V4M8 8l4-4 4 4M6 12v8h12v-8" />}
   {
     name === 'instagram' && (
       <>

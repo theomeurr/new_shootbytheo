@@ -6,12 +6,15 @@
  * - Sans JavaScript : colonnes CSS + lien direct vers la grande image.
  */
 import { type Photo, closestWidth, fallbackFormat, photoUrl, ratio, srcset } from '@/lib/media';
+import { lightboxAttrs } from '@/lib/lightbox';
 
 export interface GalleryItem {
   photo: Photo;
   alt: string;
   caption?: string;
   link?: { href: string; label: string };
+  /** Nom de fichier proposé au téléchargement (absent = pas de téléchargement). */
+  download?: string;
 }
 
 interface Props {
@@ -23,32 +26,22 @@ interface Props {
 }
 
 const { items, group = 'galerie', eager = 0 } = Astro.props;
-const sizes = '(min-width: 1500px) 21vw, (min-width: 900px) 28vw, 48vw';
-const LIGHTBOX_MIN = 960;
+const sizes = '(min-width: 1500px) 30vw, (min-width: 900px) 31vw, 48vw';
+const pad = (n: number) => String(n).padStart(2, '0');
 ---
 
 <div class="masonry" data-masonry>
   {
-    items.map(({ photo, alt, caption, link }, index) => {
+    items.map(({ photo, alt, caption, link, download }, index) => {
       const fallback = fallbackFormat(photo);
       const modern = photo.formats.filter((format) => format !== fallback);
       return (
         <a
           class="masonry__item"
-          href={photoUrl(photo, closestWidth(photo, 2048), fallback)}
           style={`--ratio:${ratio(photo)};--tone:${photo.color}`}
           data-ratio={ratio(photo)}
-          data-lb={group}
-          data-lb-index={index}
-          data-lb-w={photo.w}
-          data-lb-h={photo.h}
-          data-lb-color={photo.color}
-          data-lb-srcset={srcset(photo, fallback, { min: LIGHTBOX_MIN })}
-          data-lb-srcset-avif={modern.includes('avif') ? srcset(photo, 'avif', { min: LIGHTBOX_MIN }) : undefined}
-          data-lb-caption={caption}
-          data-lb-link={link?.href}
-          data-lb-link-label={link?.label}
-          aria-label={`Agrandir : ${alt}`}
+          {...lightboxAttrs(photo, { group, index, caption, link, download })}
+          aria-label={`Agrandir la photo ${index + 1} sur ${items.length}`}
         >
           <picture>
             {modern.map((format) => (
@@ -66,6 +59,9 @@ const LIGHTBOX_MIN = 960;
               data-fade
             />
           </picture>
+          <span class="masonry__num" aria-hidden="true">
+            {pad(index + 1)} / {pad(items.length)}
+          </span>
         </a>
       );
     })
@@ -81,11 +77,6 @@ const LIGHTBOX_MIN = 960;
   @media (min-width: 900px) {
     .masonry {
       --cols: 3;
-    }
-  }
-  @media (min-width: 1500px) {
-    .masonry {
-      --cols: 4;
     }
   }
 
@@ -109,6 +100,7 @@ const LIGHTBOX_MIN = 960;
     display: block;
     margin-bottom: var(--gap);
     overflow: hidden;
+    border-radius: 8px;
     aspect-ratio: var(--ratio);
     background-color: color-mix(in srgb, var(--tone) 50%, var(--bg));
     break-inside: avoid;
@@ -130,10 +122,28 @@ const LIGHTBOX_MIN = 960;
       transform 1.2s var(--ease-out),
       filter 0.6s var(--ease);
   }
+  .masonry__num {
+    position: absolute;
+    top: 0.625rem;
+    left: 0.625rem;
+    padding: 0.25rem 0.5rem;
+    border-radius: 6px;
+    background: rgba(11, 11, 13, 0.65);
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    letter-spacing: 0.08em;
+    opacity: 0;
+    transition: opacity 0.25s var(--ease);
+  }
+  .masonry__item:focus-visible .masonry__num {
+    opacity: 1;
+  }
   @media (hover: hover) {
     .masonry__item:hover img {
       transform: scale(1.035);
-      filter: brightness(1.06);
+    }
+    .masonry__item:hover .masonry__num {
+      opacity: 1;
     }
   }
 </style>

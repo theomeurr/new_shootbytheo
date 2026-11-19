@@ -1,336 +1,251 @@
 ---
+/**
+ * Galeries : tous les reportages, filtrables par catégorie (content/categories/)
+ * et triés par date, les plus récents en premier.
+ * Le filtre est repris dans l'adresse (?categorie=top-12) pour pouvoir être partagé.
+ */
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import EventCard from '@/components/EventCard.astro';
-import PageHead from '@/components/PageHead.astro';
-import { CATEGORIES, getEvents, groupBySeason } from '@/lib/events';
-import { absoluteUrl } from '@/lib/site';
+import Picture from '@/components/Picture.astro';
+import { getCategories, getEvents } from '@/lib/events';
+import { sitePhoto } from '@/lib/media';
+import { absoluteUrl, site } from '@/lib/site';
 
 const events = await getEvents();
-const seasons = groupBySeason(events);
-const categories = CATEGORIES.map((category) => ({ ...category, count: events.filter((event) => event.category === category.id).length }));
-const totalPhotos = events.reduce((sum, event) => sum + event.photos.length, 0);
+const known = await getCategories();
 
-const plural = (count: number, word: string) => `${count} ${word}${count > 1 ? 's' : ''}`;
+// Catégories de l'administration, plus celles qui n'existeraient que dans un reportage.
+const extra = events
+  .map((event) => event.category)
+  .filter((category, index, list) => category && !known.some((c) => c.id === category.id) && list.findIndex((c) => c?.id === category.id) === index);
+const categories = [{ id: 'toutes', name: 'Toutes' }, ...known, ...(extra as typeof known)].map((category) => ({
+  ...category,
+  count: category.id === 'toutes' ? events.length : events.filter((event) => event.category?.id === category.id).length,
+}));
 
-/** Largeur affichée des couvertures selon le nombre de cartes de la grille (voir le CSS de .grid). */
-const sizesFor = (count: number) =>
-  count <= 2 || count === 4 ? '(min-width: 700px) 45vw, 100vw' : '(min-width: 1200px) 30vw, (min-width: 700px) 45vw, 100vw';
+const banner = sitePhoto(site.galleryBanner) ?? events[0]?.cover;
 
 const jsonLd = {
   '@context': 'https://schema.org',
   '@type': 'CollectionPage',
-  name: 'Événements photographiés par ShootByTheo',
+  name: `Galeries — ${site.name}`,
   url: absoluteUrl('/evenements/'),
-  hasPart: events.slice(0, 50).map((event) => ({ '@type': 'ImageGallery', name: event.seoTitle, url: absoluteUrl(event.url) })),
+  inLanguage: 'fr-FR',
+  mainEntity: {
+    '@type': 'ItemList',
+    itemListElement: events.map((event, index) => ({ '@type': 'ListItem', position: index + 1, url: absoluteUrl(event.url), name: event.title })),
+  },
 };
 ---
 
 <BaseLayout
-  title="Événements — toutes les galeries photo"
-  description="Toutes les journées et événements sportifs photographiés par ShootByTheo : championnats de badminton, tournois, compétitions et cérémonies, classés par saison."
+  title="Galeries — reportages photo de badminton"
+  description={`Les reportages photo de ${site.name} : ${events.length} galeries de badminton (Top 12, Nationale 2, Pré-Nationale) et d’événements sportifs, journée par journée.`}
   jsonLd={jsonLd}
+  bodyClass="has-hero"
 >
-  <PageHead kicker={`${plural(events.length, 'événement')} · ${plural(totalPhotos, 'photo')}`} title="Événements" intro="Toutes les journées photographiées, saison après saison." />
+  <section class="banner">
+    {banner && <Picture photo={banner} alt="" sizes="100vw" cover position="50% 40%" priority />}
+    <div class="banner__content container">
+      <p class="kicker">Galeries</p>
+      <h1 class="display banner__title">Mes reportages</h1>
+      <p class="banner__lead">Chaque reportage couvre une journée de compétition, de l’échauffement à la dernière poignée de main. Les plus récents en premier.</p>
+    </div>
+  </section>
 
-  <div class="filters" data-filters>
-    <div class="container filters__inner">
-      <div class="filters__group" role="group" aria-label="Filtrer par univers">
-        <button class="chip" type="button" data-filter="all" aria-pressed="true">Tous <small>{events.length}</small></button>
+  <section class="container list">
+    <div class="toolbar">
+      <div class="filters" role="group" aria-label="Filtrer par catégorie">
         {
-          categories.map((category) => (
-            <button class="chip" type="button" data-filter={category.id} aria-pressed="false" disabled={category.count === 0}>
-              {category.label} <small>{category.count}</small>
+          categories.map((category, index) => (
+            <button class:list={['chip', !category.count && 'is-empty']} type="button" data-filter={category.id} aria-pressed={index === 0 ? 'true' : 'false'}>
+              {category.name} <small>{category.count}</small>
             </button>
           ))
         }
       </div>
-
-      {
-        seasons.length > 1 && (
-          <div class="filters__group filters__group--seasons" role="group" aria-label="Filtrer par saison">
-            <button class="chip" type="button" data-season-filter="all" aria-pressed="true">Toutes les saisons</button>
-            {seasons.map((season) => (
-              <button class="chip" type="button" data-season-filter={season.id} aria-pressed="false">
-                {season.season}
-              </button>
-            ))}
-          </div>
-        )
-      }
+      <label class="sort">
+        Trier
+        <select data-sort>
+          <option value="recent">Plus récents</option>
+          <option value="ancien">Plus anciens</option>
+        </select>
+      </label>
     </div>
-  </div>
 
-  <div class="container seasons">
-    {
-      seasons.map((season, seasonIndex) => (
-        <section class="season" data-group data-season-section={season.id} aria-labelledby={`saison-${season.id}`}>
-          <header class="season__head" data-reveal>
-            <p class="kicker">Saison</p>
-            <h2 class="display season__title" id={`saison-${season.id}`}>
-              {season.season}
-            </h2>
-          </header>
+    <p class="sr-only" role="status" aria-live="polite" data-status></p>
 
-          {season.sports.map((sport) => (
-            <div class="sport" data-group>
-              <h3 class="sport__title">{sport.sport}</h3>
+    <div class="grid" data-grid>
+      {events.map((event, index) => <EventCard event={event} priority={index < 3} heading="h2" />)}
+    </div>
 
-              {sport.competitions.map((competition) => (
-                <div class="competition" data-group>
-                  <div class="competition__head" data-reveal>
-                    <h4 class="competition__title">{competition.name}</h4>
-                    <span class="meta">{plural(competition.events.length, 'journée')}</span>
-                  </div>
-                  <div class="grid" data-grid data-count={competition.events.length}>
-                    {competition.events.map((event, index) => (
-                      <div class="grid__cell" data-reveal style={`--reveal-delay:${(index % 3) * 80}ms`}>
-                        <EventCard event={event} heading="h4" sizes={sizesFor(competition.events.length)} priority={seasonIndex === 0 && index < 2} />
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              ))}
-            </div>
-          ))}
-
-          {season.others.length > 0 && (
-            <div class="sport" data-group>
-              <h3 class="sport__title">Autres événements</h3>
-              <div class="competition" data-group>
-                <div class="competition__head" data-reveal>
-                  <p class="competition__title competition__title--soft">Tournois · Compétitions · Cérémonies · Événements spéciaux</p>
-                </div>
-                <div class="grid" data-grid data-count={season.others.length}>
-                  {season.others.map((event, index) => (
-                    <div class="grid__cell" data-reveal style={`--reveal-delay:${(index % 3) * 80}ms`}>
-                      <EventCard event={event} heading="h4" sizes={sizesFor(season.others.length)} />
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          )}
-        </section>
-      ))
-    }
-
-    <p class="empty" data-empty hidden>Aucun événement dans cette sélection pour le moment.</p>
-    {events.length === 0 && <p class="empty">Les premières galeries arrivent bientôt.</p>}
-  </div>
-
+    <div class="empty" data-empty hidden>
+      <strong>Aucun reportage dans cette catégorie pour le moment.</strong>
+      Les prochains apparaîtront ici dès leur publication.
+    </div>
+  </section>
 </BaseLayout>
 
 <style>
-  .filters {
-    position: sticky;
-    top: var(--sticky-top);
-    z-index: 20;
-    transition: top 0.55s var(--ease-out);
-    padding-block: 0.85rem;
-    background: rgba(255, 255, 255, 0.92);
-    -webkit-backdrop-filter: blur(16px);
-    backdrop-filter: blur(16px);
-    border-block: 1px solid var(--line);
+  .banner {
+    position: relative;
+    display: flex;
+    align-items: flex-end;
+    min-height: min(62svh, 37.5rem);
+    overflow: hidden;
+    isolation: isolate;
   }
-  .filters__inner {
+  .banner > :global(.picture) {
+    position: absolute;
+    inset: 0;
+    z-index: -2;
+  }
+  .banner::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: linear-gradient(180deg, rgba(11, 11, 13, 0.6) 0%, rgba(11, 11, 13, 0.25) 40%, var(--bg) 100%);
+  }
+  .banner__content {
+    display: grid;
+    gap: 1.1rem;
+    padding-top: calc(var(--header-h) + 5rem);
+    padding-bottom: clamp(2.25rem, 5vw, 4rem);
+  }
+  .banner__title {
+    font-size: clamp(2.1rem, 7vw, 7rem);
+  }
+  .banner__lead {
+    max-width: 58ch;
+    font-size: clamp(1rem, 1.35vw, 1.2rem);
+    color: rgba(255, 255, 255, 0.82);
+  }
+
+  .list {
+    padding-top: 1.75rem;
+    padding-bottom: var(--section);
+  }
+  .toolbar {
     display: flex;
     flex-wrap: wrap;
+    align-items: center;
     justify-content: space-between;
-    gap: 0.6rem 2rem;
+    gap: 1.1rem;
+    padding-bottom: 1.9rem;
+    margin-bottom: clamp(1.75rem, 4vw, 2.75rem);
+    border-bottom: 1px solid var(--line);
   }
-  .filters__group {
+  .filters {
     display: flex;
-    gap: 0.4rem;
-    overflow-x: auto;
-    scrollbar-width: none;
+    flex-wrap: wrap;
+    gap: 0.5rem;
   }
-  @media (max-width: 699px) {
-    .filters__group {
-      margin-inline: calc(var(--gutter) * -1);
-      padding-inline: var(--gutter);
-    }
-  }
-  .filters__group::-webkit-scrollbar {
-    display: none;
-  }
-  .filters :global(.chip[disabled]) {
-    opacity: 0.35;
-    pointer-events: none;
-  }
-
-  .seasons {
-    padding-block: clamp(2.5rem, 5vw, 5rem) var(--section);
-  }
-  .season + .season {
-    margin-top: clamp(4rem, 9vw, 9rem);
-  }
-  .season__head {
-    display: grid;
-    gap: 0.6rem;
-    margin-bottom: clamp(2rem, 4vw, 4rem);
-  }
-  .season__title {
-    font-size: clamp(2rem, 5vw, 5rem);
-    line-height: 0.9;
-    color: transparent;
-    -webkit-text-stroke: 1px var(--line-strong);
-  }
-
-  .sport + .sport {
-    margin-top: clamp(3rem, 6vw, 6rem);
-  }
-  .sport__title {
+  .sort {
     display: flex;
     align-items: center;
-    gap: 1.25rem;
-    margin-bottom: clamp(1.5rem, 2.6vw, 2.5rem);
-    font-family: var(--font-mono);
-    font-size: 0.75rem;
-    font-weight: 500;
-    letter-spacing: 0.36em;
-    text-transform: uppercase;
-    color: var(--accent);
-  }
-  .sport__title::after {
-    content: '';
-    flex: 1;
-    height: 1px;
-    background: var(--line);
-  }
-
-  .competition + .competition {
-    margin-top: clamp(2.5rem, 4.5vw, 4.5rem);
-  }
-  .competition__head {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: baseline;
-    justify-content: space-between;
-    gap: 0.4rem 1.5rem;
-    margin-bottom: clamp(1rem, 1.6vw, 1.5rem);
-  }
-  .competition__title {
-    font-weight: 900;
-    font-size: clamp(1.3rem, 2.45vw, 2.5rem);
-    line-height: 1;
-    letter-spacing: -0.025em;
-    text-transform: uppercase;
-  }
-  .competition__title--soft {
-    font-weight: 400;
-    font-size: 0.9375rem;
-    letter-spacing: 0;
-    line-height: 1.5;
-    text-transform: none;
+    gap: 0.625rem;
+    font-size: 0.8125rem;
     color: var(--muted);
+  }
+  .sort select {
+    padding: 0.55rem 2rem 0.55rem 0.75rem;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: var(--bg-soft);
+    color: var(--text);
+  }
+  .sort select:focus {
+    outline: none;
+    border-color: var(--accent);
   }
 
   .grid {
     display: grid;
-    gap: var(--gap);
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: clamp(1.75rem, 2.4vw, 2.25rem) clamp(0.875rem, 1.6vw, 1.5rem);
   }
-  @media (min-width: 700px) {
+  .grid :global([data-card][hidden]) {
+    display: none;
+  }
+  @media (max-width: 1100px) {
     .grid {
       grid-template-columns: repeat(2, minmax(0, 1fr));
     }
   }
-  @media (min-width: 1200px) {
+  @media (max-width: 640px) {
     .grid {
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-    }
-    /* Une ou deux journées seulement : les couvertures restent grandes. */
-    .grid[data-count='2'],
-    .grid[data-count='4'] {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-  }
-  @media (min-width: 1200px) {
-    .grid[data-count='1'] {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-template-columns: 1fr;
     }
   }
 
   .empty {
-    padding-block: 4rem;
-    color: var(--muted);
+    padding: 3.5rem 1.5rem;
+    border: 1px dashed var(--line);
+    border-radius: var(--radius);
     text-align: center;
+    color: var(--muted);
+  }
+  .empty strong {
+    display: block;
+    margin-bottom: 0.375rem;
+    font-size: 1.125rem;
+    color: var(--text);
   }
 </style>
 
 <script>
-  const root = document.querySelector<HTMLElement>('[data-filters]');
+  const grid = document.querySelector<HTMLElement>('[data-grid]');
+  const buttons = [...document.querySelectorAll<HTMLButtonElement>('[data-filter]')];
+  const sort = document.querySelector<HTMLSelectElement>('[data-sort]');
+  const empty = document.querySelector<HTMLElement>('[data-empty]');
+  const status = document.querySelector<HTMLElement>('[data-status]');
 
-  if (root) {
-    const categoryButtons = [...root.querySelectorAll<HTMLButtonElement>('[data-filter]')];
-    const seasonButtons = [...root.querySelectorAll<HTMLButtonElement>('[data-season-filter]')];
-    const cells = [...document.querySelectorAll<HTMLElement>('.grid__cell')];
-    const groups = [...document.querySelectorAll<HTMLElement>('[data-group]')];
-    const empty = document.querySelector<HTMLElement>('[data-empty]');
-    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (grid && sort && empty) {
+    const cards = [...grid.querySelectorAll<HTMLElement>('[data-card]')];
+    const ids = new Set(buttons.map((button) => button.dataset.filter));
+    let current = 'toutes';
 
-    const params = new URLSearchParams(location.search);
-    let category = params.get('filtre') ?? 'all';
-    let season = params.get('saison') ?? 'all';
-    if (!categoryButtons.some((button) => button.dataset.filter === category && !button.disabled)) category = 'all';
-    if (!seasonButtons.some((button) => button.dataset.seasonFilter === season)) season = 'all';
-
-    const apply = (animate: boolean) => {
-      let visible = 0;
-      for (const cell of cells) {
-        const card = cell.querySelector<HTMLElement>('[data-card]');
-        const show = Boolean(card) && (category === 'all' || card!.dataset.category === category) && (season === 'all' || card!.dataset.season === season);
-        cell.hidden = !show;
-        if (!show) continue;
-        cell.classList.add('is-visible'); // pas d'attente du défilement après un filtrage
-        if (animate && !reducedMotion) {
-          cell.animate(
-            [
-              { opacity: 0, transform: 'translate3d(0, 14px, 0)' },
-              { opacity: 1, transform: 'none' },
-            ],
-            { duration: 520, delay: Math.min(visible, 8) * 45, easing: 'cubic-bezier(0.16, 1, 0.3, 1)', fill: 'backwards' },
-          );
+    const apply = (pushUrl: boolean) => {
+      let shown = 0;
+      for (const card of cards) {
+        const visible = current === 'toutes' || card.dataset.category === current;
+        card.hidden = !visible;
+        if (visible) {
+          shown++;
+          card.classList.add('is-visible'); // pas d'animation d'apparition en attente sur une carte filtrée
         }
-        visible++;
       }
-
-      // La grille s'adapte au nombre de cartes réellement affichées.
-      document.querySelectorAll<HTMLElement>('[data-grid]').forEach((grid) => {
-        const count = grid.querySelectorAll('.grid__cell:not([hidden])').length;
-        if (grid.dataset.count === String(count)) return;
-        grid.dataset.count = String(count);
-        // Les couvertures changent de taille : le navigateur choisit la définition adaptée.
-        const sizes = count <= 2 || count === 4 ? '(min-width: 700px) 45vw, 100vw' : '(min-width: 1200px) 30vw, (min-width: 700px) 45vw, 100vw';
-        grid.querySelectorAll<HTMLImageElement | HTMLSourceElement>('img, source').forEach((node) => (node.sizes = sizes));
-      });
-
-      // Un titre de saison / sport / compétition ne reste affiché que s'il contient encore des cartes.
-      for (const group of groups) group.hidden = !group.querySelector('.grid__cell:not([hidden])');
-      if (empty) empty.hidden = visible > 0;
-
-      categoryButtons.forEach((button) => button.setAttribute('aria-pressed', String(button.dataset.filter === category)));
-      seasonButtons.forEach((button) => button.setAttribute('aria-pressed', String(button.dataset.seasonFilter === season)));
-
-      const next = new URLSearchParams();
-      if (category !== 'all') next.set('filtre', category);
-      if (season !== 'all') next.set('saison', season);
-      const query = next.toString();
-      history.replaceState(null, '', query ? `?${query}` : location.pathname);
+      buttons.forEach((button) => button.setAttribute('aria-pressed', String(button.dataset.filter === current)));
+      empty.hidden = shown > 0;
+      if (status) status.textContent = `${shown} reportage${shown > 1 ? 's' : ''}`;
+      if (pushUrl) {
+        const url = new URL(location.href);
+        if (current === 'toutes') url.searchParams.delete('categorie');
+        else url.searchParams.set('categorie', current);
+        history.replaceState(history.state, '', url);
+      }
     };
 
-    categoryButtons.forEach((button) =>
-      button.addEventListener('click', () => {
-        category = button.dataset.filter ?? 'all';
-        apply(true);
-      }),
-    );
-    seasonButtons.forEach((button) =>
-      button.addEventListener('click', () => {
-        season = button.dataset.seasonFilter ?? 'all';
-        apply(true);
-      }),
-    );
+    const order = () => {
+      const direction = sort.value === 'ancien' ? 1 : -1;
+      cards
+        .sort((a, b) => direction * (a.dataset.date ?? '').localeCompare(b.dataset.date ?? ''))
+        .forEach((card) => grid.append(card));
+    };
 
-    if (category !== 'all' || season !== 'all') apply(false);
+    buttons.forEach((button) =>
+      button.addEventListener('click', () => {
+        current = button.dataset.filter ?? 'toutes';
+        apply(true);
+      }),
+    );
+    sort.addEventListener('change', order);
+
+    const wanted = new URLSearchParams(location.search).get('categorie');
+    if (wanted && ids.has(wanted)) {
+      current = wanted;
+      apply(false);
+    }
   }
 </script>

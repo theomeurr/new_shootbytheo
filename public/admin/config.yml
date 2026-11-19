@@ -12,42 +12,86 @@ backend:
   branch: main
   base_url: https://sbt-cms-admin.t-meurier13.workers.dev
 
-# Images hors événements : content/images/
+app_title: Shoot by Théo — administration
+
+# Images hors reportages (prestations, portrait, bandeau) : content/images/
 media_folder: content/images
 public_folder: /images
 
-# ---------------------------------------------------------------------------
-# Événements : un dossier par événement, exactement comme npm run new-event.
-# ---------------------------------------------------------------------------
+# Optimisation à l'envoi, directement dans le navigateur : chaque photo glissée dans
+# l'administration est réduite à 2560 px maximum et convertie en WebP (qualité 88)
+# avant d'être enregistrée. Les fichiers de 10-20 Mo de l'appareil deviennent ~300-600 Ko,
+# sans perte visible ; le site génère ensuite ses propres tailles (AVIF/WebP) au build.
+# Les photos HEIC de l'iPhone sont converties aussi.
+media_libraries:
+  default:
+    config:
+      slugify_filename: true
+      transformations:
+        raster_image:
+          format: webp
+          quality: 88
+          width: 2560
+          height: 2560
+
+# Adresses sans accents ni espaces : « Pré-Nationale • Journée 2 » → pre-nationale-journee-2
+slug:
+  encoding: ascii
+  clean_accents: true
+
 collections:
+  # -------------------------------------------------------------------------
+  # Reportages : un dossier par reportage (event.json + les photos à côté).
+  # -------------------------------------------------------------------------
   - name: evenements
-    label: Événements
-    label_singular: Événement
-    description: 'Une carte, une page et une galerie sont générées automatiquement pour chaque événement. Les catégories (Top 12, Pré-Nationale…) sont simplement le texte du champ « Compétition » — voir npm run categories.'
+    label: Reportages
+    label_singular: Reportage
+    icon: photo_library
+    description: 'Chaque reportage a sa carte dans Galeries et sa propre page. Glissez les photos d’un coup : la première devient la couverture.'
     folder: content/evenements
     create: true
     delete: true
-    # Adresse de la page calculée automatiquement (sport + lieu + date) : rien à taper.
-    slug: "{{fields.sport}}-{{fields.location}}-{{date | date('YYYY-MM-DD')}}"
+    # Adresse de la page calculée à partir du titre, du lieu et de l'année : rien à taper.
+    slug: "{{fields.title}}-{{fields.location}}-{{date | date('YYYY')}}"
     path: '{{slug}}/event'
     extension: json
     format: json
     identifier_field: title
-    summary: '{{title}} — {{date}}'
-    sortable_fields: [date, title, competition]
+    summary: "{{title}} · {{date | date('DD/MM/YYYY')}}"
+    thumbnail: [cover, 'gallery.*']
+    sortable_fields:
+      fields: [date, title, competition]
+      default:
+        field: date
+        direction: descending
     view_groups:
-      - label: Compétition
-        field: competition
-    # Les photos de la galerie sont déposées directement dans le dossier de l'événement,
-    # au même endroit que event.json (comme quand on les copie soi-même dans le dossier).
+      groups:
+        - name: categorie
+          label: Catégorie
+          field: competition
+    view_filters:
+      filters:
+        - name: brouillons
+          label: Brouillons
+          field: draft
+          pattern: true
+        - name: telechargement
+          label: Téléchargement autorisé
+          field: download
+          pattern: true
+    # Bouton « Modifier en masse » : un tableau pour corriger titres, dates, catégories,
+    # lieux et téléchargement de plusieurs reportages d'un coup (un seul enregistrement).
+    bulk_edit:
+      fields: [title, date, competition, location, download, draft]
+    # Les photos sont enregistrées dans le dossier du reportage, à côté de event.json.
     media_folder: ''
     public_folder: ''
     fields:
-      # --- Le plus courant : ce qu'on remplit à chaque événement ---
+      # --- Ce qu'on remplit à chaque reportage, dans l'ordre ---
       - name: title
         label: Titre
         widget: string
-        hint: 'Ex. « Pré-Nationale • Journée 2 ». Le « • » sépare les deux lignes du titre sur la page de l’événement.'
+        hint: 'Ex. « Top 12 • Journée 2 ». Le « • » ne passe jamais seul en début de ligne.'
 
       - name: date
         label: Date
@@ -56,15 +100,36 @@ collections:
         required: true
 
       - name: competition
-        label: Compétition (= catégorie)
-        widget: string
+        label: Catégorie
+        widget: relation
+        collection: categories
+        value_field: '{{slug}}'
+        display_fields: [name]
+        search_fields: [name]
+        sort_by:
+          field: _manual
         required: false
-        hint: 'Ex. « Top 12 », « Pré-Nationale », « Nationale 2 ». Regroupe les journées sur la page Événements — un nouveau nom crée une nouvelle catégorie tout seul. Laisser vide pour un tournoi, une cérémonie ou un événement spécial.'
+        hint: 'Sert de filtre dans Galeries. Catégorie absente de la liste ? Ajoutez-la ici sans quitter la fiche.'
 
-      - name: location
-        label: Lieu (ville)
-        widget: string
+      - name: matches
+        label: Rencontres
+        label_singular: une rencontre
+        widget: list
         required: false
+        hint: 'Une ligne par rencontre, ex. « BC Chambly — Béthune ».'
+
+      - name: gallery
+        label: Photos
+        widget: image
+        multiple: true
+        required: false
+        hint: 'Glissez toutes les photos d’un coup (ou sélection multiple). Elles sont réduites et converties automatiquement. Faites glisser une vignette pour changer l’ordre : la première est la couverture.'
+
+      - name: cover
+        label: Couverture (facultatif)
+        widget: image
+        required: false
+        hint: 'Laisser vide : la première photo ci-dessus est utilisée. Choisir une photo ici seulement pour imposer une autre couverture.'
 
       - name: description
         label: Description
@@ -72,69 +137,156 @@ collections:
         required: false
         hint: 'Une ou deux phrases sur la journée.'
 
-      - name: cover
-        label: Couverture
-        widget: image
+      - name: location
+        label: Lieu (ville)
+        widget: string
         required: false
-        hint: 'Laisser vide pour utiliser automatiquement la première photo de la galerie.'
+        default: Chambly
 
-      - name: gallery
-        label: Galerie photo
-        # Plusieurs photos d'un coup (glisser-déposer un lot ou sélection multiple).
-        widget: image
-        multiple: true
+      - name: download
+        label: Autoriser le téléchargement
+        widget: boolean
+        default: false
+        hint: 'Ajoute un bouton « Télécharger » sur chaque photo de la visionneuse.'
+
+      - name: downloadUrl
+        label: Lien de l’album complet (facultatif)
+        widget: string
         required: false
-        hint: 'Glissez toutes vos photos d’un coup (JPEG, ~2560 px de large conseillé), ou sélectionnez-en plusieurs avec Cmd (Mac) / Ctrl (PC).'
+        hint: 'Lien Google Drive, WeTransfer… vers les photos en pleine définition. Affiche le bouton « Télécharger les photos » si le téléchargement est autorisé.'
 
-      # --- Plus rare : à ne remplir que si besoin ---
+      - name: draft
+        label: Brouillon (non publié)
+        widget: boolean
+        default: false
+        required: false
+
+      # --- Plus rare ---
+      - name: venue
+        label: Salle / gymnase
+        widget: string
+        required: false
+
       - name: sport
         label: Sport
         widget: string
         required: false
         default: Badminton
 
-      - name: venue
-        label: Salle / gymnase
-        widget: string
-        required: false
+      # --- Champs avancés, cachés : les valeurs existantes sont conservées. ---
+      - { name: teams, widget: hidden }
+      - { name: type, widget: hidden }
+      - { name: category, widget: hidden }
+      - { name: dateEnd, widget: hidden }
+      - { name: coverPosition, widget: hidden, default: '50% 40%' }
+      - { name: seoTitle, widget: hidden }
+      - { name: seoDescription, widget: hidden }
 
-      - name: teams
-        label: Équipes ou participants
-        widget: list
-        required: false
-        allow_add: true
-
-      # --- Champs avancés, cachés du formulaire pour ne pas surcharger l'ajout d'un
-      # événement : demande-le à Claude si tu en as besoin (tournoi/cérémonie sans
-      # compétition, événement sur plusieurs jours, cadrage précis de la couverture,
-      # SEO personnalisé, brouillon). Les valeurs déjà présentes sont conservées. ---
-      - { name: type, widget: hidden, required: false }
-      - { name: category, widget: hidden, required: false }
-      - { name: dateEnd, widget: hidden, required: false }
-      - { name: coverPosition, widget: hidden, required: false, default: '50% 40%' }
-      - { name: seoTitle, widget: hidden, required: false }
-      - { name: seoDescription, widget: hidden, required: false }
-      - { name: draft, widget: hidden, required: false, default: false }
+  # -------------------------------------------------------------------------
+  # Catégories : les filtres de la page Galeries (Top 12, Pré-Nationale…).
+  # -------------------------------------------------------------------------
+  - name: categories
+    label: Catégories
+    label_singular: Catégorie
+    icon: label
+    description: 'Les filtres de la page Galeries. Bouton « Réorganiser » pour changer leur ordre. Renommer une catégorie : ses reportages suivent automatiquement.'
+    folder: content/categories
+    create: true
+    delete: true
+    format: json
+    extension: json
+    identifier_field: name
+    slug: '{{fields.name}}'
+    reorder: true
+    fields:
+      - { name: name, label: Nom, widget: string, hint: 'Ex. « Nationale 3 », « Tournois », « Événements ».' }
 
 # ---------------------------------------------------------------------------
-# Textes et réglages du site : un formulaire par fichier, pas de liste à parcourir.
+# Pages et réglages : un formulaire par fichier.
 # ---------------------------------------------------------------------------
 singletons:
+  - name: prestations
+    label: Page Prestations
+    icon: work
+    file: content/prestations.json
+    format: json
+    fields:
+      - { name: title, label: Titre de la page, widget: string }
+      - { name: intro, label: Introduction, widget: text }
+      - name: services
+        label: Prestations
+        label_singular: prestation
+        widget: list
+        summary: '{{fields.title}}'
+        thumbnail: image
+        fields:
+          - { name: label, label: Sur-titre, widget: string, hint: 'Petit mot en couleur au-dessus du titre, ex. « Portraits ».' }
+          - { name: title, label: Titre, widget: string }
+          - { name: text, label: Texte, widget: text }
+          - name: points
+            label: Points forts
+            widget: list
+            required: false
+            field: { name: point, label: Point fort, widget: string }
+          - { name: image, label: Photo, widget: image }
+          - name: contactType
+            label: Type présélectionné dans le formulaire de contact
+            widget: select
+            options: [Photographie, Vidéo, Photo + Vidéo, Réseaux sociaux, Autre]
+            default: Photographie
+
+  - name: a-propos
+    label: Page À propos
+    icon: person
+    file: content/a-propos.json
+    format: json
+    fields:
+      - { name: name, label: Nom, widget: string }
+      - { name: portrait, label: Portrait, widget: image, hint: 'Une photo verticale de vous, de préférence.' }
+      - { name: portraitAlt, label: Description du portrait (accessibilité), widget: string, required: false }
+      - name: bio
+        label: Présentation
+        label_singular: paragraphe
+        widget: list
+        field: { name: paragraph, label: Paragraphe, widget: text }
+      - { name: approachTitle, label: Titre de la partie « approche », widget: string, default: Mon approche }
+      - name: approach
+        label: Mon approche
+        label_singular: paragraphe
+        widget: list
+        required: false
+        field: { name: paragraph, label: Paragraphe, widget: text }
+
   - name: site
     label: Réglages du site
+    icon: settings
     file: content/site.json
     format: json
     fields:
       - { name: name, label: Nom du site, widget: string }
-      # Réglages techniques ou plus utilisés par la mise en page actuelle : cachés
-      # (les valeurs existantes sont conservées).
-      - { name: url, widget: hidden }
-      - { name: logo, widget: hidden, required: false }
-      - { name: headerTagline, widget: hidden, required: false }
-      - { name: slogan, widget: hidden, required: false }
-      - { name: mediaBaseUrl, widget: hidden, required: false }
-      - { name: tagline, label: Signature courte, widget: string, hint: 'Affichée sur l’accueil, au-dessus de « Me contacter ». Ex. « Photographie • Sport ».' }
-      - { name: description, label: Description du site (SEO), widget: text, hint: 'Utilisée par Google et les partages quand une page n’a pas sa propre description.' }
+      - { name: tagline, label: Sous-titre de l’accueil, widget: string, hint: 'Affiché au-dessus du grand titre, ex. « Photographe sportif ».' }
+      - name: hero
+        label: Grande photo de l’accueil
+        widget: object
+        fields:
+          - { name: autoplaySeconds, widget: hidden, default: 7 }
+          - name: slides
+            label: Reportages à la une
+            widget: list
+            summary: '{{fields.event}}'
+            hint: 'Leur photo de couverture s’affiche en grand sur l’accueil (fondu enchaîné s’il y en a plusieurs). Vide = le dernier reportage.'
+            fields:
+              - name: event
+                label: Reportage
+                widget: relation
+                collection: evenements
+                value_field: '{{slug}}'
+                search_fields: [title, location]
+                display_fields: [title]
+              - { name: photo, widget: hidden, default: cover }
+              - { name: position, widget: hidden, default: '50% 40%' }
+      - { name: galleryBanner, label: Photo du bandeau de la page Galeries, widget: image, required: false }
+      - { name: description, label: Description du site (Google), widget: text, hint: 'Utilisée par Google et les partages quand une page n’a pas sa propre description.' }
       - { name: email, label: E-mail de contact, widget: string }
       - name: socials
         label: Réseaux sociaux
@@ -144,34 +296,12 @@ singletons:
           - { name: label, label: Nom, widget: string, hint: 'Ex. Instagram.' }
           - { name: handle, label: Identifiant affiché, widget: string, hint: 'Ex. @shootby.theo.' }
           - { name: url, label: Adresse, widget: string }
-      - name: hero
-        label: Image(s) à la une
-        widget: object
-        fields:
-          - { name: autoplaySeconds, widget: hidden, default: 7 }
-          - name: slides
-            label: Photos à la une
-            widget: list
-            summary: '{{fields.event}}'
-            hint: 'Choisis le ou les événements à mettre en avant (flèches ← → sur l’accueil) — leur photo de couverture est utilisée automatiquement. Vide = les 3 derniers événements.'
-            fields:
-              - name: event
-                label: Événement
-                widget: relation
-                collection: evenements
-                value_field: '{{slug}}'
-                search_fields: [title, competition, location]
-                display_fields: [title]
-              # Cachés : la couverture de l'événement suffit dans presque tous les cas.
-              # Demande à Claude si tu veux une photo précise de la galerie ou un cadrage différent.
-              - { name: photo, widget: hidden, default: cover }
-              - { name: position, widget: hidden, default: '50% 40%' }
       - name: contact
         label: Formulaire de contact
         widget: object
         required: false
         fields:
-          - { name: formEndpoint, label: Adresse du service de formulaire, widget: string, required: false, hint: 'Ex. https://formspree.io/f/xxxxxxxx. Laisser vide : le bouton ouvre un e-mail prérempli dans la messagerie du visiteur (aucun service tiers).' }
+          - { name: formEndpoint, label: Adresse du service de formulaire, widget: string, required: false, hint: 'Ex. https://formspree.io/f/xxxxxxxx. Laisser vide : le bouton ouvre un e-mail prérempli dans la messagerie du visiteur.' }
       - name: legal
         label: Mentions légales
         widget: object
@@ -190,3 +320,9 @@ singletons:
               - { name: name, label: Nom de l’hébergeur, widget: string, required: false }
               - { name: address, label: Adresse de l’hébergeur, widget: string, required: false }
               - { name: contact, label: Téléphone ou site de l’hébergeur, widget: string, required: false }
+      # Réglages techniques : cachés (les valeurs existantes sont conservées).
+      - { name: url, widget: hidden }
+      - { name: logo, widget: hidden }
+      - { name: headerTagline, widget: hidden }
+      - { name: slogan, widget: hidden }
+      - { name: mediaBaseUrl, widget: hidden }

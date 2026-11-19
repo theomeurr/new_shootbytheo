@@ -2,13 +2,40 @@ import { getCollection } from 'astro:content';
 import { formatEventDate, isoDate, seasonOf } from './dates';
 import { coverPhoto, galleryPhotos, ogImage, type Photo } from './media';
 
-export type Category = 'badminton' | 'autres-sports' | 'evenementiel';
+/** Catégorie d'un reportage : content/categories/<id>.json. Elle sert de filtre sur la page Galeries. */
+export interface Category {
+  id: string;
+  name: string;
+  order: number;
+}
 
-export const CATEGORIES: { id: Category; label: string }[] = [
-  { id: 'badminton', label: 'Badminton' },
-  { id: 'autres-sports', label: 'Autres sports' },
-  { id: 'evenementiel', label: 'Événementiel' },
-];
+const lower = (value: string) => value.toLocaleLowerCase('fr');
+const stripAccents = (value: string) => value.normalize('NFD').replace(/\p{Diacritic}/gu, '');
+const toId = (value: string) =>
+  stripAccents(lower(value))
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-|-$/g, '');
+
+let categoriesCache: Promise<Category[]> | undefined;
+
+/** Toutes les catégories, dans l'ordre choisi dans l'administration. */
+export function getCategories(): Promise<Category[]> {
+  categoriesCache ??= getCollection('categories').then((entries) =>
+    entries
+      .map((entry) => ({ id: entry.id, name: entry.data.name, order: entry.data.order }))
+      .sort((a, b) => a.order - b.order || a.name.localeCompare(b.name, 'fr')),
+  );
+  return categoriesCache;
+}
+
+/** "pre-nationale" (identifiant enregistré par l'administration) ou "Pré-Nationale" (ancien format) → catégorie. */
+function resolveCategory(value: string, categories: Category[]): Category | undefined {
+  if (!value.trim()) return undefined;
+  const id = toId(value);
+  const known = categories.find((category) => category.id === value || category.id === id || toId(category.name) === id);
+  // Catégorie inconnue (fiche supprimée, ancien nom) : on la garde telle quelle plutôt que de perdre le reportage.
+  return known ?? { id, name: value, order: 999 };
+}
 
 export interface SiteEvent {
   /** Nom du dossier dans content/evenements/. */
@@ -24,12 +51,16 @@ export interface SiteEvent {
   season: string;
   seasonId: string;
   sport: string;
+  /** Nom affiché de la catégorie ("Pré-Nationale"). */
   competition: string;
   type: string;
-  category: Category;
+  category?: Category;
   location: string;
   venue: string;
   teams: string[];
+  matches: string[];
+  download: boolean;
+  downloadUrl: string;
   description: string;
   cover?: Photo;
   coverPosition: string;
@@ -40,9 +71,6 @@ export interface SiteEvent {
   seoDescription: string;
   ogImage?: string;
 }
-
-const lower = (value: string) => value.toLocaleLowerCase('fr');
-const stripAccents = (value: string) => value.normalize('NFD').replace(/\p{Diacritic}/gu, '');
 
 /** "à Chambly", "au Havre", "aux Ulis". */
 function atPlace(location: string): string {
@@ -78,6 +106,7 @@ export function getEvents(): Promise<SiteEvent[]> {
 
 async function loadEvents(): Promise<SiteEvent[]> {
   const entries = await getCollection('events', ({ data }) => import.meta.env.DEV || !data.draft);
+  const categories = await getCategories();
 
   const events = entries.map((entry): SiteEvent => {
     const { data } = entry;
@@ -86,11 +115,12 @@ async function loadEvents(): Promise<SiteEvent[]> {
     const photos = galleryPhotos(folder, data.gallery);
     const cover = coverPhoto(folder);
 
-    const category: Category = data.category ?? (stripAccents(lower(data.sport)) === 'badminton' ? 'badminton' : 'autres-sports');
+    const category = resolveCategory(data.competition, categories);
+    const competition = category?.name ?? '';
     const dateLabel = formatEventDate(data.date, data.dateEnd);
-    const tag = [data.sport, data.competition || data.type].filter(Boolean).join(' · ');
+    const tag = [data.sport, competition || data.type].filter(Boolean).join(' · ');
 
-    const seoTitle = data.seoTitle ?? buildSeoTitle(data.title, data.sport, data.competition, data.location);
+    const seoTitle = data.seoTitle || buildSeoTitle(data.title, data.sport, competition, data.location);
     const autoDescription = `${seoTitle} — ${dateLabel}. ${photos.length > 1 ? `Galerie de ${photos.length} photos` : 'Reportage'} par ShootByTheo, photographe et vidéaste sportif.`;
     // La description de l'événement, suivie de la date et du lieu quand la place le permet.
     const context = [dateLabel, data.location].filter(Boolean).join(', ');
@@ -109,19 +139,22 @@ async function loadEvents(): Promise<SiteEvent[]> {
       season: data.season ?? seasonOf(data.date),
       seasonId: (data.season ?? seasonOf(data.date)).replace(/[^0-9]+/g, '-').replace(/^-|-$/g, ''),
       sport: data.sport,
-      competition: data.competition,
+      competition,
       type: data.type,
       category,
       location: data.location,
       venue: data.venue,
       teams: data.teams,
+      matches: data.matches.map((match) => match.trim()).filter(Boolean),
+      download: data.download,
+      downloadUrl: data.downloadUrl.trim(),
       description: data.description,
       cover,
       coverPosition: data.coverPosition,
       photos,
       tag,
       seoTitle,
-      seoDescription: truncate(data.seoDescription ?? (described || autoDescription)),
+      seoDescription: truncate(data.seoDescription || described || autoDescription),
       ogImage: ogImage(folder),
     };
   });

@@ -1,14 +1,19 @@
 {
   "title": "Nationale 2 - 9e journée",
   "date": "2026-03-28",
-  "competition": "Nationale 2",
+  "competition": "nationale-2",
   "location": "Chambly",
-  "description": "Dernière journée a la maison de la saison contre Salbris",
-  "cover": "N2-CC-15.jpg",
-  "gallery": [],
-  "sport": "Badminton",
   "venue": "",
-  "teams": [],
+  "matches": [
+    "BC Chambly — Salbris"
+  ],
+  "description": "Dernière journée de la saison à la maison, contre Salbris.",
+  "gallery": [],
+  "cover": "N2-CC-15.jpg",
   "coverPosition": "50% 40%",
+  "download": false,
+  "downloadUrl": "",
+  "sport": "Badminton",
+  "teams": [],
   "draft": false
 }
