@@ -1,10 +1,6 @@
-# Configuration de l'interface d'administration (Sveltia CMS).
-# Voir le README, section « Interface d'administration », pour le mode d'emploi.
-#
-# - En local (npm run dev) : fonctionne tout de suite, sans rien configurer ci-dessous
-#   (bouton « Work with Local Repository », voir README).
-# - À distance, depuis n'importe quel navigateur (Mac, téléphone…) : connexion GitHub via
-#   le petit relais déployé sur Cloudflare Workers (sbt-cms-admin) — voir README.
+# Administration du site (Sveltia CMS), à l'adresse /admin/.
+# En local (npm run dev) : bouton « Work with Local Repository ».
+# En ligne : connexion GitHub via le relais Cloudflare (sbt-cms-admin).
 
 backend:
   name: github
@@ -18,11 +14,7 @@ app_title: Shoot by Théo — administration
 media_folder: content/images
 public_folder: /images
 
-# Optimisation à l'envoi, directement dans le navigateur : chaque photo glissée dans
-# l'administration est réduite à 2560 px maximum et convertie en WebP (qualité 88)
-# avant d'être enregistrée. Les fichiers de 10-20 Mo de l'appareil deviennent ~300-600 Ko,
-# sans perte visible ; le site génère ensuite ses propres tailles (AVIF/WebP) au build.
-# Les photos HEIC de l'iPhone sont converties aussi.
+# Chaque photo déposée est réduite à 2560 px et convertie en WebP avant d'être enregistrée.
 media_libraries:
   default:
     config:
@@ -34,7 +26,6 @@ media_libraries:
           width: 2560
           height: 2560
 
-# Adresses sans accents ni espaces : « Pré-Nationale • Journée 2 » → pre-nationale-journee-2
 slug:
   encoding: ascii
   clean_accents: true
@@ -47,11 +38,9 @@ collections:
     label: Reportages
     label_singular: Reportage
     icon: photo_library
-    description: 'Chaque reportage a sa carte dans Galeries et sa propre page. Glissez les photos d’un coup : la première devient la couverture.'
     folder: content/evenements
     create: true
     delete: true
-    # Adresse de la page calculée à partir du titre, du lieu et de l'année : rien à taper.
     slug: "{{fields.title}}-{{fields.location}}-{{date | date('YYYY')}}"
     path: '{{slug}}/event'
     extension: json
@@ -79,11 +68,8 @@ collections:
           label: Téléchargement autorisé
           field: download
           pattern: true
-    # Bouton « Modifier en masse » : un tableau pour corriger titres, dates, catégories,
-    # lieux et téléchargement de plusieurs reportages d'un coup (un seul enregistrement).
     bulk_edit:
       fields: [title, date, competition, location, download, draft]
-    # Les photos sont enregistrées dans le dossier du reportage, à côté de event.json.
     media_folder: ''
     public_folder: ''
     fields:
@@ -91,7 +77,7 @@ collections:
       - name: title
         label: Titre
         widget: string
-        hint: 'Ex. « Top 12 • Journée 2 ». Le « • » ne passe jamais seul en début de ligne.'
+        hint: 'Ex. Top 12 • Journée 2'
 
       - name: date
         label: Date
@@ -109,33 +95,32 @@ collections:
         sort_by:
           field: _manual
         required: false
-        hint: 'Sert de filtre dans Galeries. Catégorie absente de la liste ? Ajoutez-la ici sans quitter la fiche.'
+        hint: 'Catégorie absente ? Bouton « Ajouter Catégorie » ci-dessus.'
 
       - name: matches
         label: Rencontres
         label_singular: une rencontre
         widget: list
         required: false
-        hint: 'Une ligne par rencontre, ex. « BC Chambly — Béthune ».'
+        hint: 'Ex. BC Chambly — Béthune'
 
       - name: gallery
         label: Photos
         widget: image
         multiple: true
         required: false
-        hint: 'Glissez toutes les photos d’un coup (ou sélection multiple). Elles sont réduites et converties automatiquement. Faites glisser une vignette pour changer l’ordre : la première est la couverture.'
+        hint: 'Glissez toutes les photos d’un coup. La première est la couverture : faites glisser une vignette pour changer l’ordre.'
 
       - name: cover
-        label: Couverture (facultatif)
+        label: Autre couverture
         widget: image
         required: false
-        hint: 'Laisser vide : la première photo ci-dessus est utilisée. Choisir une photo ici seulement pour imposer une autre couverture.'
+        hint: 'Facultatif. Sinon, la première photo.'
 
       - name: description
         label: Description
         widget: text
         required: false
-        hint: 'Une ou deux phrases sur la journée.'
 
       - name: location
         label: Lieu (ville)
@@ -147,13 +132,12 @@ collections:
         label: Autoriser le téléchargement
         widget: boolean
         default: false
-        hint: 'Ajoute un bouton « Télécharger » sur chaque photo de la visionneuse.'
 
       - name: downloadUrl
-        label: Lien de l’album complet (facultatif)
+        label: Lien de l’album complet
         widget: string
         required: false
-        hint: 'Lien Google Drive, WeTransfer… vers les photos en pleine définition. Affiche le bouton « Télécharger les photos » si le téléchargement est autorisé.'
+        hint: 'Google Drive, WeTransfer… (facultatif)'
 
       - name: draft
         label: Brouillon (non publié)
@@ -189,7 +173,6 @@ collections:
     label: Catégories
     label_singular: Catégorie
     icon: label
-    description: 'Les filtres de la page Galeries. Bouton « Réorganiser » pour changer leur ordre. Renommer une catégorie : ses reportages suivent automatiquement.'
     folder: content/categories
     create: true
     delete: true
@@ -199,7 +182,7 @@ collections:
     slug: '{{fields.name}}'
     reorder: true
     fields:
-      - { name: name, label: Nom, widget: string, hint: 'Ex. « Nationale 3 », « Tournois », « Événements ».' }
+      - { name: name, label: Nom, widget: string }
 
 # ---------------------------------------------------------------------------
 # Pages et réglages : un formulaire par fichier.
@@ -220,17 +203,16 @@ singletons:
         summary: '{{fields.title}}'
         thumbnail: image
         fields:
-          - { name: label, label: Sur-titre, widget: string, hint: 'Petit mot en couleur au-dessus du titre, ex. « Portraits ».' }
           - { name: title, label: Titre, widget: string }
           - { name: text, label: Texte, widget: text }
           - name: points
-            label: Points forts
+            label: Points forts (facultatif)
             widget: list
             required: false
             field: { name: point, label: Point fort, widget: string }
           - { name: image, label: Photo, widget: image }
           - name: contactType
-            label: Type présélectionné dans le formulaire de contact
+            label: Type choisi dans le formulaire de contact
             widget: select
             options: [Photographie, Vidéo, Photo + Vidéo, Réseaux sociaux, Autre]
             default: Photographie
@@ -242,7 +224,7 @@ singletons:
     format: json
     fields:
       - { name: name, label: Nom du site, widget: string }
-      - { name: tagline, label: Sous-titre de l’accueil, widget: string, hint: 'Affiché au-dessus du grand titre, ex. « Photographe sportif ».' }
+      - { name: tagline, label: Sous-titre de l’accueil, widget: string, hint: 'Ex. Photographe sportif' }
       - name: hero
         label: Grande photo de l’accueil
         widget: object
@@ -252,7 +234,7 @@ singletons:
             label: Reportages à la une
             widget: list
             summary: '{{fields.event}}'
-            hint: 'Leur photo de couverture s’affiche en grand sur l’accueil (fondu enchaîné s’il y en a plusieurs). Vide = le dernier reportage.'
+            hint: 'Vide : le dernier reportage.'
             fields:
               - name: event
                 label: Reportage
@@ -264,29 +246,29 @@ singletons:
               - { name: photo, widget: hidden, default: cover }
               - { name: position, widget: hidden, default: '50% 40%' }
       - { name: galleryBanner, label: Photo du bandeau de la page Galeries, widget: image, required: false }
-      - { name: description, label: Description du site (Google), widget: text, hint: 'Utilisée par Google et les partages quand une page n’a pas sa propre description.' }
+      - { name: description, label: Description pour Google, widget: text }
       - { name: email, label: E-mail de contact, widget: string }
       - name: socials
         label: Réseaux sociaux
         widget: list
         summary: '{{fields.label}} — {{fields.handle}}'
         fields:
-          - { name: label, label: Nom, widget: string, hint: 'Ex. Instagram.' }
-          - { name: handle, label: Identifiant affiché, widget: string, hint: 'Ex. @shootby.theo.' }
+          - { name: label, label: Nom, widget: string, hint: 'Ex. Instagram' }
+          - { name: handle, label: Identifiant affiché, widget: string, hint: 'Ex. @shootby.theo' }
           - { name: url, label: Adresse, widget: string }
       - name: contact
         label: Formulaire de contact
         widget: object
         required: false
         fields:
-          - { name: formEndpoint, label: Adresse du service de formulaire, widget: string, required: false, hint: 'Ex. https://formspree.io/f/xxxxxxxx. Laisser vide : le bouton ouvre un e-mail prérempli dans la messagerie du visiteur.' }
+          - { name: formEndpoint, label: Adresse du service de formulaire, widget: string, required: false, hint: 'Ex. https://formspree.io/f/xxxxxxxx. Vide : le bouton ouvre la messagerie du visiteur.' }
       - name: legal
         label: Mentions légales
         widget: object
         required: false
         fields:
-          - { name: publisher, label: Éditeur du site, widget: string, required: false, hint: 'Nom et prénom, ou raison sociale.' }
-          - { name: status, label: Statut, widget: string, required: false, hint: 'Ex. micro-entrepreneur.' }
+          - { name: publisher, label: Éditeur du site, widget: string, required: false, hint: 'Nom et prénom, ou raison sociale' }
+          - { name: status, label: Statut, widget: string, required: false, hint: 'Ex. micro-entrepreneur' }
           - { name: siret, label: SIRET, widget: string, required: false }
           - { name: address, label: Adresse postale, widget: string, required: false }
           - { name: publicationDirector, label: Directeur de la publication, widget: string, required: false }

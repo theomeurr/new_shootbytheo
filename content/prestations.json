@@ -1,42 +1,27 @@
 {
   "title": "Ce que je photographie",
-  "intro": "Clubs, joueurs, associations, organisateurs ou marques : dites-moi ce que vous préparez, je vous réponds avec une proposition adaptée.",
+  "intro": "Dites-moi ce que vous préparez, je vous réponds avec une proposition.",
   "services": [
     {
-      "label": "Reportage",
       "title": "Reportages sportifs",
       "contactType": "Photographie",
       "image": "/images/prestation-reportages.webp",
-      "text": "Une journée de compétition racontée en images : l’action, les visages, l’ambiance de la salle. Vous recevez une galerie en ligne, prête à partager avec vos joueurs et vos partenaires.",
-      "points": [
-        "Couverture d’une rencontre ou d’une journée complète",
-        "Galerie en ligne à partager",
-        "Photos prêtes pour les réseaux sociaux"
-      ]
+      "text": "Une journée racontée en images : l’action, les visages, l’ambiance de la salle. Vous recevez une galerie en ligne à partager.",
+      "points": []
     },
     {
-      "label": "Compétitions",
       "title": "Couverture de compétitions et d’événements",
       "contactType": "Photo + Vidéo",
       "image": "/images/prestation-competitions.webp",
-      "text": "Interclubs, tournois, championnats ou événements de club : je couvre l’événement du début à la fin, pour le club, les joueurs et les partenaires.",
-      "points": [
-        "Interclubs, tournois et championnats",
-        "Remises de prix et moments d’équipe",
-        "Option vidéo pour les réseaux sociaux"
-      ]
+      "text": "Interclubs, tournois, championnats ou événements de club : je suis là du début à la fin.",
+      "points": []
     },
     {
-      "label": "Portraits",
       "title": "Portraits de sportifs",
       "contactType": "Photographie",
       "image": "/images/prestation-portraits.webp",
-      "text": "Des portraits posés ou pris sur le terrain, pour une présentation d’équipe, une fiche joueur ou un partenaire.",
-      "points": [
-        "Portraits individuels et photos d’équipe",
-        "En salle, sur le terrain ou en extérieur",
-        "Formats adaptés au web et à l’impression"
-      ]
+      "text": "Des portraits posés ou pris sur le terrain : présentation d’équipe, fiche joueur, partenaires.",
+      "points": []
     }
   ]
 }

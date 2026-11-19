@@ -47,9 +47,7 @@ const jsonLd = {
   <section class="banner">
     {banner && <Picture photo={banner} alt="" sizes="100vw" cover position="50% 40%" priority />}
     <div class="banner__content container">
-      <p class="kicker">Galeries</p>
       <h1 class="display banner__title">Mes reportages</h1>
-      <p class="banner__lead">Chaque reportage couvre une journée de compétition, de l’échauffement à la dernière poignée de main. Les plus récents en premier.</p>
     </div>
   </section>
 
@@ -115,11 +113,6 @@ const jsonLd = {
   }
   .banner__title {
     font-size: clamp(2.1rem, 7vw, 7rem);
-  }
-  .banner__lead {
-    max-width: 58ch;
-    font-size: clamp(1rem, 1.35vw, 1.2rem);
-    color: rgba(255, 255, 255, 0.82);
   }
 
   .list {

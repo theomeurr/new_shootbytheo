@@ -13,13 +13,11 @@ const hiddenFields = Object.entries((site.contact.hiddenFields ?? {}) as Record<
 <BaseLayout title="Contact — un projet ? Parlons-en" description="Club, joueur, association, organisateur ou marque : contactez ShootByTheo pour discuter de votre événement et recevoir un devis personnalisé (photo, vidéo, réseaux sociaux).">
   <section class="contact container">
     <div class="contact__intro">
-      <p class="kicker" data-reveal>Contact</p>
       <div class="fit" style={`--fit:${titleFit}`} data-reveal>
         <h1 class="display contact__title">
           {titleLines.map((line) => <span class="fit__line">{line} </span>)}
         </h1>
       </div>
-      <p class="lead contact__lead" data-reveal style="--reveal-delay:80ms">Club, joueur, association, organisateur ou marque : contactez-moi pour discuter de votre événement.</p>
 
       <ul class="contact__links" data-reveal style="--reveal-delay:140ms">
         <li>
@@ -122,10 +120,6 @@ const hiddenFields = Object.entries((site.contact.hiddenFields ?? {}) as Record<
   .contact__title {
     font-size: clamp(1.3rem, calc(100cqi / (var(--fit) * 1.6)), 3.25rem);
     margin-left: -0.04em;
-  }
-  .contact__lead {
-    max-width: 34ch;
-    color: var(--text-dim);
   }
   .contact__links {
     display: grid;

@@ -44,8 +44,8 @@ const heroIds = new Set(slides.map((slide) => `${slide.photo.dir}/${slide.photo.
 // ---- Trois portes d'entrée ----
 const galleriesPhoto = events.find((event) => event.cover && !heroIds.has(`${event.cover.dir}/${event.cover.id}`))?.cover ?? events[0]?.cover;
 const doors = [
-  { href: '/evenements/', title: 'Galeries', text: 'Les reportages, journée par journée.', photo: galleriesPhoto, position: '50% 35%' },
-  { href: '/prestations/', title: 'Prestations', text: 'Reportages, compétitions, portraits.', photo: sitePhoto(prestations.services[0]?.image), position: '50% 35%' },
+  { href: '/evenements/', title: 'Galeries', photo: galleriesPhoto, position: '50% 35%' },
+  { href: '/prestations/', title: 'Prestations', photo: sitePhoto(prestations.services[0]?.image), position: '50% 35%' },
 ];
 
 // ---- Mosaïque : 7 photos prises à tour de rôle dans les reportages récents ----
@@ -112,10 +112,9 @@ const jsonLd = [
       <p class="kicker hero__kicker">{site.tagline}</p>
       <h1 class="hero__title"><img src="/logo-shoot-by-theo.png" alt={site.name} width="1204" height="653" fetchpriority="high" /></h1>
       <div class="hero__bottom">
-        <p class="hero__lead">Reportages de badminton, compétitions et portraits de sportifs, pour les clubs, les joueurs et les organisateurs.</p>
+        <p class="hero__lead">Le badminton, vu du bord du terrain.</p>
         <a class="btn btn--accent" href="/evenements/">Découvrir mon travail <Icon name="arrow-right" /></a>
       </div>
-      <a class="hero__credit" href={slides[0]?.event.url}>{slides[0] && keepBullet(slides[0].event.title)}</a>
     </div>
   </section>
 
@@ -126,12 +125,9 @@ const jsonLd = [
           {door.photo && <Picture photo={door.photo} alt="" sizes="(min-width: 900px) 47vw, 100vw" cover position={door.position} max={1440} />}
           <div class="door__content">
             <h2 class="door__title">{door.title}</h2>
-            <p class="door__foot">
-              <span>{door.text}</span>
-              <span class="door__go" aria-hidden="true">
-                <Icon name="arrow-right" />
-              </span>
-            </p>
+            <span class="door__go" aria-hidden="true">
+              <Icon name="arrow-right" />
+            </span>
           </div>
         </a>
       ))
@@ -143,14 +139,11 @@ const jsonLd = [
       <section class="featured section">
         <div class="container">
           <div class="head" data-reveal>
-            <div>
-              <p class="kicker">À la une</p>
-              <h2 class="display section-title">
-                Les images
-                <br />
-                de la saison
-              </h2>
-            </div>
+            <h2 class="display section-title">
+              Les images
+              <br />
+              de la saison
+            </h2>
             <a class="link-arrow" href="/evenements/">
               Toutes les galeries <Icon name="arrow-right" />
             </a>
@@ -173,16 +166,9 @@ const jsonLd = [
       <section class="latest section">
         <div class="container">
           <div class="head" data-reveal>
-            <div>
-              <p class="kicker">Derniers reportages</p>
-              <h2 class="display section-title">
-                Fraîchement
-                <br />
-                publiés
-              </h2>
-            </div>
+            <h2 class="display section-title">Derniers reportages</h2>
             <a class="link-arrow" href="/evenements/">
-              Voir les {events.length} reportages <Icon name="arrow-right" />
+              Tous les reportages <Icon name="arrow-right" />
             </a>
           </div>
           <div class="grid">
@@ -277,20 +263,6 @@ const jsonLd = [
     font-size: clamp(1rem, 1.35vw, 1.2rem);
     color: rgba(255, 255, 255, 0.82);
   }
-  .hero__credit {
-    position: absolute;
-    right: max(var(--edge), var(--gutter-r));
-    top: calc(var(--header-h) + 1.25rem);
-    font-family: var(--font-mono);
-    font-size: 0.6875rem;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: rgba(255, 255, 255, 0.55);
-    transition: color 0.2s var(--ease);
-  }
-  .hero__credit:hover {
-    color: var(--text);
-  }
 
   /* ---------- trois portes d'entrée ---------- */
   .doors {
@@ -328,8 +300,10 @@ const jsonLd = [
   .door__content {
     position: absolute;
     inset: auto 0 0;
-    display: grid;
-    gap: 0.625rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
     padding: clamp(1.1rem, 2vw, 1.9rem);
   }
   .door__title {
@@ -338,14 +312,6 @@ const jsonLd = [
     font-size: clamp(1.65rem, 2.6vw, 2.5rem);
     line-height: 1;
     text-transform: uppercase;
-  }
-  .door__foot {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 0.75rem;
-    font-size: 0.9rem;
-    color: rgba(255, 255, 255, 0.75);
   }
   .door__go {
     flex: none;
@@ -391,9 +357,6 @@ const jsonLd = [
     justify-content: space-between;
     gap: 1.25rem;
     margin-bottom: clamp(1.75rem, 4vw, 3rem);
-  }
-  .head .kicker {
-    margin-bottom: 0.875rem;
   }
 
   /* ---------- mosaïque ---------- */

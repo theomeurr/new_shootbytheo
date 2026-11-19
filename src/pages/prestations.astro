@@ -30,10 +30,7 @@ const jsonLd = {
 >
   <section class="container page">
     <div class="intro" data-reveal>
-      <div>
-        <p class="kicker">Prestations</p>
-        <h1 class="display page__title">{prestations.title}</h1>
-      </div>
+      <h1 class="display page__title">{prestations.title}</h1>
       <p class="lead">{prestations.intro}</p>
     </div>
 
@@ -43,7 +40,6 @@ const jsonLd = {
           <article class="service" data-reveal>
             <div class="service__media">{service.photo && <Picture photo={service.photo} alt={service.title} sizes="(min-width: 860px) 55vw, 100vw" cover max={1440} priority={index === 0} />}</div>
             <div class="service__body">
-              <p class="kicker">{service.label}</p>
               <h2 class="service__title">{service.title}</h2>
               <p class="service__text">{service.text}</p>
               {service.points.length > 0 && (
@@ -76,9 +72,6 @@ const jsonLd = {
     justify-content: space-between;
     gap: 1.25rem 3rem;
     margin-bottom: clamp(2rem, 4vw, 3rem);
-  }
-  .intro .kicker {
-    margin-bottom: 0.875rem;
   }
   .intro .lead {
     max-width: 46ch;

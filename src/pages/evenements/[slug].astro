@@ -43,7 +43,6 @@ const facts = [
   { label: 'Lieu', value: [event.venue, event.location].filter(Boolean).join(', ') },
   { label: 'Compétition', value: event.competition || event.type },
   { label: event.matches.length > 1 ? 'Rencontres' : 'Rencontre', value: event.matches.join('\n') },
-  { label: 'Photos', value: `${count} photographie${count > 1 ? 's' : ''}` },
 ].filter((fact) => fact.value);
 
 const jsonLd = [
@@ -129,11 +128,11 @@ const jsonLd = [
         {
           event.download ? (
             <p class="note">
-              Téléchargement autorisé : {event.downloadUrl ? 'l’album complet en haute définition, ou ' : ''}chaque photo depuis la visionneuse. Merci de créditer <strong>{instagram?.handle ?? site.name}</strong> en cas de publication.
+              Photos à télécharger librement. Merci de créditer <strong>{instagram?.handle ?? site.name}</strong>.
             </p>
           ) : (
             <p class="note">
-              Les photos de ce reportage se consultent en ligne. Pour une utilisation, <a href="/contact/">écrivez-moi</a>.
+              Pour utiliser ces photos, <a href="/contact/">écrivez-moi</a>.
             </p>
           )
         }
@@ -153,7 +152,7 @@ const jsonLd = [
     </section>
 
     <section class="container photos" aria-label="Photos du reportage">
-      {count > 0 ? <Gallery items={items} group={event.slug} eager={3} /> : <p class="note">Les photos de ce reportage arrivent bientôt.</p>}
+      {count > 0 ? <Gallery items={items} group={event.slug} eager={3} /> : <p class="note">Les photos arrivent bientôt.</p>}
     </section>
 
     {

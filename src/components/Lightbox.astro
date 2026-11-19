@@ -38,7 +38,6 @@ import Icon from './Icon.astro';
 
   <div class="lb__foot">
     <p class="lb__caption" data-lb-caption></p>
-    <p class="lb__keys" aria-hidden="true"><kbd>←</kbd><kbd>→</kbd> naviguer <kbd>Z</kbd> zoomer <kbd>Échap</kbd> fermer</p>
   </div>
 </dialog>
 
@@ -239,18 +238,6 @@ import Icon from './Icon.astro';
     text-underline-offset: 0.25em;
     white-space: nowrap;
   }
-  .lb__keys {
-    display: none;
-  }
-  .lb__keys kbd {
-    margin-inline: 0.15rem;
-    padding: 0.1rem 0.4rem;
-    border: 1px solid var(--line);
-    border-radius: 4px;
-    font-family: var(--font-mono);
-    font-size: 0.6875rem;
-    color: var(--text);
-  }
 
   @media (min-width: 900px) {
     .lb {
@@ -262,9 +249,6 @@ import Icon from './Icon.astro';
       width: 3.375rem;
       height: 3.375rem;
       margin-top: -1.7rem;
-    }
-    .lb__keys {
-      display: block;
     }
   }
   @media (max-width: 560px) {
