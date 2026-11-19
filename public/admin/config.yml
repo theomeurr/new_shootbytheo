@@ -14,7 +14,7 @@ backend:
 
 app_title: Shoot by Théo — administration
 
-# Images hors reportages (prestations, portrait, bandeau) : content/images/
+# Images hors reportages (prestations, bandeau) : content/images/
 media_folder: content/images
 public_folder: /images
 
@@ -234,28 +234,6 @@ singletons:
             widget: select
             options: [Photographie, Vidéo, Photo + Vidéo, Réseaux sociaux, Autre]
             default: Photographie
-
-  - name: a-propos
-    label: Page À propos
-    icon: person
-    file: content/a-propos.json
-    format: json
-    fields:
-      - { name: name, label: Nom, widget: string }
-      - { name: portrait, label: Portrait, widget: image, hint: 'Une photo verticale de vous, de préférence.' }
-      - { name: portraitAlt, label: Description du portrait (accessibilité), widget: string, required: false }
-      - name: bio
-        label: Présentation
-        label_singular: paragraphe
-        widget: list
-        field: { name: paragraph, label: Paragraphe, widget: text }
-      - { name: approachTitle, label: Titre de la partie « approche », widget: string, default: Mon approche }
-      - name: approach
-        label: Mon approche
-        label_singular: paragraphe
-        widget: list
-        required: false
-        field: { name: paragraph, label: Paragraphe, widget: text }
 
   - name: site
     label: Réglages du site

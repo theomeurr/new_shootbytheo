@@ -18,7 +18,6 @@ export const NAV = [
   { label: 'Accueil', href: '/' },
   { label: 'Galeries', href: '/evenements/' },
   { label: 'Prestations', href: '/prestations/' },
-  { label: 'À propos', href: '/a-propos/' },
 ] as const;
 
 export const CONTACT_LINK = { label: 'Contact', href: '/contact/' } as const;

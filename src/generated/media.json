@@ -464,30 +464,6 @@
      }
     },
     {
-     "id": "portrait-theo",
-     "file": "portrait-theo.webp",
-     "hash": "c79cab47",
-     "w": 1706,
-     "h": 2560,
-     "color": "#3b4240",
-     "lqip": "data:image/webp;base64,UklGRnQAAABXRUJQVlA4IGgAAADQAwCdASoNABQAPwFqrE8rJiQiMAgBYCAJZACdMoAC/LwAGJdTHvQA/vESatiZkTyI1FTVm+h6e5h3aPBkzVztoGZQFyJKNUUCHf6QE/vUmbQIL2dit9xaZ8VMbX6O+4rUbUdPMlqAAA==",
-     "widths": [
-      480,
-      960,
-      1440,
-      1706
-     ],
-     "formats": [
-      "avif",
-      "webp"
-     ],
-     "src": {
-      "size": 306050,
-      "mtime": 1795079421205,
-      "hash": "d0f15bc23046c980355efcb05ad49dad52bb9ea6"
-     }
-    },
-    {
      "id": "prestation-competitions",
      "file": "prestation-competitions.webp",
      "hash": "ce2e751e",

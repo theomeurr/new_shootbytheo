@@ -14,7 +14,7 @@ npm run preview    # vérifie le résultat du build
 
 ## Interface d'administration (CMS)
 
-Tout (reportages, photos, catégories, pages Prestations et À propos, réglages) se gère depuis
+Tout (reportages, photos, catégories, page Prestations, réglages) se gère depuis
 **[Sveltia CMS](https://sveltiacms.app)**, à l'adresse `/admin/`. Le panneau lit et écrit directement les
 mêmes fichiers que les commandes `npm run …` : les deux approches restent utilisables à tout moment.
 
@@ -204,10 +204,9 @@ montre les 3 plus récents.
 | Fichier | Contenu |
 | --- | --- |
 | `content/prestations.json` | Page Prestations : titre, introduction et les prestations (photo, texte, points forts, type présélectionné dans le formulaire de contact). |
-| `content/a-propos.json` | Page À propos : nom, portrait, présentation, approche. |
 | `content/site.json` | Nom, sous-titre, e-mail, réseaux sociaux, grande photo de l'accueil, bandeau de la page Galeries, formulaire, mentions légales. |
 | `content/categories/` | Catégories (filtres de la page Galeries). |
-| `content/images/` | Images hors reportages (prestations, portrait, bandeau). |
+| `content/images/` | Images hors reportages (prestations, bandeau). |
 | `media.config.mjs` | Tailles, formats (AVIF / WebP) et qualité des images générées. |
 | `src/styles/global.css` | Couleurs (`--bg`, `--accent`…), typographie, espacements. |
 
@@ -233,7 +232,7 @@ Les mêmes que sur le site historique, hébergées avec le site (aucun appel à 
 
 Pour changer de police : installer le paquet Fontsource voulu, l'importer en tête de `global.css` et modifier
 `--font-sans` / `--font-mono`. Si la police des titres change, remesurer la table de `src/lib/type-metrics.ts`
-(elle sert à caler les titres de l'accueil, d'À propos et de Contact dans leur colonne).
+(elle sert à caler les titres de Contact dans leur colonne).
 
 ### Formulaire de contact
 

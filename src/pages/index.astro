@@ -1,6 +1,6 @@
 ---
 /**
- * Accueil : grande photo + titre, trois portes d'entrée (Galeries, Prestations, À propos),
+ * Accueil : grande photo + logo, deux portes d'entrée (Galeries, Prestations),
  * une mosaïque de photos à la une et les derniers reportages.
  * Tout se met à jour seul à chaque nouveau reportage publié.
  */
@@ -15,7 +15,6 @@ import { type Photo, findPhoto, sitePhoto } from '@/lib/media';
 import { lightboxAttrs } from '@/lib/lightbox';
 import { absoluteUrl, site } from '@/lib/site';
 import prestations from '@content/prestations.json';
-import about from '@content/a-propos.json';
 
 const events = await getEvents();
 
@@ -47,7 +46,6 @@ const galleriesPhoto = events.find((event) => event.cover && !heroIds.has(`${eve
 const doors = [
   { href: '/evenements/', title: 'Galeries', text: 'Les reportages, journée par journée.', photo: galleriesPhoto, position: '50% 35%' },
   { href: '/prestations/', title: 'Prestations', text: 'Reportages, compétitions, portraits.', photo: sitePhoto(prestations.services[0]?.image), position: '50% 35%' },
-  { href: '/a-propos/', title: 'À propos', text: 'Le photographe derrière l’objectif.', photo: sitePhoto(about.portrait), position: '50% 25%' },
 ];
 
 // ---- Mosaïque : 7 photos prises à tour de rôle dans les reportages récents ----
@@ -93,7 +91,7 @@ const jsonLd = [
     url: absoluteUrl('/'),
     email: site.email,
     description: site.description,
-    founder: { '@type': 'Person', name: about.name, jobTitle: 'Photographe sportif' },
+    founder: { '@type': 'Person', name: 'Théo Meurier', jobTitle: 'Photographe sportif' },
     image: slides[0]?.event?.ogImage ? absoluteUrl(slides[0].event.ogImage) : undefined,
     sameAs: site.socials.map((social) => social.url),
     knowsAbout: ['Photographie sportive', 'Badminton', 'Reportage sportif', 'Portraits de sportifs', 'Événements sportifs'],
@@ -112,7 +110,7 @@ const jsonLd = [
     }
     <div class="hero__content container">
       <p class="kicker hero__kicker">{site.tagline}</p>
-      <h1 class="display hero__title">{site.name}</h1>
+      <h1 class="hero__title"><img src="/logo-shoot-by-theo.png" alt={site.name} width="1204" height="653" fetchpriority="high" /></h1>
       <div class="hero__bottom">
         <p class="hero__lead">Reportages de badminton, compétitions et portraits de sportifs, pour les clubs, les joueurs et les organisateurs.</p>
         <a class="btn btn--accent" href="/evenements/">Découvrir mon travail <Icon name="arrow-right" /></a>
@@ -125,7 +123,7 @@ const jsonLd = [
     {
       doors.map((door, index) => (
         <a class="door" href={door.href} data-reveal style={`--reveal-delay:${index * 80}ms`}>
-          {door.photo && <Picture photo={door.photo} alt="" sizes="(min-width: 900px) 31vw, 100vw" cover position={door.position} max={1440} />}
+          {door.photo && <Picture photo={door.photo} alt="" sizes="(min-width: 900px) 47vw, 100vw" cover position={door.position} max={1440} />}
           <div class="door__content">
             <h2 class="door__title">{door.title}</h2>
             <p class="door__foot">
@@ -261,9 +259,10 @@ const jsonLd = [
     height: 2px;
     background: var(--accent);
   }
-  .hero__title {
-    max-width: 12ch;
-    font-size: clamp(2.6rem, 8.4vw, 8.5rem);
+  .hero__title img {
+    width: clamp(15rem, 44vw, 38rem);
+    height: auto;
+    filter: drop-shadow(0 2px 18px rgba(11, 11, 13, 0.45));
   }
   .hero__bottom {
     display: flex;
@@ -296,14 +295,14 @@ const jsonLd = [
   /* ---------- trois portes d'entrée ---------- */
   .doors {
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: clamp(0.75rem, 1.5vw, 1.25rem);
     padding-top: clamp(1.75rem, 4vw, 3.5rem);
   }
   .door {
     position: relative;
     display: block;
-    aspect-ratio: 4 / 5;
+    aspect-ratio: 3 / 2;
     border-radius: var(--radius);
     overflow: hidden;
     isolation: isolate;
