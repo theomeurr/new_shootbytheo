@@ -1,21 +1,6 @@
 {
   "name": "Shoot by Théo",
-  "url": "https://shootbytheo.com",
-  "logo": "/logo-white.png",
   "tagline": "Photographe sportif",
-  "headerTagline": "Sport · Événementiel",
-  "slogan": [
-    "Capturer l’intensité."
-  ],
-  "description": "ShootByTheo, photographe sportif : reportages photo, contenus réseaux sociaux pour clubs, joueurs, associations et événements sportifs.",
-  "email": "contact@shootbytheo.com",
-  "socials": [
-    {
-      "label": "Instagram",
-      "handle": "@shootby.theo",
-      "url": "https://www.instagram.com/shootby.theo/"
-    }
-  ],
   "hero": {
     "autoplaySeconds": 7,
     "slides": [
@@ -31,11 +16,20 @@
       }
     ]
   },
+  "galleryBanner": "/images/sans-titre-1.webp",
+  "description": "ShootByTheo, photographe sportif : reportages photo, contenus réseaux sociaux pour clubs, joueurs, associations et événements sportifs.",
+  "email": "contact@shootbytheo.com",
+  "socials": [
+    {
+      "label": "Instagram",
+      "handle": "@shootby.theo",
+      "url": "https://www.instagram.com/shootby.theo/"
+    }
+  ],
   "contact": {
     "formEndpoint": "",
     "hiddenFields": {}
   },
-  "mediaBaseUrl": "",
   "legal": {
     "publisher": "",
     "status": "",
@@ -48,5 +42,11 @@
       "contact": ""
     }
   },
-  "galleryBanner": "/images/banniere-galeries.webp"
+  "url": "https://shootbytheo.com",
+  "logo": "/logo-white.png",
+  "headerTagline": "Sport · Événementiel",
+  "slogan": [
+    "Capturer l’intensité."
+  ],
+  "mediaBaseUrl": ""
 }
